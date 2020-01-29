@@ -25,6 +25,9 @@ ___________________________________________________________________________
 
 ## General notes  
 **Log into UNIX server through RStudio terminal**  
+`require(ssh)`
+`session <- ssh_connect("ap1@pbio381.uvm.edu")`
+`print(session)`
 
 Go to terminal on RStudio, type in the following to get root access:  
 
