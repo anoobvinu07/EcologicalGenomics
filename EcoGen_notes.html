@@ -369,6 +369,7 @@ summary {
 </div>
 
 
+<p><code>{r setup, include=FALSE} knitr::opts_chunk$set(echo = TRUE)</code></p>
 <div id="affiliation-keller-lab-department-of-plant-biology-university-of-vermont" class="section level3">
 <h3><strong>Affiliation</strong>: Keller Lab; Department of Plant Biology, University of Vermont</h3>
 </div>
@@ -389,13 +390,14 @@ summary {
 <h3>Table of Contents:</h3>
 <ul>
 <li><input type="checkbox" disabled></input>
-<a href="./fastq">Working with fastq</a></li>
+<a href="./fastq.md">Working with fastq</a></li>
 </ul>
 <hr />
 </div>
 <div id="general-notes" class="section level2">
 <h2>General notes</h2>
-<p><strong>Log into UNIX server through RStudio terminal</strong></p>
+<p><strong>Log into UNIX server through RStudio terminal</strong><br />
+<code>require(ssh)</code> <code>session &lt;- ssh_connect(&quot;ap1@pbio381.uvm.edu&quot;)</code> <code>print(session)</code></p>
 <p>Go to terminal on RStudio, type in the following to get root access:</p>
 <p><code>/usr/bin/env bash -l</code></p>
 <p>type in your password</p>

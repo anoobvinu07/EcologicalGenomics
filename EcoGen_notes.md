@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Table of Contents:  
 
-- [ ] [Working with fastq](./fastq) 
+- [ ] [Working with fastq](./fastq.md) 
 
 ___________________________________________________________________________  
 
@@ -55,3 +55,4 @@ You have root access now:
 **Course website:** https://pespenilab.github.io/Ecological-Genomics/  
 
 ***  
+
