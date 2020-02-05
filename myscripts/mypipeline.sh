@@ -3,7 +3,7 @@
 # We'll use this a wrapper to run our different mapping scripts
 
 # Path to my repo
-myrepo = "/users/a/p/ap1/EcologicalGenomics"
+myrepo="/users/a/p/ap1/EcologicalGenomics"
 
 # echo ${myrepo}  <- to call my repo
 
