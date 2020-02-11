@@ -52,3 +52,11 @@ You have root access now:
 **Course website:** https://pespenilab.github.io/Ecological-Genomics/  
 
 ***  
+Updating R
+
+```{r}
+install.packages("installr")
+library(installr)
+updateR()
+```
+
