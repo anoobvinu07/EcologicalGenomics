@@ -1,6 +1,6 @@
 ---
 title: ""
-date: "`r Sys.Date()`"
+date: " "
 output:
   rmdformats::readthedown:
     highlight: kate
