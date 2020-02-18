@@ -28,3 +28,5 @@ N50 - take the contigs when it reaches the 50% of the total basepairs - the cont
 - So this number looks at how well assembled the DNA fragements are !  
 - More of a benchmark, and there are other metrics as well, like N90. [more info needed]  
 
+
+
