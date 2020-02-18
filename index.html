@@ -9,7 +9,6 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="date" content="2020-02-18" />
 
 <title>index.utf8</title>
 
@@ -1514,12 +1513,17 @@ $(document).ready(function () {
     <h2><a href="#content"></a></h2>
     <div id="text-table-of-contents">
       <ul>
+      <li><a href="#global-options">Global options</a></li>
       <li><a href="#general-notes">General notes</a></li>
       </ul>
     </div>
 </div>
 
 <div id="main">
+<p>```{r setup, echo=FALSE, cache=FALSE} library(knitr) library(rmdformats)</p>
+<div id="global-options" class="section level2">
+<h2>Global options</h2>
+<p>options(max.print=“75”) opts_chunk<span class="math inline">\(set(echo=FALSE,  cache=TRUE,  prompt=FALSE,  tidy=TRUE,  comment=NA,  message=FALSE,  warning=FALSE) opts_knit\)</span>set(width=75) ```</p>
 <div id="affiliation-keller-lab-department-of-plant-biology-university-of-vermont" class="section level3">
 <h3><strong>Affiliation</strong>: Keller Lab; Department of Plant Biology, University of Vermont</h3>
 </div>
@@ -1543,6 +1547,7 @@ $(document).ready(function () {
 <a href="./fastq.md">Working with fastq</a></li>
 </ul>
 <hr />
+</div>
 </div>
 <div id="general-notes" class="section level2">
 <h2>General notes</h2>
@@ -1568,7 +1573,7 @@ $(document).ready(function () {
 </div>
 
 <div id="postamble" data-toggle="wy-nav-shift" class="status">
-<p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-02-18</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> <code>r Sys.Date()</code></p>
 </div>
 
 
