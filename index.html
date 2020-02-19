@@ -1541,11 +1541,16 @@ $(document).ready(function () {
 <div id="table-of-contents" class="section level3">
 <h3>Table of Contents:</h3>
 <ul>
+<li><a href="id-section1">General Notes</a><br />
+</li>
+<li><a href>bash commands</a></li>
 <li><a href="./fastq.html">Working with fastq</a><br />
 </li>
 <li>Trimmomatic</li>
 </ul>
 <hr />
+<hr />
+<div id="id-section1"></div>
 </div>
 <div id="general-notes" class="section level2">
 <h2>General notes</h2>
@@ -1576,7 +1581,20 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function () {
- 	  });
+ 	    $('#content img')
+ 	  .addClass("image-lb");
+  $('#content').magnificPopup({
+	      type:'image',
+	      closeOnContentClick: false,
+	      closeBtnInside: false,
+	      delegate: 'img',
+	      gallery: {enabled: true },
+	      image: {
+	        verticalFit: true,
+          titleSrc: 'alt'
+	      }
+ 	    });
+ 	});
 </script>
 
 

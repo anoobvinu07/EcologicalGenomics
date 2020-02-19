@@ -1,9 +1,10 @@
 ---
-title: ""
-date: "`r Sys.Date()`"
+title: "EcologicalGenomics"
 output:
   rmdformats::readthedown:
     highlight: kate
+    lightbox: true
+    gallery: true
 ---
 
 
@@ -33,10 +34,15 @@ opts_knit$set(width=75)
 
 ### Table of Contents:  
 
-- [ ] [Working with fastq](./fastq.md) 
+- [General Notes](id-section1)  
+- [bash commands]()
+- [Working with fastq](./fastq.html)   
+- Trimmomatic
 
 ___________________________________________________________________________  
 
+-----
+<div id='id-section1'/>
 ## General notes  
 **Log into UNIX server through RStudio terminal**  
 `require(ssh)`

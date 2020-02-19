@@ -3,6 +3,8 @@ title: "EcologicalGenomics"
 output:
   rmdformats::readthedown:
     highlight: kate
+    lightbox: true
+    gallery: true
 ---
 
 ### **Affiliation**:  Keller Lab; Department of Plant Biology, University of Vermont  
@@ -15,11 +17,14 @@ output:
 
 ### Table of Contents:  
 
+- [General Notes](id-section1)  
+- []()
 - [Working with fastq](./fastq.html)   
 - Trimmomatic
 
 ___________________________________________________________________________  
-
+-----
+<div id='id-section1'/>
 ## General notes  
 **Log into UNIX server through RStudio terminal**  
 `require(ssh)`
