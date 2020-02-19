@@ -1,27 +1,9 @@
 ---
-title: ""
-date: " "
+title: "EcologicalGenomics"
 output:
   rmdformats::readthedown:
     highlight: kate
 ---
-
-
-```{r setup, echo=FALSE, cache=FALSE}
-library(knitr)
-library(rmdformats)
-
-## Global options
-options(max.print="75")
-opts_chunk$set(echo=FALSE,
-	             cache=TRUE,
-               prompt=FALSE,
-               tidy=TRUE,
-               comment=NA,
-               message=FALSE,
-               warning=FALSE)
-opts_knit$set(width=75)
-```
 
 ### **Affiliation**:  Keller Lab; Department of Plant Biology, University of Vermont  
 ### **E-mail contact**:  anoob.prakash@uvm.edu  
@@ -33,7 +15,7 @@ opts_knit$set(width=75)
 
 ### Table of Contents:  
 
-- [ ] [Working with fastq](./fastq.md) 
+- [Working with fastq](./fastq.html) 
 
 ___________________________________________________________________________  
 
