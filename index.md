@@ -15,7 +15,8 @@ output:
 
 ### Table of Contents:  
 
-- [Working with fastq](./fastq.html) 
+- [Working with fastq](./fastq.html)   
+- Trimmomatic
 
 ___________________________________________________________________________  
 
