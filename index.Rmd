@@ -5,7 +5,7 @@ output:
     highlight: kate
     lightbox: true
     gallery: true
-    # toc: 2
+    
 ---
 
 
@@ -98,23 +98,170 @@ Using the “pipe” to send the output of one command to the input of another |
 Removing files or folders [use with caution as the action is irreversible]  | `rm`   
 <p style="color:green"> Github specific</p>  
 Description                                     | Commands  
------------------------------------------------ | --------
-Git add                                         | `git add`  
-Pull from the server                            | `git pull`  
-Commit changes                                  | `git commit`
+----------------------------------------------- | --------  
+Cloning a git repo                              | `git clone`  
+Pull from the server                            | `git pull` 
+Git add                                         | `git add --all`  
+Commit changes                                  | `git commit -m` *comment about the commit*  
 Push to the server                              | `git push`  
-Cloning a git repo                              |    `git clone`
+
+
+
+**Tweaking the rm command on the server**  
+Once you remove a file with `rm` command on the UNIX server, its lost for good. In order to make sure that its not an accidental deletition, we can make the server ask the user to confirm before deletion. For that, the following steps need to be followed.  
+1. Go to your home directory (`cd ~/`)  
+2. List hidden files (`ll -a`)  
+3. Open **.bashrc** - contains settings for when you want to interact with the server - with `vim .bashrc` or any other text editor you use on the server.  
+4. Type in the following command under **# User specific aliases and functions** by going into the insert mode (by pressing *i* on the keyboard): `alias rm='rm -i'`  
+5. Your file should look like thw following  
+```{}
+# .bashrc
+
+  # Source global definitions
+  if [ -f /etc/bashrc ]; then
+          . /etc/bashrc
+  fi
+
+  # Uncomment the following line if you don't like systemctl's auto-paging feature:
+  # export SYSTEMD_PAGER=
+
+  # User specific aliases and functions
+
+  alias rm='rm -i'
+```
+6. Press **esc** on the keyboard to exit out of the edit mode.  
+7. Type `:wq`  (`w` is to write the changes and `q` is to quit out of the editor)  
+8. `exit` out of the server for the changes to take place.  
 
 
 ## File transfer protocol  
-Files can be transfered from the server to the local machine through pushing it to the github. However, when the files are too large to commit a push to the GitHub server, a file transfer software like [WinSCP](https://winscp.net/eng/index.php) is required ( [FileZilla](https://filezilla-project.org/?AFFILIATE=6732&__c=1) or [Cyberduck](https://cyberduck.io/) for Mac). Such transfer clients helps to establish a secure connection and carry out file transfer between a local and a remote computer. Just the server credentials are required to start using the software. Make sure the connection type is SFTP, which stands for SSH File Transfer Protocol, or Secure File Transfer Protocol.  
+Files can be transfered from the server to the local machine through pushing it to the github. However, when the files are too large to commit a push to the GitHub server, a file transfer software like [WinSCP](https://winscp.net/eng/index.php) is required ( [FileZilla](https://filezilla-project.org/?AFFILIATE=6732&__c=1) or [Cyberduck](https://cyberduck.io/) for Mac ). Such transfer clients helps to establish a secure connection and carry out file transfer between a local and a remote computer. Just the server credentials are required to start using the software. Make sure the connection type is SFTP, which stands for SSH File Transfer Protocol, or Secure File Transfer Protocol.  
+
+# Population genomics of Red Spruce  
+Study Species: Red Spruce (*Picea rubens*)  
+
+- It is a coniferous tree that plays a prominent role in montane communities throughout the Appalachians.  
+- It thrives in the cool, moist climates of the high elevation mountains of the Apppalachians and northward along the coastal areas of Atlantic Canada.  
+- Towards the southern ranges of the population, they are mostly limited to higher altitudes, existing in the form of "sky islands"  
+- The trees retreated to the mountain top refugia as the climate warmed.
+this caused them to be highly isolated from other stands.  
+- The effect of environmental change is difficult can be tracked via changes in the species abundance and distribution across the latitude.  
+
+Challenges: The effect of climate change is difficult to differentiate between demographic history ($\Delta$abundance and $\Delta$distribution) of the species or selection acting on it.  
+
+## Why population genomics:  
+
+Why study across the genome?  
+
+1. Genomic context
+
+  - To recognise the huge amount of variation in the genome through sampling  
+    - RADseq can help with that  
+  - The **effect of genentic drift is global and selection is local** in the genome  
+  - Small population sizes and drift act on the entire genome.  
+    
+2. Demographic history  
+
+    - Effective population size ($N_e$)  
+  
+    - Migration (gene flow) 
+  
+      - migration amoung populations -> "genetic populations" aka "demes"  
+  
+    - Divergence times  
+  
+      - divergence time between demes
+  
+    - Wright Fisher model  
+  
+      - everyone has equal chance of mating  
+  
+    - Coalscent theory  
+    
+      - The model of gene variants sampled from a popultion maybe have originated from a common ancestor.  
+     
+      - In an expanding population, coalescent events are more frequent in past and less frequent in the present due to larger $N_e$.  
+     
+      - High rate of coalescence can be a reason to differentiate populations. Since coalescence events are more frequent with in a population than if it was a single big population.
+     
+      - tMRCA - stands for time to the most recent common ancestor  
+    
+      - The concept and mathematical proof for coalescent theory was brought forward by John Kingman  
+      
+      - Watterson put forth the estimator  
+      
+      - Tajima - Tajima's D  
+      
+      - Hudson - more recently developed gene genealogies computational approaches
+     
+      - $\pi$ is an estimator of $\theta$.  
+    
+    
+```{r pressure, echo=FALSE, fig.cap="Fig. 2. The genealogy of a sample of five alleles, showing the time intervals between coalescent events (Hudson, 1990)", out.width = '100%'}
+knitr::include_graphics("./hudson1990_coalescence.png")
+```
+  
+    - Site Frequency Spectrum (SFS)  
+  
+  
+  
+  
+  
+3. Selection
+  
+
+
+
+
+## The pipeline for cleaning genomic data  
+## Population: `XGL`
+1. Visualize, Clean, Visualize  
+    
+    **Visualize**  
+    Visualize the quality of raw data (Program: `FastQC`)
+
+    **Clean**  
+    Clean raw data (Program: Trimmomatic)  
+
+    **Visualize**  
+    Visualize the quality of cleaned data (Program: `FastQC`)  
+
+2. Calculate the number of cleaned, high quality reads going into mapping  
+
+3. **Mapping**: Map (a.k.a. Align) cleaned reads from each sample to the reference assembly to generate sequence alignment files (Program: bwa, Input: .fastq, Output: .sam).  
+    
+    3.1 Mapping cleaned and trimmed reads against reference genome  
+      - reference genome from Norway spruce [Congenie](http://congenie.org/)  
+      - 
+
+
+4. Remove PCR duplicates identified during mapping, and calculate alignment statistics (% of reads mapping succesully, mapping quality scores, average depth of coverage per individual)  
+
+## FIG
+
+
+
+## [Pipeline Code](./fastq.html) `Complete code for POPGEN pipeline`
+
+
+
+
+
+
+## estimating diversity and population structure  
+
+
+
 
 
 ***
-# Course Materials amd Notes  
+# Course Materials and Notes  
 ## [Sequencing methods](https://docs.google.com/document/d/1MuXPS3hNg3wIxsKw-jQmKY7y57Ka2qqZwHYKRAbpNMw/edit?usp=sharing)
 [Tutorial on bash](https://pespenilab.github.io/Ecological-Genomics/Tutorial/2020-01-22_Command_Line_Unix.html)   
+[github cheat sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)  
 
 ### [Course website](https://pespenilab.github.io/Ecological-Genomics/)  
 
 ***  
+## References  
+Hudson, Richard R. "Gene genealogies and the coalescent process." Oxford surveys in evolutionary biology 7.1 (1990): 44.  
