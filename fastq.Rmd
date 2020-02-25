@@ -144,7 +144,7 @@ MINLEN: Drop the read if it is below a specified length
 
 # Mapping  
 
-## Program used : [BWA](http://bio-bwa.sourceforge.net/bwa.shtml) {.tabset .tabset-fade .tabset-pills}  
+## Program used : [BWA](http://bio-bwa.sourceforge.net/bwa.shtml), samtools {.tabset .tabset-fade .tabset-pills}  
 
 BWA is a very efficient read mapper and works really well with this exome data.  
 The basic bwa command that will be used is as follows:  
@@ -194,12 +194,18 @@ output="/data/project_data/RS_ExomeSeq/mapping"
 
 The reads are mapped to the reference genome using bwa. The reference genome of Norway spruce is huge (~20 Gb), so instead of using the whole genome for mapping only the exome / coding regions are used. For this purpose, the probes were designed just for the exome region and then BLAST ed to search for each probe. We have information on the contigs, which are small DNA sequences used to construct the map. However, there is not enough information to say for sure where these contigs lie on the chromosomes.  
 
+This reduced reference contains:  
+  - 668,091,227 bp (~668 Mbp) in 33,679 contigs  
+  - The mean (median) contig size is 10.5 (12.9) kbp  
+  - The N50 of the reduced reference is 101,375 bp  
+
 The **reference genome** is located here: `cd /data/project_data/RS_ExomeSeq/ReferenceGenomes/`  
 
 To get reference genome online and dowload for use, the following code can be used: `wget "http://plantgenie.org/Picea_abies/v1.0/FASTA/GenomeAssemblies/Pabies1.0-genome.fa.gz"`   
 
 
-N50 - take the contigs when it reaches the 50% of the total basepairs - the contig at this location and how big it is in terms of basepairs is the N50 value    
+N50   
+- take the contigs when it reaches the 50% of the total basepairs - the contig at this location and how big it is in terms of basepairs is the N50 value    
 - looking for a big no. for the N50  
 - So this number looks at how well assembled the DNA fragements are !  
 - More of a benchmark, and there are other metrics as well, like N90. [more info needed]    
@@ -268,6 +274,25 @@ done
 ```
 
 ### bamstats.sh   
+
+**samtools**  
+  - powerful tool for manipulating sam/bam files  
+  - `flagstat` command of samtools gives basic informatio on how well the mapping worked  
+    - `samtools flagstat` *filename,sam*  
+  - `tview` - to view the alignment files (sam or bam)  
+    - `samtools tview` *path to the sam/bam file* *path to the reference genome*  
+    - `samtools tview` /data/project_data/RS_ExomeSeq/mapping/BWA/XGL_05.sorted.rmdup.bam /data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa  
+
+To get stats on how well the mapping worked  
+`samtools flagstat file.sorted.rmdup.bam | awk 'NR>=5&&NR<=13 {print $1}' | column -x`  
+`samtools depth file.sorted.rmdup.bam | awk '{sum+=$3} END {print sum/NR}`  
+
+Depth of coverage is also estimated on this step.  
+
+**Note**  
+in awk - `NR` stands for the no. of rows  
+
+
 ```
 !#/bin/bash
 
@@ -298,6 +323,36 @@ for file in ${output}/BWA/${mypop}*sorted.rmdup.bam
 		done >> ${myrepo}/myresults/${mypop}.coverage.txt
 ```
 
+### Summary  
+
+A SAM file is a tab delimited text file that stores information about the alignment of reads in a FASTQ file to a reference genome or transcriptome. For each read in a FASTQ file, there’s a line in the SAM file that includes  
+
+  - the read, aka. query, name  
+  - a FLAG (number with information about mapping success and orientation and whether the read is the left or right read)  
+  - the reference sequence name to which the read mapped  
+  - the leftmost position in the reference where the read mapped  
+  - the mapping quality (Phred-scaled)  
+  - a CIGAR string that gives alignment information (how many bases Match (M), where there’s an Insertion (I) or Deletion (D))  
+  - an ‘=’, mate position, inferred insert size (columns 7,8,9)  
+  - the query sequence and Phred-scaled quality from the FASTQ file (columns 10 and 11)  
+  - then Lots of good information in TAGS at the end, if the read mapped, including whether it is a unique read (XT:A:U), the number of best hits (X0:i:1), the number of suboptimal hits (X1:i:0).  
+  
+The left (R1) and right (R2) reads alternate through the file. SAM files usually have a header section with general information where each line starts with the ‘@’ symbol.  
+
+  - SAM and BAM files contain the same information 
+  - SAM is human readable but has a large size and BAM is in binary code and therefore has a smaller file size.  
+  - Usually SAM files are not kept, however they can be easily generated from thr BAM files  
+  - BAM file extension - *filename* **sorted.rmdup.bam**  
+  - BAM index file extension - **.bai** - a companion file for bam files  
+  - [SAM decoder](https://broadinstitute.github.io/picard/explain-flags.html) to decode the second column of numbers  
+  
+**samtools**  
+  - powerful tool for manipulating sam/bam files  
+  - `flagstat` command of samtools gives basic informatio on how well the mapping worked  
+    - `samtools flagstat` *filename,sam*  
+  - `tview` - to view the alignment files (sam or bam)  
+    - `samtools tview` *path to the sam/bam file* *path to the reference genome*  
+  
 
 
 
@@ -305,11 +360,29 @@ for file in ${output}/BWA/${mypop}*sorted.rmdup.bam
 
 
 
-## Program used : [ANGSD](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-014-0356-4)  
+# Genotype likelihoods 
 
 
+## Program used : [ANGSD](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-014-0356-4)  {.tabset .tabset-fade .tabset-pills}   
 
-## Pipeline Code {.tabset .tabset-fade .tabset-pills} 
+**Analysis of Next Generation Sequence Data**  
+
+There is some degree of uncertainity in the observed genotypes and they are not true genotypes. Read data are counts that produce a multinomial distribution of alleles at a given site. With only a few reads, you can't determine the geneotype confidently.  
+
+A **genotype likelihood (GL)** is essentially the probability of observing the sequencing data (reads containing a particular base), given the genotype of the individual at that site. ANGSD allows us to incorporate uncertainty into our analysis.  
+
+ 
+
+### Workflow  
+
+  - Create a list of bam files for the samples you want to analyze  
+  - Estimate genotype likelihoods (GL’s) and allele frequencies after filtering to minimize noise  
+  - Use GL’s to:  
+    - estimate the site frequency spectrum (SFS)  
+    - estimate nucleotide diversities (Watterson’s theta, pi, Tajima’s D, …)  
+    - estimate $F_{ST}$ between all populations, or pairwise between sets of populations  
+    - perform a genetic PCA based on estimation of the genetic covariance matrix (this is done on the entire set of Edge ind’s)  
+
 
 ### ANGSD [folded]  
 ```
@@ -360,7 +433,7 @@ realSFS ${output}/${mypop}_folded_allsites.saf.idx \
 
 ```
 
-### Refined estimate of SFS and theta  
+### Refined estimate of SFS and theta diversity stats  
 ```
 # Get refined estimate of the SFS and doTheta
 ANGSD -b ${output}/${mypop}_bam.list \
@@ -388,7 +461,9 @@ ANGSD -b ${output}/${mypop}_bam.list \
 ```  
 ### Estimate nucleotide diversity  
 ```
+# Use the doTheta output from above to estimate nucleotide diversity
 
+thetaStat do_stat ${output}/${mypop}_folded_allsites.thetas.idx
 ```
 
 
@@ -435,17 +510,57 @@ ANGSD -b ${output}/${mypop}_bam.list \
 # -SNP_pval 1e-6
 
 ```
+## Program used : R {.tabset .tabset-fade .tabset-pills} 
+
+### R code  
+
+```{r}
+setwd("C:\\Dropbox\\UVM\\5. Courses\\4. Spring 2020\\Ecological Genomics\\EcologicalGenomics\\SFS_EcoGen")
+
+# list.files()
+
+SFS <- scan("XGL_outFold.sfs")
+
+sumSFS <- sum(SFS)
+
+pctPoly <- 100*(1-(SFS[1]/sumSFS))
+pctPoly
+
+plotSFS <- SFS[-c(1,length(SFS))]
+plotSFS
+
+barplot(plotSFS)
+
+div <- read.table("XGL_folded_allsites.thetas.idx.pestPG")
+
+colnames(div) <- c("window", "chrname","wincenter","tW","tP","tF","tH","tL",
+                   "tajD","fulif","fuliD","fayH","zengsE","numSites")
+
+div$tWpersite <- div$tW/div$numSites
+div$tPpersite <- div$tP/div$numSites
+
+par(mfrow=c(2,2))
+hist(div$tWpersite, col="gray",xlab="Theta-W",main="")
+hist(div$tPpersite, col="gray",xlab="Theta-P",main="")
+hist(div$tajD, col="gray",xlab="Tajima's D",main="")
+barplot(plotSFS)
+# dev.off() # closes the pdf and writes it to file
+
+summary(div)
+
+
+```
 
 
 
+### The plots  
+
+```{r pressure, echo=FALSE, fig.cap="Clock wise from top left: Watterson's theta, pi, SFS and Tajima's D for XGL population of red spruce", out.width = '100%'}
+knitr::include_graphics("./SFS_EcoGen/XGL.png")
+```
 
 
 
-
-***
-# Course Materials and Notes  
-## [Sequencing methods](https://docs.google.com/document/d/1MuXPS3hNg3wIxsKw-jQmKY7y57Ka2qqZwHYKRAbpNMw/edit?usp=sharing)
-[Tutorial on bash](https://pespenilab.github.io/Ecological-Genomics/Tutorial/2020-01-22_Command_Line_Unix.html)   
-[github cheat sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)  
+##  
 
 

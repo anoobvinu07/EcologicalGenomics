@@ -25,7 +25,7 @@ par(mfrow=c(2,2))
 hist(div$tWpersite, col="gray",xlab="Theta-W",main="")
 hist(div$tPpersite, col="gray",xlab="Theta-P",main="")
 hist(div$tajD, col="gray",xlab="Tajima's D",main="")
-barplot(plotSFS)
+barplot(plotSFS, xlab="SFS",)
 dev.off() # closes the pdf and writes it to file
 
 summary(div)

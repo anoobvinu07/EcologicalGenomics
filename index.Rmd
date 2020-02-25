@@ -232,10 +232,15 @@ knitr::include_graphics("./hudson1990_coalescence.png")
     
     3.1 Mapping cleaned and trimmed reads against reference genome  
       - reference genome from Norway spruce [Congenie](http://congenie.org/)  
-      - 
+      - This reduced reference contains:  
+        - 668,091,227 bp (~668 Mbp) in 33,679 contigs  
+        - The mean (median) contig size is 10.5 (12.9) kbp  
+        - The N50 of the reduced reference is 101,375 bp 
 
 
 4. Remove PCR duplicates identified during mapping, and calculate alignment statistics (% of reads mapping succesully, mapping quality scores, average depth of coverage per individual)  
+
+5. Estimating diversity and population structure  
 
 ## FIG
 
@@ -248,7 +253,7 @@ knitr::include_graphics("./hudson1990_coalescence.png")
 
 
 
-## estimating diversity and population structure  
+  
 
 
 
