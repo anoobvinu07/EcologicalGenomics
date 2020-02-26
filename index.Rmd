@@ -199,10 +199,10 @@ Why study across the genome?
     
 ```{r pressure, echo=FALSE, fig.cap="Fig. 2. The genealogy of a sample of five alleles, showing the time intervals between coalescent events (Hudson, 1990)", out.width = '100%'}
 knitr::include_graphics("./hudson1990_coalescence.png")
-```
-  
-    - Site Frequency Spectrum (SFS)  
-  
+```  
+      
+      - Site Frequency Spectrum (SFS)  
+        - number of individuals (frequency) plotted against number of differentiated SNPS (polymorphisms)
   
   
   

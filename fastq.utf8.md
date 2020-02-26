@@ -5,9 +5,7 @@ date: "29/01/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 Common directory location where the data are stored:
 `cd /data/project_data/RS_ExomeSeq/fastq/edge_fastq/`
 
@@ -521,7 +519,8 @@ ANGSD -b ${output}/${mypop}_bam.list \
 
 ### R code  
 
-```{r}
+
+```r
 setwd("C:\\Dropbox\\UVM\\5. Courses\\4. Spring 2020\\Ecological Genomics\\EcologicalGenomics\\SFS_EcoGen")
 
 # list.files()
@@ -532,12 +531,28 @@ sumSFS <- sum(SFS)
 
 pctPoly <- 100*(1-(SFS[1]/sumSFS))
 pctPoly
+```
 
+```
+## [1] 0.7799495
+```
+
+```r
 plotSFS <- SFS[-c(1,length(SFS))]
 plotSFS
+```
 
+```
+## [1] 39885.50 78238.31 69611.83
+```
+
+```r
 barplot(plotSFS)
+```
 
+<img src="fastq_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+
+```r
 div <- read.table("XGL_folded_allsites.thetas.idx.pestPG")
 
 colnames(div) <- c("window", "chrname","wincenter","tW","tP","tF","tH","tL",
@@ -551,20 +566,59 @@ hist(div$tWpersite, col="gray",xlab="Theta-W",main="")
 hist(div$tPpersite, col="gray",xlab="Theta-P",main="")
 hist(div$tajD, col="gray",xlab="Tajima's D",main="")
 barplot(plotSFS)
+```
+
+<img src="fastq_files/figure-html/unnamed-chunk-1-2.png" width="672" />
+
+```r
 # dev.off() # closes the pdf and writes it to file
 
 summary(div)
+```
 
-
+```
+##                       window             chrname        wincenter    
+##  (0,397)(4,401)(0,401)   :    2   chloroplast:    1   Min.   :   54  
+##  (0,0)(192,192)(0,192)   :    1   MA_1       :    1   1st Qu.: 1247  
+##  (0,0)(4621,4621)(0,4621):    1   MA_10001693:    1   Median : 3338  
+##  (0,1)(1338,1339)(0,1339):    1   MA_10002   :    1   Mean   : 6581  
+##  (0,1)(269,270)(0,270)   :    1   MA_10002614:    1   3rd Qu.: 8859  
+##  (0,1)(2797,2798)(0,2798):    1   MA_10002669:    1   Max.   :98537  
+##  (Other)                 :24786   (Other)    :24787                  
+##        tW                 tP                 tF          tH          tL   
+##  Min.   :  0.0000   Min.   :  0.0000   Min.   :0   Min.   :0   Min.   :0  
+##  1st Qu.:  0.6286   1st Qu.:  0.6876   1st Qu.:0   1st Qu.:0   1st Qu.:0  
+##  Median :  1.6893   Median :  1.9588   Median :0   Median :0   Median :0  
+##  Mean   :  3.9633   Mean   :  4.8072   Mean   :0   Mean   :0   Mean   :0  
+##  3rd Qu.:  4.3346   3rd Qu.:  5.2100   3rd Qu.:0   3rd Qu.:0   3rd Qu.:0  
+##  Max.   :129.6079   Max.   :162.1646   Max.   :0   Max.   :0   Max.   :0  
+##                                                                           
+##       tajD             fulif             fuliD             fayH        
+##  Min.   :-2.0510   Min.   :0.05004   Min.   :0.0485   Min.   :0.07033  
+##  1st Qu.: 0.4244   1st Qu.:1.22945   1st Qu.:1.1623   1st Qu.:1.66341  
+##  Median : 1.5165   Median :1.87208   Median :1.6733   Median :2.44543  
+##  Mean   : 1.3764   Mean   :1.84748   Mean   :1.6387   Mean   :2.36708  
+##  3rd Qu.: 2.2316   3rd Qu.:2.48321   3rd Qu.:2.1390   3rd Qu.:3.12110  
+##  Max.   : 3.9632   Max.   :3.38890   Max.   :2.7418   Max.   :4.05147  
+##                    NA's   :2         NA's   :2        NA's   :2        
+##      zengsE            numSites        tWpersite           tPpersite        
+##  Min.   :-3.61611   Min.   :     0   Min.   :0.0001010   Min.   :0.0000931  
+##  1st Qu.:-2.81689   1st Qu.:   499   1st Qu.:0.0008799   1st Qu.:0.0009537  
+##  Median :-2.20164   Median :   879   Median :0.0018945   Median :0.0022169  
+##  Mean   :-2.15712   Mean   :  1315   Mean   :0.0030002   Mean   :0.0036440  
+##  3rd Qu.:-1.52810   3rd Qu.:  1659   3rd Qu.:0.0041236   3rd Qu.:0.0050436  
+##  Max.   :-0.06373   Max.   :106648   Max.   :0.0337746   Max.   :0.0430208  
+##  NA's   :2                           NA's   :2           NA's   :2
 ```
 
 
 
 ### The plots  
 
-```{r pressure, echo=FALSE, fig.cap="Clock wise from top left: Watterson's theta, pi, SFS and Tajima's D for XGL population of red spruce", out.width = '100%'}
-knitr::include_graphics("./SFS_EcoGen/XGL.png")
-```
+<div class="figure">
+<img src="./SFS_EcoGen/XGL.png" alt="Clock wise from top left: Watterson's theta, pi, SFS and Tajima's D for XGL population of red spruce" width="100%" />
+<p class="caption">Clock wise from top left: Watterson's theta, pi, SFS and Tajima's D for XGL population of red spruce</p>
+</div>
 
 
 
