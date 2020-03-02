@@ -1,0 +1,12 @@
+---
+title: "Transcriptomics pipeline"
+author: "Anoob Prakash"
+date: "26/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+`./`*filename* - runs the script with bash command  
