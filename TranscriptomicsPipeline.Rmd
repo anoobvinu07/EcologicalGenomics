@@ -240,7 +240,7 @@ library(readr)
 # BiocManager::install("hexbin")
 library(vsn)  
 library(pheatmap)
-
+library(patchwork)
 
 ```
 
@@ -697,6 +697,7 @@ res_clim <- results(dds,
                   alpha = 0.05)
 res_clim <- res_clim[order(res_clim$padj),]
 head(res_clim)
+summary(res_clim)
 ```
 
 
@@ -776,6 +777,146 @@ pheatmap(mat, annotation_col=df)
 
 ```
 
+## Significant genes  
+```{r}
+# for Drought vs Control contrast
+topgenes5 <- head(rownames(res_DC),5)
+
+
+# "MA_10426407g0030" 
+# PB1 domain
+gene1 <-plotCounts(dds, 
+                   gene="MA_10426407g0030", 
+                   intgroup = ("treatment"), 
+                   returnData=TRUE)
+
+gene1_plot <- ggplot(gene1,
+                     aes(x=treatment,y=count, col=treatment)) + 
+              geom_point() + 
+              geom_jitter() + 
+              theme_bw() + 
+              scale_x_discrete(limits = c("C", "H", "D")) +
+              theme(legend.position="none") + 
+              xlab("Treatments") + ylab("Counts") + 
+              ggtitle("MA_10426407g0030 - Phox Bem1p")
+
+
+
+# "MA_75192g0010" 
+# biological process - regulation of cellular process, reponse to stimulus
+# No apical meristem (NAM) protein
+gene2 <-plotCounts(dds, 
+                   gene="MA_75192g0010", 
+                   intgroup = ("treatment"), 
+                   returnData=TRUE)
+
+gene2_plot <- ggplot(gene1,
+                     aes(x=treatment,y=count, col=treatment)) + 
+              geom_point() + 
+              geom_jitter() + 
+              theme_bw() + 
+              scale_x_discrete(limits = c("C", "H", "D")) +
+              theme(legend.position="none") + 
+              xlab("Treatments") + ylab("Counts") + 
+              ggtitle("MA_75192g0010 - NAC domain-containing 68-like")
+
+# "MA_444738g0020" 
+# molecular function - catalytic activity  
+# Protein phosphatase 2C, Stage II sporulation protein E (SpoIIE)
+gene3 <-plotCounts(dds, 
+                   gene="MA_444738g0020", 
+                   intgroup = ("treatment"), 
+                   returnData=TRUE)
+
+gene3_plot <- ggplot(gene1,
+                     aes(x=treatment,y=count, col=treatment)) + 
+              geom_point() + 
+              geom_jitter() + 
+              theme_bw() + 
+              scale_x_discrete(limits = c("C", "H", "D")) +
+              theme(legend.position="none") + 
+              xlab("Treatments") + ylab("Counts") + 
+              ggtitle("MA_444738g0020 - Phosphatase 2C")
+ 
+# "MA_46682g0010"
+# Protein phosphatase 2C
+gene4 <-plotCounts(dds, 
+                   gene="MA_46682g0010", 
+                   intgroup = ("treatment"), 
+                   returnData=TRUE)
+
+gene4_plot <- ggplot(gene1,
+                     aes(x=treatment,y=count, col=treatment)) + 
+              geom_point() + 
+              geom_jitter() + 
+              theme_bw() + 
+              scale_x_discrete(limits = c("C", "H", "D")) +
+              theme(legend.position="none") + 
+              xlab("Treatments") + ylab("Counts") + 
+              ggtitle("MA_46682g0010 - Probable phosphatase 2C 8")
+
+# "MA_824288g0010"
+# Protease inhibitor/seed storage/LTP family, Probable lipid transfer
+gene5 <-plotCounts(dds, 
+                   gene="MA_824288g0010", 
+                   intgroup = ("treatment"), 
+                   returnData=TRUE)
+
+gene5_plot <- ggplot(gene1,
+                     aes(x=treatment,y=count, col=treatment)) + 
+              geom_point() + 
+              geom_jitter() + 
+              theme_bw() + 
+              scale_x_discrete(limits = c("C", "H", "D")) +
+              theme(legend.position="none") + 
+              xlab("Treatments") + ylab("Counts") + 
+              ggtitle("MA_824288g0010 - Lipid-transfer DIR1")
+
+
+PCA <- ggplot(data, aes(PC1, PC2, color=treatment, shape=climate)) +
+        geom_point(size=4, alpha=0.85) +
+        xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+        ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+        theme_bw()
+
+
+
+PCA + (gene1_plot / gene2_plot / gene3_plot/  gene4_plot/ gene5_plot)
+
+# for Heat vs Control contrast
+topgenes5 <- head(rownames(res_HC),5)
+
+# "MA_10433227g0010"
+# biological stress - response to stress
+# KDa class I heat shock -like
+
+
+# "MA_10243352g0010" 
+# KDa class IV heat shock -like
+# biolocal process - protein folding
+# cellular component - endoplasmic reticulum
+# Hsp20/alpha crystallin family, CS domain
+
+
+# "MA_10429149g0010"
+# novel gene  
+
+
+
+# "MA_10429775g0010"
+# BAG family molecular chaperone regulator 6
+
+
+# "MA_8624541g0010"
+# novel gene
+# PspA/IM30 family, Viral A-type inclusion protein repeat, 
+# Septum formation initiator, Protein of unknown function (DUF904), 
+# Laminin Domain II
+
+```
+
+
+
 
 # Treatment model {.tabset .tabset-fade .tabset-pills} 
 
@@ -835,6 +976,17 @@ summary(res_HC)
 ```
 87 genes are upregulated and 9 genes are down regulted for just the hot teperature treatment.  
 
+**Significant genes for climate od origin**  
+```{r}
+res_clim <- results(dds, 
+                  name="climate_HD_vs_CW", 
+                  alpha = 0.05)
+res_clim <- res_clim[order(res_clim$padj),]
+head(res_clim)
+summary(res_clim)
+```
+
+
 ## MA plot  
 ```{r}
 plotMA(res_DC,ylim=c(-3,3))
@@ -888,10 +1040,36 @@ pheatmap(mat, annotation_col=df)
 
 ```
 
+## Significant genes  
+```{r}
+# for Drought vs Control contrast
+topgenes5 <- head(rownames(res_DC),5)
+
+# "MA_10426407g0030" 
+# "MA_75192g0010"    
+# "MA_444738g0020"  
+# "MA_46682g0010"    
+# "MA_824288g0010" 
+
+# genes same as the model with interaction effect
+
+
+# for Heat vs Control contrast
+topgenes5 <- head(rownames(res_HC),5)
+# "MA_10433227g0010" 
+# "MA_10243352g0010" 
+# "MA_10429149g0010"
+# "MA_10429775g0010" 
+# "MA_8624541g0010" 
+
+# genes same as the model with interaction effect
+
+
+```
 
 
 
-Dispersion estimates for the genes 
+## Dispersion estimates for the genes 
 ```{r}
 plotDispEsts( dds, ylim = c(1e-4, 1e2) )
 
