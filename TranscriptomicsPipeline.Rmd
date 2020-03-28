@@ -2,11 +2,914 @@
 title: "Transcriptomics pipeline"
 author: "Anoob Prakash"
 date: "26/02/2020"
-output: html_document
+output:
+  rmarkdown::html_document:
+    theme: cosmo  
+    number_sections: false
+    toc: true
+    toc_float: true
+    
+
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Population: XBM D and XBM H
+
+## run fastqc
+
 `./`*filename* - runs the script with bash command  
+
+
+
+
+
+
+
+# Mapping and Quantification of transcript abundance {.tabset .tabset-fade .tabset-pills}    
+### Program used : [salmon](https://salmon.readthedocs.io/en/latest/salmon.html#) 
+
+Salmon:  
+- Used for quantifying transcript abundance  
+- Fast mapping and count the reads  
+
+Salmon is a tool for wicked-fast transcript quantification from RNA-seq data. It requires a set of target transcripts (either from a reference or de-novo assembly) to quantify. All you need to run Salmon is a FASTA file containing your reference transcripts and a (set of) FASTA/FASTQ file(s) containing your reads. Optionally, Salmon can make use of pre-computed alignments (in the form of a SAM/BAM file) to the transcripts rather than the raw reads.
+
+The mapping-based mode of Salmon runs in two phases  
+  - `indexing`  
+    - The indexing step is independent of the reads, and only need to be run one for a particular set of reference transcripts.  
+    
+  - `quantification`  
+    - The quantification step, obviously, is specific to the set of RNA-seq reads and is thus run more frequently.  
+
+## HC27 index  
+
+salmon quant -i transcripts_index -l <LIBTYPE> -r reads.fq --validateMappings -o transcripts_quant
+
+`-i` `transcripts_index`  - transcripts_index is the *filename*  
+
+
+`transcripts_quant` - the output folder/files  
+
+``grep -r --include \*.log -e 'Mapping rate'``  
+mapping rate - the percentage of the reads that got mapped backed to the reference genome  
+
+```{bash, eval=FALSE}
+#!/bin/bash
+
+# moving the place the script will be run
+cd /data/project_data/RS_RNASeq/fastq/cleanreads/
+
+#' infolder=/data/project_data/RS_RNASeq/fastq/cleanreads
+#' outfolder=/data/project_data/RS_RNASeq/salmon/cleanedreads
+
+
+for file in XBM_07_D*cl.fq
+
+do
+
+
+salmon quant -i /data/project_data/RS_RNASeq/ReferenceTranscriptome/Pabies_HC27_index \
+         -l A \
+         -r /data/project_data/RS_RNASeq/fastq/cleanreads/${file} \
+         --validateMappings \
+         -o /data/project_data/RS_RNASeq/salmon/cleanedreads/${file} \
+
+done
+
+
+
+for file in XBM_07_H*cl.fq
+
+
+do
+
+salmon quant -i /data/project_data/RS_RNASeq/ReferenceTranscriptome/Pabies_HC27_index \
+        -l A \
+        -r /data/project_data/RS_RNASeq/fastq/cleanreads/${file} \
+        --validateMappings \
+        -o /data/project_data/RS_RNASeq/salmon/cleanedreads/${file} \
+        
+done
+
+
+```
+
+
+## cds index  
+
+- Improved mapping in this step.  
+- HC is high quality transcripts only with 27 kmer flag  
+- cds  
+  - index file name -- > Pabies_cds_index  
+  - contains all the coding sequence for *P. abies*  
+  - takes all the transcripts and improved the mapping percent  
+```{bash, eval=FALSE}
+#!/bin/bash
+
+# moving the place the script will be run
+cd /data/project_data/RS_RNASeq/fastq/cleanreads
+
+infolder=/data/project_data/RS_RNASeq/fastq/cleanreads
+outfolder=/data/project_data/RS_RNASeq/salmon/allmapping
+
+for file in XBM_07_D*cl.fq
+
+do
+
+salmon quant -i /data/project_data/RS_RNASeq/ReferenceTranscriptome/Pabies_cds_index \
+         -l A \
+         -r ${infolder}/${file} \
+         --validateMappings \
+         --seqBias \
+         -o ${outfolder}/${file} \
+
+done
+
+# the second loop  
+for file in XBM_07_H*cl.fq
+
+do
+
+salmon quant -i /data/project_data/RS_RNASeq/ReferenceTranscriptome/Pabies_cds_index \
+         -l A \
+         -r ${infolder}/${file} \
+         --validateMappings \
+         --seqBias \
+         -o ${outfolder}/${file}
+
+done
+
+```
+
+## tximport pipeline (R code)   
+
+Import and summarize transcript-level abundance estimates for transcript- and gene-level analysis with Bioconductor packages, such as edgeR, DESeq2, and limma-voom [Soneson, Love, and Robinson 2015](https://f1000research.com/articles/4-1521/v1).
+
+**Benefits of this approach**  
+  i. This approach corrects for potential changes in gene length across samples (e.g. from differential isoform usage) (Trapnell et al. 2013)  
+  
+  ii. Some of the upstream quantification methods (Salmon, Sailfish, kallisto) are substantially faster and require less memory and disk usage compared to alignment-based methods that require creation and storage of BAM files  
+  
+  iii. It is possible to avoid discarding those fragments that can align to multiple genes with homologous sequence, thus increasing sensitivity (Robert and Watson 2015).  
+
+
+**quant.sf**  
+- Quantification file
+- This is salmons main quantification file  
+- Combine individual `quant.sf` files into a counts matrix for all 76 samples  
+- View the quant.sf to see the information on the mapping  
+
+`head -n 100 quant.sf`  
+
+  
+Name        | Length     | EffectiveLength | TPM | NumReads  
+----------- | ---------- | --------------- | --- | --------  
+The name of the transcript file provided  
+
+[vignette for this step](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html#salmon)  
+
+
+```{r, eval=FALSE}
+# To install tximport and tximportData:
+BiocManager::install("tximport")
+BiocManager::install("tximportData")
+
+library(tximportData) 
+library(tximport) #'[https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html#introduction]
+```
+
+```{r, eval=FALSE}
+
+#locate the directory containing the files. 
+dir <- "/data/project_data/RS_RNASeq/salmon/"
+list.files(dir)
+
+# read in table with sample ids
+samples <- read.table("/data/project_data/RS_RNASeq/salmon/RS_samples.txt", header=TRUE)
+
+# now point to quant files
+all_files <- file.path(dir, samples$sample, "quant.sf")
+names(all_files) <- samples$sample # naming them based on the sample file names  
+
+    # what would be used if linked transcripts to genes
+    #txi <- tximport(files, type = "salmon", tx2gene = tx2gene)
+    # to be able to run without tx2gene
+txi <- tximport(all_files, type = "salmon", txOut=TRUE)  
+names(txi)
+
+head(txi$counts)
+
+countsMatrix <- txi$counts
+dim(countsMatrix)
+#[1] 66069    76
+
+# To write out
+write.table(countsMatrix, file = "RS_countsMatrix.txt", col.names = T, row.names = T, quote = F)   
+
+```
+The counts matrix are then moved to the local machine using any FTPs at hand to do further analysis. The counts are not normalised to length, as we are working with 3' tag RNAseq data. 
+
+
+
+# Differential gene expression for all samples {.tabset .tabset-fade .tabset-pills}
+### Program used : DESeq2   
+
+## Packages required  
+To install [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html):  
+```
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("DESeq2")
+```
+```{r message=FALSE, warning=FALSE, paged.print=FALSE, eval=TRUE}
+library(DESeq2)
+# use the line below if rlang throws an error
+# devtools::install_github("r-lib/rlang", build_vignettes = TRUE) 
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(scales)
+library(ggpubr)
+library(readr)
+
+# BiocManager::install("vsn") 
+# BiocManager::install("hexbin")
+library(vsn)  
+library(pheatmap)
+
+
+```
+
+
+## Set up experimental design   
+```{r}
+## Import the counts matrix
+countsTable <- read.table("./RS_counts_samples/RS_cds2kb_countsMatrix.txt", 
+                          header=TRUE, 
+                          row.names=1)
+# head(countsTable) # commented out due to long output
+dim(countsTable)
+countsTableRound <- round(countsTable) # Need to round because DESeq wants only integers
+# head(countsTableRound) # commented out due to long output
+
+## Import the samples description table - links each sample to factors of the experimental design.
+# Need the colClasses otherwise imports "day" as numeric which DESeq doesn't like, coula altneratively change to d0, d5, d10
+conds <- read.delim("./RS_counts_samples/RS_samples.txt", 
+                    header=TRUE, 
+                    stringsAsFactors = TRUE, 
+                    row.names=1, 
+                    colClasses=c('factor', 'factor', 'factor', 'factor'))
+head(conds)
+dim(conds)
+
+
+
+## Let's see how many reads we have from each sample:
+colSums(countsTableRound)
+mean(colSums(countsTableRound))
+barplot(colSums(countsTableRound), 
+        las=3, 
+        cex.names=0.5,
+        names.arg = substring(colnames(countsTableRound),1,13))
+abline(h=mean(colSums(countsTableRound)), col="blue", lwd =2)
+
+
+## What's the average no. of counts per gene
+# rowSums(countsTableRound)  # commented out due to long output
+
+mean(rowSums(countsTableRound))
+median(rowSums(countsTableRound)) # since expression data is not a normally distributed
+
+# shows dispersion across genes - differenes in magnitude of epression
+
+## What's the average no. of counts per gene per sample
+apply(countsTableRound,2,mean)
+
+## Create a DESeq object and define the experimental design here with the tilde
+
+dds <- DESeqDataSetFromMatrix(countData=countsTableRound,
+                                      colData=conds,
+                                      design= ~ climate + day + treatment) 
+#' replace pop with climate to check how much it differs on the [second run]
+
+dim(dds)
+#'    [row]    [col]
+#' [1] 66408    76
+
+# Filter out genes with few reads
+# the filtering level - at least one read per sample 
+
+dds <- dds[rowSums(counts(dds)) > 76]
+dim(dds)
+#' [1] 23887    76
+# this is filtering to sum of 76 read across all samples/one per each sample
+
+# the filtering level - at least one read per 10 sample 
+#' dds <- dds[rowSums(counts(dds)) > 760]
+#' dim(dds)
+#' [1] 7884   76
+# this is filtering to sum of 760 read across all samples/ten per each sample
+```
+## DEseq model  
+
+**Run the DESeq model to test for differential gene expression**  
+1) Estimate size factors (per sample)   
+2) Estimate dispersion (per gene)  
+3) Run negative binomial glm  
+
+```{r}
+dds <- DESeq(dds)
+
+# List the results you've generated
+resultsNames(dds)
+
+#Running the model design: design= ~ pop + day + treatment
+  #' [1] "Intercept"            "pop_BRU_05_vs_ASC_06"
+  #' [3] "pop_CAM_02_vs_ASC_06" "pop_ESC_01_vs_ASC_06"
+  #' [5] "pop_JAY_02_vs_ASC_06" "pop_KAN_04_vs_ASC_06"
+  #' [7] "pop_LOL_02_vs_ASC_06" "pop_MMF_13_vs_ASC_06"
+  #' [9] "pop_NOR_02_vs_ASC_06" "pop_XBM_07_vs_ASC_06"
+  #' [11] "day_10_vs_0"          "day_5_vs_0"          
+  #' [13] "treatment_D_vs_C"     "treatment_H_vs_C" 
+
+#Running the model design: design= ~ climate + day + treatment
+  #' [1] "Intercept"        "climate_HD_vs_CW" "day_10_vs_0"     
+  #' [4] "day_5_vs_0"       "treatment_D_vs_C" "treatment_H_vs_C"
+
+
+# Order and list and summarize results from specific contrasts
+# Here you set your adjusted p-value cutoff, can make summary tables of the number of genes differentially expressed (up- or down-regulated) for each contrast
+res <- results(dds, alpha=0.05)
+res <- res[order(res$padj),] #padj - adjusted p value
+
+
+head(res)
+
+# log2 fold change (MLE): treatment H vs C 
+# Wald test p-value: treatment H vs C 
+# DataFrame with 6 rows and 6 columns
+#                          baseMean    log2FoldChange             lfcSE              stat
+#                         <numeric>         <numeric>         <numeric>         <numeric>
+# MA_172878g0010   15.8548874481417  2.26899213338593 0.440654522862573  5.14914068882384
+# MA_107783g0020    6.6082118492291 -1.96824414729965 0.394042285152139 -4.99500744327406
+# MA_28973g0010    18.8813749792546 -1.96646719472092 0.412333404130081  -4.7691192976947
+# MA_10434037g0010   5.611769238156  2.18536059760716 0.496716919353558  4.39960974240871
+# MA_10426002g0010 10.8980752578363 -1.20767724886484  0.28313242027949 -4.26541491671176
+# MA_10429525g0010 60.5937645508928  1.17170086164903 0.281505776107562  4.16226223792056
+#                                pvalue                padj
+#                             <numeric>           <numeric>
+# MA_172878g0010    2.6168254972695e-07 0.00249278796869893
+# MA_107783g0020   5.88334982425963e-07 0.00280223952129486
+# MA_28973g0010    1.85033065465687e-06 0.00587541660542044
+# MA_10434037g0010  1.0844572516574e-05   0.025826349448221
+# MA_10426002g0010 1.99531043148388e-05  0.0357522692443266
+# MA_10429525g0010  3.1511017390706e-05  0.0357522692443266
+
+summary(res)
+#' out of 23887 with nonzero total read count
+#' adjusted p-value < 0.05
+#' LFC > 0 (up)       : 16, 0.067%
+#' LFC < 0 (down)     : 3, 0.013%
+#' outliers [1]       : 61, 0.26%
+#' low counts [2]     : 14300, 60%
+#' (mean count < 6)
+#' [1] see 'cooksCutoff' argument of ?results
+#' [2] see 'independentFiltering' argument of ?results
+
+
+
+res_treatCD <- results(dds, 
+                       name="treatment_D_vs_C",
+                       alpha=0.05)
+
+head(res_treatCD)
+
+res_treatCD <- res_treatCD[order(res_treatCD$padj),]
+head(res_treatCD)
+
+# log2 fold change (MLE): treatment D vs C 
+# Wald test p-value: treatment D vs C 
+# DataFrame with 6 rows and 6 columns
+#                          baseMean   log2FoldChange             lfcSE
+#                         <numeric>        <numeric>         <numeric>
+# MA_10257300g0010 20.9979917001674 6.31608775716229 0.761778438070059
+# MA_444738g0020   23.5872071084088 2.60491779951536 0.331247263623849
+# MA_57964g0010    7.89927388331396 5.39652442842909 0.688793826922721
+# MA_75192g0010    37.9183573851468 5.81210235837303 0.768762098604424
+# MA_10428616g0010  35.758883777048 3.82582283371241   0.5106413925389
+# MA_7017g0010     64.7924705055064 2.64439151272772 0.360360746750015
+#                              stat               pvalue                 padj
+#                         <numeric>            <numeric>            <numeric>
+# MA_10257300g0010 8.29123986911982 1.12074011571862e-16 1.84462615646128e-12
+# MA_444738g0020    7.8639677533258  3.7215338785869e-15 2.57743989395213e-11
+# MA_57964g0010    7.83474563431962 4.69792799189281e-15 2.57743989395213e-11
+# MA_75192g0010    7.56033936756775 4.02019076294696e-14  1.6542079941836e-10
+# MA_10428616g0010 7.49219097709743 6.77332669685355e-14 2.22964368207025e-10
+# MA_7017g0010     7.33817857959473 2.16520151830619e-13 5.93950863163359e-10
+
+
+summary(res_treatCD)
+# out of 23887 with nonzero total read count
+# adjusted p-value < 0.05
+# LFC > 0 (up)       : 678, 2.8%
+# LFC < 0 (down)     : 424, 1.8%
+# outliers [1]       : 61, 0.26%
+# low counts [2]     : 7367, 31%
+# (mean count < 2)
+# [1] see 'cooksCutoff' argument of ?results
+# [2] see 'independentFiltering' argument of ?results
+```
+
+## MA plot
+```{r}
+##### Data visualization #####
+# MA plot
+plotMA(res_treatCD,ylim=c(-3,3))
+# differential expression on the y-axis as a function of means across the 
+# the samples; and the color indicates the significance levels
+```
+
+## PCA  
+```{r}
+# PCA
+vsd <- vst(dds, blind=FALSE) #, nsub=10000
+
+data <- plotPCA(vsd,intgroup=c("climate","treatment","day"), #ntop=10000
+                returnData=TRUE)
+
+# data <- plotPCA(vsd,intgroup=c("climate","treatment","day"),returnData=TRUE)
+# percentVar <- round(100 * attr(data, "percentVar"))
+
+percentVar <- round(100 * attr(data,"percentVar")) # to measure percent variance
+
+data$treatment <- factor(data$treatment, levels=c("C","H","D"), labels = c("C","H","D"))
+data$day <- factor(data$day, levels=c("0","5","10"), labels = c("0","5","10"))
+
+# dev.off()
+ggplot(data, aes(PC1, PC2, color=day, shape=treatment)) +
+  geom_point(size=4, alpha=0.85) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+  theme_minimal()
+
+
+
+#' Counts of specific top gene! (important validatition that the normalization, model is working)
+# MA_10257300g0010
+d <-plotCounts(dds, gene="MA_10426407g0030", intgroup = (c("treatment","climate")), returnData=TRUE)
+d
+
+p <-ggplot(d, aes(x=climate, y=count, shape=climate, colour = treatment)) + 
+  theme_minimal() + theme(text = element_text(size=20), panel.grid.major=element_line(colour="grey"))
+p <- p + geom_point(position=position_jitter(w=0.3,h=0), size=3) +
+  scale_x_discrete(limits=c("CW","HD"))
+p
+# ------------------
+p <-ggplot(d, aes(x=treatment, y=count, shape=climate)) +
+  theme_minimal() + theme(text = element_text(size=20), panel.grid.major=element_line(colour="grey"))
+p <- p + geom_point(position=position_jitter(w=0.3,h=0), size=3) +
+  scale_x_discrete(limits=c("C","H","D"))
+p
+# ----------------------------#
+
+d <-plotCounts(dds, gene="MA_10257300g0010", intgroup = (c("treatment","climate","day")), returnData=TRUE)
+d
+
+p <-ggplot(d, aes(x=treatment, y=count, color=day, shape=climate)) + 
+  theme_minimal() + theme(text = element_text(size=20), panel.grid.major=element_line(colour="grey"))
+p <- p + geom_point(position=position_jitter(w=0.3,h=0), size=3) +
+  scale_x_discrete(limits=c("C","H","D"))
+p
+
+# ----------------------------#
+p <-ggplot(d, aes(x=treatment, y=count, shape=climate)) + 
+  theme_minimal() + theme(text = element_text(size=20), panel.grid.major=element_line(colour="grey"))
+p
+```
+
+## Heatmap  
+```{r}
+# Heatmap of top 20 genes sorted by pvalue
+
+topgenes <- head(rownames(res_treatCD),20)
+mat <- assay(vsd)[topgenes,]
+mat <- mat - rowMeans(mat)
+df <- as.data.frame(colData(dds)[,c("treatment","climate")])
+pheatmap(mat, annotation_col=df)
+
+
+
+
+```
+
+
+# Differential gene expression for for day 10 samples 
+### Program used : DESeq2 
+
+# Interaction model {.tabset .tabset-fade .tabset-pills}  
+
+## Set up experimental design  
+```{r}
+## Import the counts matrix
+countsTable <- read.table("./RS_counts_samples/RS_cds2kb_countsMatrix.txt", 
+                          header=TRUE, 
+                          row.names=1)
+# head(countsTable) # commented out due to long output
+dim(countsTable)
+countsTableRound <- round(countsTable) # Need to round because DESeq wants only integers
+# head(countsTableRound) # commented out due to long output
+
+## Import the samples description table - links each sample to factors of the experimental design.
+# Need the colClasses otherwise imports "day" as numeric which DESeq doesn't like, coula altneratively change to d0, d5, d10
+conds <- read.delim("./RS_counts_samples/RS_samples.txt", 
+                    header=TRUE, 
+                    stringsAsFactors = TRUE, 
+                    row.names=1, 
+                    colClasses=c('factor', 'factor', 'factor', 'factor'))
+head(conds)
+dim(conds)
+
+
+######################## Only Day 10 data ######################################
+
+# grep("10", names(countsTableRound), value = TRUE)
+# day10countstable <- subset(countsTableRound, grep("10", names(countsTableRound), value = TRUE)) #doesn't work has to be logical
+
+day10countstable <- countsTableRound %>% select(contains("10"))
+dim(day10countstable)
+
+conds10 <- subset(conds, day=="10")
+dim(conds10)
+
+head(conds10)
+
+
+dds <- DESeqDataSetFromMatrix(countData = day10countstable, colData = conds10,
+                              design = ~ climate + treatment + climate:treatment)
+
+
+dim(dds) # only 30 cols corresponding to the 30 samples for day 10
+nrow(dds) # another way to look at just the no. of samples (col no.)
+
+# Filter out genes with few reads
+# the filtering level - at least one read per sample (here the total no. of samples are 30) 
+
+dds <- dds[rowSums(counts(dds)) > 30]
+# row sums look at average no. of counts per gene (row names), and if it is less than 30,
+# then that means that gene is not present in all the samples  
+dim(dds) 
+
+```
+
+
+## DEseq model  
+**model: design = ~ climate + treatment + climate:treatment**  
+  - Interaction model  
+```{r}
+dds <- DESeq(dds)
+
+# List the results you've generated
+resultsNames(dds)  
+
+# Running the model: design = ~ climate + treatment + climate:treatment
+
+# [1] "Intercept"            "climate_HD_vs_CW"     "treatment_D_vs_C"    
+# [4] "treatment_H_vs_C"     "climateHD.treatmentD" "climateHD.treatmentH"
+```
+
+**Significant genes for treatment effects**  
+  1. Treatment D vs C  
+```{r}
+# Order and list and summarize results from specific contrasts
+# Here you set your adjusted p-value cutoff, can make summary tables of the number of genes differentially expressed (up- or down-regulated) for each contrast
+res_DC <- results(dds, 
+                  name="treatment_D_vs_C", 
+                  alpha = 0.05)
+res_DC <- res_DC[order(res_DC$padj),]
+head(res_DC)
+
+# log2 fold change (MLE): treatment D vs C 
+# Wald test p-value: treatment D vs C 
+# DataFrame with 6 rows and 6 columns
+#                          baseMean    log2FoldChange             lfcSE
+#                         <numeric>         <numeric>         <numeric>
+# MA_10426407g0030 219.715584286121  2.55696344469483 0.324906793273335
+# MA_75192g0010    77.5190010889928  8.04619662596282  1.17408907419792
+# MA_10425837g0010 293.426521892966 -3.17899129382686 0.462410078365211
+# MA_824288g0010   154.710951677063 -4.15994435220765 0.610952834706398
+# MA_133272g0010   9.82528137178526 -6.86599490523252  1.03504041639281
+# MA_71201g0010    16.1438828561619 -7.29150111298197   1.1007571709411
+#                               stat               pvalue                 padj
+#                          <numeric>            <numeric>            <numeric>
+# MA_10426407g0030  7.86983681976673 3.55104122313097e-15 4.77686065335578e-11
+# MA_75192g0010     6.85313985351546 7.22463913264551e-12 3.23952818707825e-08
+# MA_10425837g0010 -6.87483132951115 6.20632480288537e-12 3.23952818707825e-08
+# MA_824288g0010   -6.80894516874902 9.83169393331512e-12 3.30639866977388e-08
+# MA_133272g0010   -6.63355246470566 3.27702420845959e-11 7.83405828293912e-08
+# MA_71201g0010    -6.62407777616205 3.49422760166776e-11 7.83405828293912e-08
+
+summary(res_DC)
+# out of 24300 with nonzero total read count
+# adjusted p-value < 0.05
+# LFC > 0 (up)       : 257, 1.1%
+# LFC < 0 (down)     : 327, 1.3%
+# outliers [1]       : 118, 0.49%
+# low counts [2]     : 10730, 44%
+# (mean count < 3)
+# [1] see 'cooksCutoff' argument of ?results
+# [2] see 'independentFiltering' argument of ?results 
+
+# 257 genes upregulated and 327 genes down regulated 
+```
+
+  2. Treatment H vs C  
+```{r}
+res_HC <- results(dds, 
+                  name="treatment_H_vs_C", 
+                  alpha = 0.05)
+res_HC <- res_HC[order(res_HC$padj),]
+head(res_HC) 
+
+# log2 fold change (MLE): treatment H vs C 
+# Wald test p-value: treatment H vs C 
+# DataFrame with 6 rows and 6 columns
+#                          baseMean    log2FoldChange             lfcSE              stat
+#                         <numeric>         <numeric>         <numeric>         <numeric>
+# MA_10433227g0010 125.510230112695  3.26707905818489 0.641361831156057  5.09397176363921
+# MA_10435662g0010 8.28699601140931 -7.05408028075111  1.50340372681173 -4.69207316368087
+# MA_5409604g0010  7.29512610271943 -4.88577315799737  1.04447376975162 -4.67773657844871
+# MA_10243352g0010 26.4607070894793  4.20442889158221  0.97215011030973  4.32487621715402
+# MA_10427910g0010  22.037007847001  4.44212975412583  1.03334482980114  4.29878741927868
+# MA_2145g0010     95.3899101513183  2.78020586763242 0.637078978276453  4.36398933638333
+#                                pvalue               padj
+#                             <numeric>          <numeric>
+# MA_10433227g0010 3.50639011713097e-07 0.0084791525812461
+# MA_10435662g0010 2.70450368168049e-06 0.0233806756768932
+# MA_5409604g0010  2.90058833143162e-06 0.0233806756768932
+# MA_10243352g0010 1.52617534938053e-05 0.0692149659971974
+# MA_10427910g0010 1.71735090556275e-05 0.0692149659971974
+# MA_2145g0010     1.27711805204037e-05 0.0692149659971974
+
+summary(res_HC)
+
+# out of 24300 with nonzero total read count
+# adjusted p-value < 0.05
+# LFC > 0 (up)       : 1, 0.0041%
+# LFC < 0 (down)     : 2, 0.0082%
+# outliers [1]       : 118, 0.49%
+# low counts [2]     : 0, 0%
+# (mean count < 0)
+# [1] see 'cooksCutoff' argument of ?results
+# [2] see 'independentFiltering' argument of ?results 
+
+# one gene up regulated and two genes down regualted
+```
+
+
+**Genes significant for the interaction effects**
+No genes were up or down regulated for the interaction effects
+```{r}
+########################interactions#####################################
+res_interClimTreat <- results(dds, 
+                              name="climateHD.treatmentD",
+                              alpha=0.05)
+res_interClimTreat <- res_interClimTreat[order(res_interClimTreat$padj),]
+head(res_interClimTreat)
+summary(res_interClimTreat)
+
+
+res_interClimTreat1 <- results(dds, 
+                              name="climateHD.treatmentH",
+                              alpha=0.05)
+res_interClimTreat1 <- res_interClimTreat1[order(res_interClimTreat1$padj),]
+head(res_interClimTreat1)
+summary(res_interClimTreat1)
+```
+
+**Significant genes for climate od origin**  
+```{r}
+res_clim <- results(dds, 
+                  name="climate_HD_vs_CW", 
+                  alpha = 0.05)
+res_clim <- res_clim[order(res_clim$padj),]
+head(res_clim)
+```
+
+
+## MA plot  
+```{r}
+# MA plot
+
+# for drought treatment
+plotMA(res_DC,ylim=c(-3,3))
+
+# for hot treatment
+plotMA(res_HC,ylim=c(-3,3))
+
+# interaction
+plotMA(res_interClimTreat,ylim=c(-3,3))
+
+# no significant expression levels observed for the interaction of HotDry climate
+# and the Drought treatment
+
+plotMA(res_interClimTreat1,ylim=c(-3,3))
+```
+
+
+## PCA plot  
+```{r}
+# PCA
+vsd <- vst(dds, blind=FALSE) #, nsub=10000
+
+data <- plotPCA(vsd,intgroup=c("climate","treatment","pop"), #ntop=10000
+                returnData=TRUE)
+
+
+
+percentVar <- round(100 * attr(data,"percentVar")) # to measure percent variance
+
+data$treatment <- factor(data$treatment, levels=c("C","H","D"), labels = c("C","H","D"))
+
+ggplot(data, aes(PC1, PC2, color=climate, shape=treatment)) +
+  geom_point(size=4, alpha=0.85) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+  theme_minimal()
+
+ggplot(data, aes(PC1, PC2, color=treatment, shape=climate)) +
+  geom_point(size=4, alpha=0.85) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+  theme_minimal()
+```
+
+## Heatmap
+```{r}
+# Heatmap of top 20 genes sorted by pvalue for interaction
+
+topgenes <- head(rownames(res_interClimTreat),20)
+mat <- assay(vsd)[topgenes,]
+mat <- mat - rowMeans(mat)
+df <- as.data.frame(colData(dds)[,c("treatment","climate")])
+pheatmap(mat, annotation_col=df)
+
+
+# Heatmap of top 20 genes sorted by pvalue for drought treatment
+
+topgenes <- head(rownames(res_DC),20)
+mat <- assay(vsd)[topgenes,]
+mat <- mat - rowMeans(mat)
+df <- as.data.frame(colData(dds)[,c("treatment","climate")])
+pheatmap(mat, annotation_col=df)
+
+# Heatmap of top 20 genes sorted by pvalue for hot treatment
+
+topgenes <- head(rownames(res_HC),20)
+mat <- assay(vsd)[topgenes,]
+mat <- mat - rowMeans(mat)
+df <- as.data.frame(colData(dds)[,c("treatment","climate")])
+pheatmap(mat, annotation_col=df)
+
+```
+
+
+# Treatment model {.tabset .tabset-fade .tabset-pills} 
+
+## Experimental design  
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = day10countstable, colData = conds10,
+                              design = ~ climate + treatment)
+
+dim(dds) 
+nrow(dds) 
+
+# Filter out genes with few reads
+# the filtering level - at least one read per sample (here the total no. of samples are 30) 
+
+dds <- dds[rowSums(counts(dds)) > 30]
+
+dim(dds) 
+```
+
+
+## DEseq model  
+**model: design = ~ climate + treatment**  
+```{r}
+dds <- DESeq(dds)
+
+# List the results generated
+resultsNames(dds) 
+
+```
+
+**Significant genes for treatment effects**  
+1. Treatment D vs C  
+
+
+```{r}
+# Order and list and summarize results from specific contrasts
+# Here you set your adjusted p-value cutoff, can make summary tables of the number of genes differentially expressed (up- or down-regulated) for each contrast
+res_DC <- results(dds, 
+                  name="treatment_D_vs_C", 
+                  alpha = 0.05)
+res_DC <- res_DC[order(res_DC$padj),]
+head(res_DC)
+summary(res_DC)
+
+```
+1456 genes are upregulated and 1162 genes are down regulted for Drought treatment.  
+
+
+2. Treatment H vs C  
+```{r}
+res_HC <- results(dds, 
+               name="treatment_H_vs_C", 
+               alpha = 0.05)
+res_HC <- res_HC[order(res_HC$padj),]
+head(res_HC) 
+summary(res_HC)
+```
+87 genes are upregulated and 9 genes are down regulted for just the hot teperature treatment.  
+
+## MA plot  
+```{r}
+plotMA(res_DC,ylim=c(-3,3))
+
+plotMA(res_HC,ylim=c(-3,3))
+```
+
+## PCA plot  
+```{r}
+vsd <- vst(dds, blind=FALSE) 
+
+data <- plotPCA(vsd,intgroup=c("climate","treatment","pop"), #ntop=10000
+                returnData=TRUE)
+
+
+# Measure percent variance
+percentVar <- round(100 * attr(data,"percentVar")) 
+
+data$treatment <- factor(data$treatment, levels=c("C","H","D"), labels = c("C","H","D"))
+
+ggplot(data, aes(PC1, PC2, color=climate, shape=treatment)) +
+  geom_point(size=4, alpha=0.85) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+  theme_minimal()
+
+ggplot(data, aes(PC1, PC2, color=treatment, shape=climate)) +
+  geom_point(size=4, alpha=0.85) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+  theme_minimal()
+```
+
+## Heat map  
+```{r}
+# Heatmap of top 20 genes sorted by pvalue for Drought treatment
+
+topgenes <- head(rownames(res_DC),20)
+mat <- assay(vsd)[topgenes,]
+mat <- mat - rowMeans(mat)
+df <- as.data.frame(colData(dds)[,c("treatment","climate")])
+pheatmap(mat, annotation_col=df)
+
+# Heatmap of top 20 genes sorted by pvalue for Hot treatment
+
+topgenes <- head(rownames(res_HC),20)
+mat <- assay(vsd)[topgenes,]
+mat <- mat - rowMeans(mat)
+df <- as.data.frame(colData(dds)[,c("treatment","climate")])
+pheatmap(mat, annotation_col=df)
+
+```
+
+
+
+
+Dispersion estimates for the genes 
+```{r}
+plotDispEsts( dds, ylim = c(1e-4, 1e2) )
+
+```
+
+
+
+
+
+
+
+
+
+
+# LRT (compare models)   
+- still in works  
+
+
+
+
+

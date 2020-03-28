@@ -1,0 +1,35 @@
+---
+title: "Epigenomics"
+author: "Anoob Prakash"
+date: "25/03/2020"
+output:
+  rmarkdown::html_document:
+    theme: cosmo  
+    number_sections: false
+    toc: true
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Location of data stored:  
+ cd /data/project_data/epigenetics/reference_genome/Bisulfite_Genome/  
+ 
+### Bismark  
+  - type bismark in bash to start the program 
+ 
+  - `bismark -help` for help with the wrapper  
+ 
+  - `--output_dir` - one output directory for all the data
+ 
+  - forward read are - _1  
+  - reverese reads are - _2  
+  - adding read group  
+    - `--rg_tag`
+    - `--rg_id` - sample id  
+  - `--gzip`  - compress  
+  - `--local` - local alignment / soft clipping of the bases    
+  - `--maxins` - max insert size 
