@@ -16,13 +16,62 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Population: XBM D and XBM H
+`Population: XBM D and XBM H` 
 
-## run fastqc
+# The experiment {.tabset .tabset-fade .tabset-pills}       
+Questions can we ask/address with this experimental design, with these data? How do we translate these questions to models in DESeq2?  
+  1. Do families from different source climates differ for their gene expression?  
 
-`./`*filename* - runs the script with bash command  
+  2. Is there a transcriptome wide response to heat stress? Does this change when the additional stress of drought is added?  
 
+  3. Is there a significant interaction between source climate and stress treatment, such that families from hot/dry climates have a unique expression response to heat or heat+drought compared to families from cool/wet climates?  
 
+  4. Which specific genes are involved in the above responses, and do they reveal functional enrichment of particular pathways?  
+
+  5. Do DE genes or pathways show evidence of positive selection (compare DE genes with popgen signatures of sel’n)?  
+
+  6. Can we use association mapping to identify eQTL associated with DE responses?  
+  
+## Experimental Design  
+Ten maternal families total; sample labels are “POP_FAM”  
+  - ASC_06, BRU_05, ESC_01, XBM_07, NOR_02, CAM_02, JAY_02, KAN_04, LOL_02, MMF_13  
+Two Source Climates (SourceClim):  
+
+  - HotDry (5 fams): ASC_06, BRU_05, ESC_01, XBM_07, NOR_02  
+  - CoolWet (5 fams): CAM_02, JAY_02, KAN_04, LOL_02, MMF_13  
+  
+Experimental Treatments (Trt):
+
+  - Control: watered every day, 16:8 L:D photoperiod at 23C:17C temps  
+  - Heat: 16:8 L:D photoperiod at 35C:26C temps (50% increase in day and night temps over controls)  
+  - Heat+Drought: Heat plus complete water witholding  
+Three time periods (Day):  
+
+  - Harvested tissues on Days 0, 5, and 10  
+  
+- Extracted RNA from whole seedlings (root, stem, needle tissue)  
+
+- Aimed for 5 biological reps per Trt x SourceClim x Day combo, but day5 had few RNA extractions that worked  
+
+- Realized sample replication after sequencing: N=76  
+
+## Library prep and sequencing  
+Samples were quantified for RNA concentration and quality on the Bioanalyzer Samples >1 ng/ul were sent to Cornell for 3’ tag sequencing Library prep followed the LexoGen protocol and sequencing was on 1 lane of a NextSeq500 (1x86 bp reads) Samples were demultiplexed and named according to the convention: POP_FAM_TRT_DAY  
+
+## Data Processing Pipeline  
+FastQC on raw reads –> Trimmomatic (done!) –> FastQC on cleaned reads  
+
+**Reference transcriptome:**  
+```
+/data/project_data/RS_RNASeq/ReferenceTranscriptome/Pabies1.0-all-cds.fna.gz
+
+```
+Downloaded from Congenie.org  
+  - 66,632 unigenes, consisting of 26,437 high-confidence gene models, 32,150 medium-confidence gene models, and 8,045 low-confidence gene models  
+  - Use Salmon to simulateously map reads and quantify abundance.  
+  - Import the data into DESeq2 in R for data normalization, visualization, and statistical tests for differential gene expression.  
+  - Choose samples to visualize for quality (FastQC) and to map (Salmon)  
+  - Ignoring day for the moment, there are 10 PopulationByFamily groups (POP_XX) and three treatment groups (C, H, and D), so 30 groups. If you each take two of these pop by treatment groups to process, we’ll have all the samples covered. cd into the `/data/project_data/RS_RNAseq/fastq` directory to view the files. Let’s write on the board each of our chosen groups.  
 
 
 
@@ -43,6 +92,55 @@ The mapping-based mode of Salmon runs in two phases
     
   - `quantification`  
     - The quantification step, obviously, is specific to the set of RNA-seq reads and is thus run more frequently.  
+    
+    
+**First step:** Index the reference transcriptome. This only needs to be done once and has been done already, but here’s the code:  
+```
+cd /data/project_data/RS_RNAseq/ReferenceTrancriptome/
+salmon index -t Pabies1.0-all-cds.fna.gz -i Pabies_cds_index --decoys decoys.txt -k 31
+```
+Note that the -k flag sets the minimum acceptable length for a valid match between query (read) and the reference. This is a parameter that the creators of Salmon suggest can be made “slightly smaller” if the mapping rate is lower than expected. We may want to explore reducing -k.  
+
+**Second step:** Start quantification! Let’s see if we can write a for loop together to start the mapping based on the Salmon tutorial  
+```
+salmon quant -i transcripts_index -l <LIBTYPE> -r reads.fq --validateMappings -o transcripts_quant
+```
+The descriptions of all of the options can be found on the [Salmon github page](https://salmon.readthedocs.io/en/latest/salmon.html#description-of-important-options) and by using the command `salmon quant -h`.
+
+## fastqc  
+
+`./`*filename* - runs the script with bash command  
+
+```{bash eval=FALSE}
+#!/bin/bash
+
+cd /data/project_data/RS_RNASeq/fastq/
+
+########## Trimmomatic for single end reads
+
+for R1 in *R1.fastq.gz  
+
+do 
+    echo "starting sample ${R1}"
+    f=${R1/_R1.fastq.gz/}
+    name=`basename ${f}`
+
+    java -classpath /data/popgen/Trimmomatic-0.33/trimmomatic-0.33.jar org.usadellab.trimmomatic.TrimmomaticSE \
+        -threads 1 \
+        -phred33 \
+         "$R1" \
+         /data/project_data/RS_RNASeq/fastq/cleanreads/${name}_R1.cl.fq \
+        ILLUMINACLIP:/data/popgen/Trimmomatic-0.33/adapters/TruSeq3-SE.fa:2:30:10 \
+        LEADING:20 \
+        TRAILING:20 \
+        SLIDINGWINDOW:6:20 \
+        HEADCROP:12 \
+        MINLEN:35 
+     echo "sample ${R1} done"
+done 
+```
+
+
 
 ## HC27 index  
 
@@ -212,6 +310,22 @@ write.table(countsMatrix, file = "RS_countsMatrix.txt", col.names = T, row.names
 ```
 The counts matrix are then moved to the local machine using any FTPs at hand to do further analysis. The counts are not normalised to length, as we are working with 3' tag RNAseq data. 
 
+## Mapping issues  
+**Explore mapping rate**  
+For each sample mapped, you now have a directory with several output files including a log of the run. In that log, the mapping rate (% of reads mapped with sufficient quality) is reported. We can view the contents of the file using cat. We can also use grep (i.e., regular expressions) to pull out the mapping rate for all the samples.   
+
+```
+grep -r --include \*.log -e 'Mapping rate'
+```
+
+The index file called `Pabies_cds_index`, which contains all of the coding sequences for P. abies, not just the high confidence coding sequences. This improved the percent mapping from ~ 4% to ~ 25%. We further hypothesized that many of our reads were not mapping because the reference we had selected included only the coding region. In working with 3’ RNAseq data, much of our sequencing effort is likely to be in the 3’ UTR (untranslated region). We concatenated the reference sequences for the coding (“cds”) and the 3’ UTR (“2kb downstream”) for each gene. We then mapped to this new reference using salmon (as you had done before). Our mapping rate improved dramatically, ranging from 40-70% of reads mapping across samples, mean of 52%.   
+
+### Ways to explore data analysis  
+  1. Explore the various results for a given experimental design, see: `resultsNames(dds)`  
+  
+  2. Set up your DESeq object with different experimental designs; e.g., `design = ~ climate + treatment + climate:treatment`  
+  
+  3. Subset your data to exclude/include different factors, run different designs; `select` and `subset` are handy functions in R for subsetting your `countsMatrix` or conds table.  
 
 
 # Differential gene expression for all samples {.tabset .tabset-fade .tabset-pills}
