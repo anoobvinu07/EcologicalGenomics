@@ -10,9 +10,7 @@ output:
 
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 **Affiliation**:  Keller Lab; Department of Plant Biology, University of Vermont  
 **E-mail contact**:  anoob.prakash@uvm.edu  
@@ -185,9 +183,10 @@ Why study across the genome?
       - $\pi$ is an estimator of $\theta$.  
     
     
-```{r pressure, echo=FALSE, fig.cap="Fig. 2. The genealogy of a sample of five alleles, showing the time intervals between coalescent events (Hudson, 1990)", out.width = '100%'}
-knitr::include_graphics("./hudson1990_coalescence.png")
-```  
+<div class="figure">
+<img src="./hudson1990_coalescence.png" alt="Fig. 2. The genealogy of a sample of five alleles, showing the time intervals between coalescent events (Hudson, 1990)" width="100%" />
+<p class="caption">Fig. 2. The genealogy of a sample of five alleles, showing the time intervals between coalescent events (Hudson, 1990)</p>
+</div>
       
   - Site Frequency Spectrum (SFS)  
       - number of individuals (frequency) plotted against number of differentiated SNPS (polymorphisms)

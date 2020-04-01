@@ -2182,8 +2182,8 @@ Sample prep –&gt; RNA extraction –&gt; library prep –&gt; Sequencing—[bi
 <h2><code>Transcriptomics pipeline</code></h2>
 <p><a href="./TranscriptomicsPipeline.html">Pipeline Code</a></p>
 </div>
-<div id="type-of-data-brendan" class="section level2">
-<h2>Type of data (Brendan)</h2>
+<div id="type-of-data" class="section level2">
+<h2>Type of data</h2>
 <ul>
 <li>Gene expression
 <ul>
@@ -2328,7 +2328,7 @@ sample2 —- | —– | —- |<br />
 <li>General definition: stable, long term alterations in transcriptional potential of cell that are not necessarily heritable (NIH epigenomics roadmap)</li>
 </ul>
 <div id="why-do-we-care" class="section level3">
-<h3>1. Why do we care</h3>
+<h3>Why do we care</h3>
 <ul>
 <li><span class="math inline">\(V_P\)</span> = <span class="math inline">\(V_G\)</span> + <span class="math inline">\(V_E\)</span> + <span class="math inline">\(V_{G x E}\)</span>
 <ul>
@@ -2344,11 +2344,13 @@ sample2 —- | —– | —- |<br />
 <li>adaptation<br />
 </li>
 </ul></li>
-<li>Methylation is promminently absent in drosophila and yeast</li>
+<li>Methylation is promminently absent in drosophila and yeast<br />
+</li>
+<li></li>
 </ul>
 </div>
 <div id="mechanisms-of-epigenitics" class="section level3">
-<h3>2. Mechanisms of epigenitics</h3>
+<h3>Mechanisms of epigenitics</h3>
 <ul>
 <li>phosphorylation<br />
 </li>
@@ -2367,7 +2369,7 @@ sample2 —- | —– | —- |<br />
 </ul>
 </div>
 <div id="functional-consequences-of-methylation" class="section level3">
-<h3>3. Functional consequences of methylation</h3>
+<h3>Functional consequences of methylation</h3>
 <ul>
 <li>Promorters/ enhancers
 <ul>
@@ -2388,22 +2390,35 @@ The patterns of methylation are different across species. The most common type o
 </ul></li>
 </ul>
 </div>
-<div id="bisulfite-sequencing" class="section level3">
-<h3>4. Bisulfite sequencing</h3>
-<ul>
-<li>Main way to quantify methylation.<br />
-</li>
-<li>Addition of Sodium bisulfite at low pHs, it converts Cytosine to Uracil, and thus during sequencing these U’s will go to T’s. While in methylated sequences, the addition of sodium bisulfite does not take place. Thus during PCR applification, there will be higher T’s if it was not methylated, while higher C’s in methyalted sequences.
-<ul>
-<li>From this we want to see how much methylation is happening at a loci.</li>
-</ul></li>
-</ul>
+<div id="sequencing-methods" class="section level3">
+<h3>Sequencing methods</h3>
+<p>Bisulfite sequencing<br />
+- Main way to quantify methylation.<br />
+- Addition of Sodium bisulfite at low pHs, it converts Cytosine to Uracil, and thus during sequencing these U’s will go to T’s. While in methylated sequences, the addition of sodium bisulfite does not take place. Thus during PCR applification, there will be higher T’s if it was not methylated, while higher C’s in methyalted sequences.<br />
+- From this we want to see how much methylation is happening at a loci.</p>
+<p>MSAP<br />
+- Methylation Sensitive Amplification Polymorphisim<br />
+-</p>
+<p>Other notes:<br />
+AFLP<br />
+- Quikly generates a large no. of marker fragments<br />
+- Requires small amount of starting template<br />
+- High reproducibility<br />
+- Labour intensive<br />
+- Generate genetic maps</p>
+<p>Shanon-Wiener diversity index (H)<br />
+- measures of diversity that combines species richness (the no. of sps. in a given area) and their relative abundance<br />
+- increases as richness and eveness of the community increases</p>
+</div>
+<div id="epigenomics-pipeline" class="section level3">
+<h3><code>Epigenomics pipeline</code></h3>
+<p><a href="./EpigenomicsPipeline.html">Pipeline Code</a></p>
 <hr />
 </div>
 </div>
 <div id="course-materials-and-notes" class="section level1">
 <h1>Course Materials and Notes</h1>
-<div id="sequencing-methods" class="section level2">
+<div id="sequencing-methods-1" class="section level2">
 <h2><a href="https://docs.google.com/document/d/1MuXPS3hNg3wIxsKw-jQmKY7y57Ka2qqZwHYKRAbpNMw/edit?usp=sharing">Sequencing methods</a></h2>
 <p><a href="https://pespenilab.github.io/Ecological-Genomics/Tutorial/2020-01-22_Command_Line_Unix.html">Tutorial on bash</a><br />
 <a href="https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf">github cheat sheet</a></p>

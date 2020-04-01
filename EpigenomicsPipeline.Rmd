@@ -8,17 +8,26 @@ output:
     number_sections: false
     toc: true
     toc_float: true
-
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Location of data stored:  
+# Bismark  {.tabset .tabset-fade .tabset-pills}   
+- Align to Acartia tonsa reference genome using Bismark  
+- 
+
+**Location of data stored:**  
  cd /data/project_data/epigenetics/reference_genome/Bisulfite_Genome/  
  
-### Bismark  
+**Sample assigned**  
+ - AH_F25_4  
+ 
+## Bash code
+
   - type bismark in bash to start the program 
  
   - `bismark -help` for help with the wrapper  
@@ -33,3 +42,73 @@ knitr::opts_chunk$set(echo = TRUE)
   - `--gzip`  - compress  
   - `--local` - local alignment / soft clipping of the bases    
   - `--maxins` - max insert size 
+```{bash eval=FALSE}
+#!/bin/bash
+
+bismark --bowtie2 --multicore 1 \
+    --genome /data/project_data/epigenetics/reference_genome \
+    --output_dir /data/project_data/epigenetics/aligned_output \
+    -1 /data/project_data/epigenetics/trimmed_fastq/AH_F25_4_1.fq.gz \
+    -2 /data/project_data/epigenetics/trimmed_fastq/AH_F25_4_2.fq.gz \
+    --rg_tag --rg_id AH_F25_4 --rg_sample AH_F25_4 --gzip --local --maxins 1000
+```
+
+  
+
+## Parameters  
+
+
+`--bowtie2` tells bismark to map with bowtie2. There are other options possible here (bowtie1, for example)  
+
+`--multicore 1` Use one core. We could use multiple cores to make alignment faster, but we may crash the server if many of you are mapping at once if we do this.  
+
+`--genome` the location of our converted genome. The bismark package has a command to prep your genome that I've already done. You can check it out: `bismark_methylation_extractor --help`  
+`-1` the path to your sample's forward read  
+`-2` the path to your sample's reverse read  
+
+`--rg_tag` add a read group tag that identifies your individual sample in your output bam file  
+
+`--rg_id` the string that defines the readgroup ID  
+
+`--rg_sample` the string that defines your readgroup sample ID  
+`--gzip` for the temporary files, use gzip to save space  
+`--local` align with the local alignment option in bowtie2. This will include soft clipping, which should increase mapping rate, but comes at the cost of (maybe) increasing mis-mapping.  
+
+`--maxins` specifies the maximum insert size for mapping. We're using 1000 as our libraries had a mean insert size of ~200. Note that this is smaller than most sequencing libraries.  
+
+```{bash eval=FALSE}
+#!/bin/bash
+
+bismark --bowtie2 --multicore 1 \
+    --genome /data/project_data/epigenetics/reference_genome \
+    --output_dir /data/project_data/epigenetics/aligned_output \
+    -1 /data/project_data/epigenetics/trimmed_fastq/SAMPLEID_1.fq.gz \
+    -2 /data/project_data/epigenetics/trimmed_fastq/SAMPLEID_2.fq.gz \
+    --rg_tag --rg_id SAMPLEID --rg_sample SAMPLEID --gzip --local --maxins 1000
+```
+
+Here the SAMPLEID was replaced with my sample id `AH_F25_4`  
+
+# Next  {.tabset .tabset-fade .tabset-pills}  
+
+## R 
+Packages required:
+```{r}
+require(tidyverse)
+require(pheatmap)
+
+library(devtools)
+install_github("al2na/methylKit", build_vignettes=FALSE, 
+  repos=BiocManager::repositories(),
+  dependencies=TRUE, type="source")
+
+BiocManager::install("methylKit")
+require(methylKit)
+
+
+
+
+
+```
+
+

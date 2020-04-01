@@ -1534,11 +1534,19 @@ div.tocify {
 </div>
 
 
-<div id="location-of-data-stored" class="section level2">
-<h2>Location of data stored:</h2>
-<p>cd /data/project_data/epigenetics/reference_genome/Bisulfite_Genome/</p>
-<div id="bismark" class="section level3">
-<h3>Bismark</h3>
+<div id="bismark" class="section level1 tabset tabset-fade tabset-pills">
+<h1>Bismark</h1>
+<ul>
+<li>Align to Acartia tonsa reference genome using Bismark<br />
+</li>
+<li></li>
+</ul>
+<p><strong>Location of data stored:</strong><br />
+cd /data/project_data/epigenetics/reference_genome/Bisulfite_Genome/</p>
+<p><strong>Sample assigned</strong><br />
+- AH_F25_4</p>
+<div id="bash-code" class="section level2">
+<h2>Bash code</h2>
 <ul>
 <li><p>type bismark in bash to start the program</p></li>
 <li><p><code>bismark -help</code> for help with the wrapper</p></li>
@@ -1559,6 +1567,37 @@ div.tocify {
 </li>
 <li><p><code>--maxins</code> - max insert size</p></li>
 </ul>
+<pre class="bash"><code>#!/bin/bash
+
+bismark --bowtie2 --multicore 1 \
+    --genome /data/project_data/epigenetics/reference_genome \
+    --output_dir /data/project_data/epigenetics/aligned_output \
+    -1 /data/project_data/epigenetics/trimmed_fastq/AH_F25_4_1.fq.gz \
+    -2 /data/project_data/epigenetics/trimmed_fastq/AH_F25_4_2.fq.gz \
+    --rg_tag --rg_id AH_F25_4 --rg_sample AH_F25_4 --gzip --local --maxins 1000</code></pre>
+</div>
+<div id="parameters" class="section level2">
+<h2>Parameters</h2>
+<p><code>--bowtie2</code> tells bismark to map with bowtie2. There are other options possible here (bowtie1, for example)</p>
+<p><code>--multicore 1</code> Use one core. We could use multiple cores to make alignment faster, but we may crash the server if many of you are mapping at once if we do this.</p>
+<p><code>--genome</code> the location of our converted genome. The bismark package has a command to prep your genome that I’ve already done. You can check it out: <code>bismark_methylation_extractor --help</code><br />
+<code>-1</code> the path to your sample’s forward read<br />
+<code>-2</code> the path to your sample’s reverse read</p>
+<p><code>--rg_tag</code> add a read group tag that identifies your individual sample in your output bam file</p>
+<p><code>--rg_id</code> the string that defines the readgroup ID</p>
+<p><code>--rg_sample</code> the string that defines your readgroup sample ID<br />
+<code>--gzip</code> for the temporary files, use gzip to save space<br />
+<code>--local</code> align with the local alignment option in bowtie2. This will include soft clipping, which should increase mapping rate, but comes at the cost of (maybe) increasing mis-mapping.</p>
+<p><code>--maxins</code> specifies the maximum insert size for mapping. We’re using 1000 as our libraries had a mean insert size of ~200. Note that this is smaller than most sequencing libraries.</p>
+<pre class="bash"><code>#!/bin/bash
+
+bismark --bowtie2 --multicore 1 \
+    --genome /data/project_data/epigenetics/reference_genome \
+    --output_dir /data/project_data/epigenetics/aligned_output \
+    -1 /data/project_data/epigenetics/trimmed_fastq/SAMPLEID_1.fq.gz \
+    -2 /data/project_data/epigenetics/trimmed_fastq/SAMPLEID_2.fq.gz \
+    --rg_tag --rg_id SAMPLEID --rg_sample SAMPLEID --gzip --local --maxins 1000</code></pre>
+<p>Here the SAMPLEID was replaced with my sample id <code>AH_F25_4</code></p>
 </div>
 </div>
 
