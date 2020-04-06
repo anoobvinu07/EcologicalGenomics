@@ -12,9 +12,99 @@ editor_options:
   chunk_output_type: console
 ---
 
+
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# The experiment  {.tabset .tabset-fade .tabset-pills}   
+
+## Learning objectives:  
+1. Background on the copepod selection experimental design  
+2. Think about the hypotheses we can address with this experiment  
+3. Cover how bisulfite sequencing data differs from regular data and not to panic when you see your fastqc output  
+4. Begin mapping using Bismark  
+
+## Copepod selection experiment  
+
+Acartia tonsa is a calanoid copepod that has a world wide distribution. It inhabits estuaries and coastal waters and it typically the most abundant zooplankton present. Because of their huge population sizes and global distribution, they play an important role in ocean biogeochemical cycling and ecosystem functioning. For example, they’re an important food base for many fishes. Given their broad distribution in dynamic habitats (estuaries), they can tolerate and live in a broad range of salinities, freshwater to seawater, and temperatures, among other stressors.  
+
+We know that the world is rapidly changing due to human activities and it is important to understand how species will respond to these changes. We were interested in understanding how A. tonsa could respond to stressful environments that will likely be caused by climate change. Can they adapt to rapid changes in temperature and acidity? How might epigenetic responses interact with adaptation to enable resilience?  
+
+A. tonsa is a great system to ask these questions for a number of reasons. First, their generation time is only ~10-20 days and they’re tiny! Only 1-2 mm. This means we can easily execute multi-generational studies with thousands of individuals. Second, because they can tolerate such variable environments, they should have lots of plasticity to respond to environmental fluctuations. Finally, their large population sizes mean that genetic diversity should be high, giving them high adaptive potential. This means that if any species can respond to rapid environmental change, it is likely A. tonsa.   
+
+## Experimental design  
+
+A. tonsa were collected from the wild, common gardened for three generations, and then split into **four treatments** with **four replicates** each and about 3,000-5,000 individuals per replicate. They were left to evolve in these conditions for **25 generations**. Samples were collected at generation F0 and F25 to quantify methylation frequencies using **reduced representation bisulfite sequencing** [(RRBS)](https://en.wikipedia.org/wiki/Reduced_representation_bisulfite_sequencing).  
+
+```{r , echo=FALSE, fig.cap="The experimental design", out.width = '80%'}
+knitr::include_graphics("./copepodExpDesign.png")
+``` 
+
+  
+Sample ID	|Treatment    	  | Trt abrreviation	    | Generation  
+--------- | --------------- | --------------------- | -------  
+AA_F00_1	|Control: ambient temp, ambient CO2 |	AA	| F00  
+AA_F25_2  |Control: ambient temp, ambient CO2	| AA	| F25  
+AH_F25_3  |ambient temp, high CO2	            | AH  | F25  
+HA_F25_1  |high temp, ambient CO2	            | HA	| F25
+HH_F25_1  |high temp, high CO2	              | HH	| F25  
+
+
+## RRBS  
+
+- Stands for reduced representation bisulfite sequencing  
+- Following the adapter ligation, we bisulfite convert all unmethylated C’s to T’s.  
+
+- Before starting we also spiked in a small amount of DNA from E. coli that we know wasn’t methylated. Using this, we can calculate downstream how efficient our bisulfite conversion was.  
+
+```{r  echo=FALSE, fig.cap="How RRBS works", out.width = '80%'}
+knitr::include_graphics("./rrbs_copepod.png")
+``` 
+
+## methylKit capabilities  
+```{r  echo=FALSE, fig.cap="Flowchart for capabilities of methylKit package", out.width = '90%'}
+knitr::include_graphics("./methylKITflowchart.png")
+``` 
+
+
+# Pipeline {.tabset .tabset-fade .tabset-pills}  
+
+1. Visualize, clean, visualize  
+
+  - Visualize quality of raw data with fastqc  
+  - clean raw data with Trimmomatic  
+  - Visualize quality of cleaned data with fastqc  
+2. Align to Acartia tonsa reference genome (**Bismark**)  
+  - also align lambda DNA to check for conversion efficiency (Already Done)  
+3. Extract methylation calls   
+4. Process and filter calls  
+5. Summary figures (PCA, clustering, etc)  
+6. Test for differential methylation (Methylkit)  
+
+## Bisulfite sequence data looks weird  
+Unlike the normal sequence reads, in bisulfite conversion there is a high no. of T bases. This increase is because of the fact that all the non-methylated cytosines are converted to thyamine bases. While the that the reverse strand is the reverse complement of the bisulfite converted forward strand, and is not just the BS converted bottom strand. Thus reverse read being complement to the forward read will have a higher no. of adenine bases. 
+
+
+```{r  echo=FALSE, fig.cap="Why bisulfite fastq visualization looks weird", out.width = '80%'}
+knitr::include_graphics("./bisulfite_conversion.png")
+``` 
+
+## FastQ report  
+
+```{r  echo=FALSE, fig.cap="FastQ for the bisulfite convereted forward read after trimming", out.width = '80%'}
+knitr::include_graphics("./bisulfite_forward.png")
+```
+
+
+```{r  echo=FALSE, fig.cap="FastQ for the bisulfite convereted reverse read after trimming", out.width = '80%'}
+knitr::include_graphics("./bisulfite_reverse.png")
+``` 
+
+
+
+
 
 # Bismark  {.tabset .tabset-fade .tabset-pills}   
 - Align to Acartia tonsa reference genome using Bismark  
@@ -52,10 +142,12 @@ bismark --bowtie2 --multicore 1 \
     -2 /data/project_data/epigenetics/trimmed_fastq/AH_F25_4_2.fq.gz \
     --rg_tag --rg_id AH_F25_4 --rg_sample AH_F25_4 --gzip --local --maxins 1000
 ```
-
+Bismark is, at its core, running [`bowtie2`](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml). But there are important differences. If you remember, we’re using two modified versions of the genome where we’ve converted C-to-T AND G-to-A. We also generate temporary files of our trimmed reads where we convert C-to-T (read1) AND G-to-A (read2) so they can map to this converted genome. This makes the alignment a bit harder because : 
+  1. the complexity of DNA is reduced  
+  2. we are mapping to two separate genomes.   
   
 
-## Parameters  
+**Parameters**  
 
 
 `--bowtie2` tells bismark to map with bowtie2. There are other options possible here (bowtie1, for example)  
@@ -89,26 +181,353 @@ bismark --bowtie2 --multicore 1 \
 
 Here the SAMPLEID was replaced with my sample id `AH_F25_4`  
 
-# Next  {.tabset .tabset-fade .tabset-pills}  
+## Mapping reads  
+- zcat to read the .gz files  
 
-## R 
+On Mac, use the following:
+zcat < AA_F00_1_1_bismark_bt2_pe.bismark.cov.gz  
+
+
+**Mapping rate**  
+  - The mapping rate is very high in AA_F00, the control at zero generations, which can be worrying. This might be due to the fact that slightly more samples went into sequecing AA_F00.  
+  - So including more DNAs might actually help increase the mapping rate.  
+  - Maybe mapping them as single ends rather than paired end might help increase the mapping rate.  
+  - THe bisulfite conversion rate was checked and found out to be 98-99%, when compared with the *E.coli* that was spiked in.
+  
+```{r  echo=FALSE, fig.cap="Mapping rates for different treatements", out.width = '80%'}
+knitr::include_graphics("./copepod_mappingRate.png")
+``` 
+
+# Extract methylation calls  {.tabset .tabset-fade .tabset-pills}  
+
+## Methylation report  
+
+```{bash eval=FALSE}
+bismark_methylation_extractor --bedGraph --scaffolds --gzip \
+    --cytosine_report --comprehensive \
+    --no_header \
+    --parallel 6 \
+    --output ~/tonsa_epigenetics/analysis/methylation_extract/ \
+    --genome_folder /data/copepods/tonsa_genome/ \
+    *pe.bam
+
+```
+
+[Methylation extraction report](https://htmlpreview.github.io/?https://github.com/PespeniLab/Ecological-Genomics/blob/master/Epigenetics_AA_F00_2_1_bismark_bt2_PE_report-ALL_SITES.html)  
+
+**M-Bias Plot**  
+  - Methylation Bias Plot  
+  - CpG methylation is the dark line across the length of the read, and we are intersted in this line  
+  - CpG methylation is same across the read, which is what we expect to see  
+  - CpG reads are very high at the begining for *read 1*, we are unsure of what it is so we are going to **cut the first two bases** to remove this bias.  
+    - It is generally recommended to remove this bias  
+    - The same spike was also seen in the spiked E.coli  
+    - The mechanism that is causing it is very unclear  
+    - Generally considered as a technical artifact rather than a biological artifact  
+  - *Read 2* shows a bit of a dip in CpG at the beginning  
+  
+
+## Methylation report ignoring bias  
+**To ignore the first two bases:**  
+- Done to remove the high CpG read at the begining of the reads   
+```{bash eval=FALSE}
+bismark_methylation_extractor --bedGraph --scaffolds --gzip \
+    --cytosine_report --comprehensive \
+    --no_header \
+    --parallel 6 \
+    --ignore 2 --ignore_r2 2 \
+    # this says to ignore the first two bases
+    --output ~/tonsa_epigenetics/analysis/methylation_extract/ \
+    --genome_folder /data/copepods/tonsa_genome/ \
+    *pe.bam
+```
+
+[Methylation extraction report ignoring bias](https://htmlpreview.github.io/?https://github.com/PespeniLab/Ecological-Genomics/blob/master/Epigenetics_AA_F00_2_1_bismark_bt2_PE_report-IGNORE_BIAS.html)  
+
+## bash  
+
+We can look at sites with some data using the following:  
+```{bash eval=FALSE}
+zcat HH_F25_4_1_bismark_bt2_pe.bismark.cov.gz | head
+```
+
+Column 1: Chromosome  
+Column 2: Start position  
+Column 3: End position  
+  - Both start and stop column of the base we are intersted in are going to be same, since we are looking at single bases  
+Column 4: Methylation percentage  
+Column 5: Number of methylated C's  
+Column 6: Number of unmethylated C's  
+
+```{bash eval=FALSE}
+zcat HH_F25_4_1_bismark_bt2_pe.bismark.cov.gz | awk '$4 > 5 && $5 > 10' | head
+```
+- says column 4 values > 5  
+
+- says column 5 > ten methylated reads  
+
+
+# methylKit  {.tabset .tabset-fade .tabset-pills}  
+
+## R code  
 Packages required:
-```{r}
+```{r message=FALSE, warning=FALSE}
 require(tidyverse)
 require(pheatmap)
 
-library(devtools)
-install_github("al2na/methylKit", build_vignettes=FALSE, 
-  repos=BiocManager::repositories(),
-  dependencies=TRUE, type="source")
-
-BiocManager::install("methylKit")
+# fixing issues with methylKit package installation
+# BiocManager::install("methylKit")
+# install.packages("tibble", dependencies = TRUE, INSTALL_opts = '--no-lock')
 require(methylKit)
-
-
-
 
 
 ```
 
+```{r}
+# first, we want to read in the raw methylation calls with methylkit
+
+# set directory with absolute path (why is this necessary? I have no idea, but gz files wont work with relative paths)
+dir <- "C:\\Epigenetics_data\\Epigenetics_data\\"
+
+list.files(dir)  
+# read in the sample ids
+samples <- read.table("C:\\Epigenetics_data\\Epigenetics_data\\sample_id.txt",
+                      header = FALSE)
+# now point to coverage files
+files <- file.path(dir, samples$V1) # pasting the directory and samples together  
+all(file.exists(files)) # to check if the path is real and points to the correct location 
+# convert to list
+file.list <- as.list(files) # for methylKit to run properly  
+# get the names only for naming our samples
+nmlist <- as.list(gsub("_1_bismark_bt2_pe.bismark.cov.gz","",samples$V1))
+head(nmlist)
+
+# use methRead to read in the coverage files
+## converting to a methylKit object from the list made  
+myobj <- methRead(location = file.list,   # path to the files stored
+                  sample.id = nmlist,     # sample ID info 
+                  assembly = "atonsa",    # this is just a string. no actual database
+                  dbtype = "tabix",       # going to make a database in the form of .txt files
+                                          # this is also good for saving up on the memory
+                  context = "CpG",      
+                  resolution = "base",    # resolution is for SNPs so at a base elevel
+                  mincov = 20,            # min 20 reads per site to get accurate estimation
+                                          # 10 is an acceptable value too
+                  treatment = c(0,0,0,0,  # four AA_F00 files
+                                1,1,1,1,  # four AA_F25 files
+                                2,2,2,2,  # four AH_F25 files
+                                3,3,3,3,  # four HA_F25 files
+                                4,4,4,4), # four HH_F25 files
+                  pipeline = "bismarkCoverage", # input data format
+                  dbdir = "C:\\Epigenetics_data\\") # not necessary to be specified
+
+######
+# visualize coverage and filter
+######
+
+# We can look at the coverage for individual samples with getCoverageStats()
+getCoverageStats(myobj[[1]], plot = TRUE, both.strands = FALSE) #Get CpG coverage information
+# numbers on bars denote what percentage of locations are contained in that bin
+# Experiments that are highly suffering from PCR duplication bias will have 
+# a secondary peak towards the right hand side of the histogram
+
+myobj[[1]] # no. of Cs and Ts should equal coverage
+
+# looking at percent methylation 
+getMethylationStats(myobj[[1]],plot=TRUE,both.strands=FALSE)
+
+# and can plot all of our samples at once to compare.
+# par(mfrow=c(5,4))
+# 
+# for(i in 1:length(myobj)) {
+#   getCoverageStats(myobj[[i]], plot = TRUE, both.strands = FALSE) #Get CpG coverage information
+# } #Plot and save %CpG methylation information
+```
+
+```{r  echo=FALSE, fig.cap="The histogram of CpG coverage for all the samples", out.width = '80%'}
+knitr::include_graphics("./copepod_figs/coverarge_per_individual_samples_forloop.png")
+``` 
+
+```{r}
+# filter samples by depth with filterByCoverage()
+filtered.myobj <- filterByCoverage(myobj,
+                                   lo.count = 20, lo.perc = NULL,
+                                   hi.count = NULL, hi.perc = 97.5,
+                                   db.dir = "C:\\Epigenetics_data\\")
+
+######
+# merge samples
+######
+
+#Note! This takes a while and we're skipping it
+
+# use unite() to merge all the samples. We will require sites to be present in each sample or else will drop it
+
+# don't run as it takes a lot of time  
+# meth <- unite(filtered.myobj, 
+#                mc,cores=3, 
+#                suffix="united", # add united at the end of the name
+#                db.dir="C:\\Epigenetics_data\\")
+```
+
+Methylkit has a convenient aspect where we can load previously generated databases. This means we don’t have to re-run analyses, but can skip ahead to where we previously left off. We will do this below to load the united database that I’ve already generated.  
+```{r}
+meth <- methylKit:::readMethylBaseDB(
+                      dbpath = "C:\\Epigenetics_data\\Epigenetics_data\\methylBase_united.txt.bgz",
+                            dbtype = "tabix",
+                            sample.id =   unlist(nmlist),
+                            assembly = "atonsa", # this is just a string. not an actual database
+                            context = "CpG",
+                            resolution = "base",
+                            treatment = c(0,0,0,0,
+                              1,1,1,1,
+                              2,2,2,2,
+                              3,3,3,3,
+                              4,4,4,4),
+                            destrand = FALSE)
+```
+
+## Methylation statistics across samples
+```{r}
+
+# percMethylation() calculates the percent methylation for each site and sample
+pm <- percMethylation(meth)
+head(pm) # methylation percentage for each site per each sample
+
+#plot methylation histograms
+ggplot(gather(as.data.frame(pm)), 
+              aes(value)) + 
+              geom_histogram(bins = 10, color="black", fill="grey") + 
+              facet_wrap(~key)
+
+# calculate and plot mean methylation
+sp.means <- colMeans(pm)
+
+sp.means
+
+dim(pm) # methlation for 15158 sites in 20 samples
+
+p.df <- data.frame(sample=names(sp.means),
+          group = substr(names(sp.means), 1,6),
+          methylation = sp.means)
+
+ggplot(p.df, aes(x=group, y=methylation, color=group)) + 
+    stat_summary(color="black") + geom_jitter(width=0.1, size=3) 
+## is the high methylation rate high in AA_F00 or is it due to it having higher mapping rate compared to the rest of the samples?? - hard to know  
+```
+
+## Summarize variation: PCA, clustering
+```{r}
+
+
+# sample clustering
+clusterSamples(meth,
+               dist = "correlation",
+               method = "ward.D",
+               plot = TRUE)
+# they are not clustering by treatments  
+
+# PCA
+PCASamples(meth)
+```
+
+**find differentially methylated sites between two groups**  
+```{r}
+
+
+# subset with reorganize()
+
+meth_sub <- reorganize(meth,
+                sample.ids =c("AA_F00_1","AA_F00_2","AA_F00_3", "AA_F00_4",
+                              "HH_F25_1","HH_F25_2","HH_F25_3","HH_F25_4"),
+                treatment = c(0,0,0,0,1,1,1,1), # subsetting to just 8 samples
+                save.db=FALSE) 
+
+# calculate differential methylation
+
+myDiff <- calculateDiffMeth(meth_sub,
+                            overdispersion = "MN",
+                            mc.cores = 1,
+                            suffix = "AA_HH",
+                            adjust = "qvalue",
+                            test = "Chisq") # chi square model seems to be the best
+
+# methylDiff object with 15158 rows
+# --------------
+#          chr start   end strand    pvalue    qvalue  meth.diff
+# 1 LS041577.1 13445 13445      * 0.3761267 0.4350097 -1.7573249
+# 2 LS041577.1 13454 13454      * 0.5515915 0.5204545 -0.6910039
+# 3 LS041577.1 13457 13457      * 0.5249551 0.5094404  0.9919853
+# 4 LS041577.1 13469 13469      * 0.2800910 0.3729654 -1.0800306
+# 5 LS041577.1 13472 13472      * 0.7381655 0.5918415  0.7230843
+# 6 LS041577.1 13490 13490      * 0.5561196 0.5226456 -0.6748154
+# --------------
+# sample.ids: AA_F00_1 AA_F00_2 AA_F00_3 AA_F00_4 HH_F25_1 HH_F25_2 HH_F25_3 HH_F25_4 
+# destranded FALSE 
+# assembly: atonsa 
+# context: CpG 
+# treament: 0 0 0 0 1 1 1 1 
+# resolution: base 
+
+# get all differentially methylated bases
+myDiff <- getMethylDiff(myDiff,
+                        qvalue = 0.05,
+                        difference = 10)
+
+# we can visualize the changes in methylation frequencies quickly.
+head(getData(myDiff)$meth.diff)
+hist(getData(myDiff)$meth.diff) # methylation differences 
+
+# get hyper methylated bases
+
+# get hypo methylated bases
+```
+
+## Plots of differentially methylated groups
+```{r}
+pm <- percMethylation(meth_sub)
+# make a dataframe with snp id's, methylation, etc.
+sig.in <- as.numeric(row.names(myDiff))
+pm.sig <- pm[sig.in,]
+
+ 
+
+# add snp, chr, start, stop
+
+ 
+
+din <- getData(myDiff)[,1:3]
+df.out <- cbind(paste(getData(myDiff)$chr, getData(myDiff)$start, sep=":"), din, pm.sig)
+colnames(df.out) <- c("snp", colnames(din), colnames(df.out[5:ncol(df.out)]))
+df.out <- (cbind(df.out,getData(myDiff)[,5:7]))
+
+#heatmaps first
+
+# get percent methylation matrix
+
+# make a dataframe with snp id's, methylation, etc.
+
+# add snp, chr, start, stop
+
+
+####
+# heatmap
+####
+
+my_heatmap <- pheatmap(pm.sig,
+        show_rownames = FALSE)
+
+# we can also normalize 
+
+
+
+#####
+#let's look at methylation of specific snps
+####
+
+# convert data frame to long form
+
+## write bed file for intersection with genome annotation
+
+```
 

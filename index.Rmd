@@ -185,7 +185,7 @@ Why study across the genome?
       - $\pi$ is an estimator of $\theta$.  
     
     
-```{r pressure, echo=FALSE, fig.cap="Fig. 2. The genealogy of a sample of five alleles, showing the time intervals between coalescent events (Hudson, 1990)", out.width = '100%'}
+```{r pressure, echo=FALSE, fig.cap="Fig. 1. The genealogy of a sample of five alleles, showing the time intervals between coalescent events (Hudson, 1990)", out.width = '60%'}
 knitr::include_graphics("./hudson1990_coalescence.png")
 ```  
       
@@ -582,6 +582,13 @@ Shanon-Wiener diversity index (H)
 
 ### `Epigenomics pipeline`  
 [Pipeline Code](./EpigenomicsPipeline.html)  
+
+# Group projects  
+
+
+
+
+
 
 
 
