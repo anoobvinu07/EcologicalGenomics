@@ -597,6 +597,8 @@ Shanon-Wiener diversity index (H)
 ## [Sequencing methods](https://docs.google.com/document/d/1MuXPS3hNg3wIxsKw-jQmKY7y57Ka2qqZwHYKRAbpNMw/edit?usp=sharing)
 [Tutorial on bash](https://pespenilab.github.io/Ecological-Genomics/Tutorial/2020-01-22_Command_Line_Unix.html)   
 [github cheat sheet](https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf)  
+[Epigenomics bioinformatics](https://codata-rda-advanced-bioinformatics-2018.readthedocs.io/en/latest/4.Day4.html)  
+
 
 ### [Course website](https://pespenilab.github.io/Ecological-Genomics/)  
 

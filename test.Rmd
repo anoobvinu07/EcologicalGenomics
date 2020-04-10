@@ -1,0 +1,39 @@
+---
+title: "Epigenomics"
+author: "Anoob Prakash"
+date: "25/03/2020"
+output:
+  rmarkdown::html_document:
+    theme: cosmo  
+    number_sections: false
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Bedtools results {.tabset .tabset-fade .tabset-pills}    
+
+## AA_AH_hits  
+```{r}
+AA_AH_hits <- read.csv("C:\\Epigenetics_data\\Epigenetics_data\\bed_files/AA_AH_hits.bed", sep="\t", header = FALSE)
+
+
+knitr::kable(AA_AH_hits[,c(1,10:13,16:18)], format="pandoc")
+
+```
+
+## AA_AH_uniqueHits
+```{r}
+AA_AH_unique_hits <- read.csv("C:\\Epigenetics_data\\Epigenetics_data\\bed_files/AA_AH_uniqueHits.bed", sep="\t", header = FALSE)
+
+k <- AA_AH_unique_hits[unique(AA_AH_unique_hits$V10),] # only unique 
+knitr::kable(AA_AH_unique_hits[unique(AA_AH_unique_hits$V10),c(1,10:13,16:18)], format="pandoc")
+```
