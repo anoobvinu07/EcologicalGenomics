@@ -487,7 +487,10 @@ p.df <- data.frame(sample=names(sp.means),
           methylation = sp.means)
 
 ggplot(p.df, aes(x=group, y=methylation, color=group)) + 
-    stat_summary(color="black") + geom_jitter(width=0.1, size=3) 
+    stat_summary(color="black") + geom_jitter(width=0.1, size=3) +
+  ylab("Percent Methylation") + xlab("Treatment") + theme_bw() + 
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=15,face="bold"))
 ## is the high methylation rate high in AA_F00 or is it due to it having higher mapping rate compared to the rest of the samples?? - hard to know  
 ```
 - mean and std error are represented in the plot  
@@ -789,6 +792,9 @@ df.plot <- df.out[,c(1,5:12)] %>%
 df.plot$group <- substr(df.plot$name,1,2)
 head(df.plot)
 
+
+
+
 # looking at snp LS051659.1:1214
 
 AH_snp <- df.plot %>% filter(snp=="LS051659.1:1214") %>% 
@@ -798,10 +804,42 @@ AH_snp <- df.plot %>% filter(snp=="LS051659.1:1214") %>%
 ggplotly(AH_snp)
 
 ## write bed file for intersection with genome annotation
-write.table(file = "C:\\Epigenetics_data\\Epigenetics_data\\bed_files\\AA_AH_diffmeth.bed",
-          data.frame(chr= df.out$chr, start = df.out$start, end = df.out$end),
-          row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
+# write.table(file = "C:\\Epigenetics_data\\Epigenetics_data\\bed_files\\AA_AH_diffmeth.bed",
+#           data.frame(chr= df.out$chr, start = df.out$start, end = df.out$end),
+#           row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
 
+```
+
+
+```{r}
+AH_snp1 <- df.plot %>% filter(snp=="LS274951.1:141") %>% 
+            ggplot(., aes(x=group, y=methylation, color=group, fill=group)) +
+              stat_summary(fun.data = "mean_se", size = 2) +
+              geom_jitter(width = 0.1, size=3, pch=21, color="black")  +
+            ylab("Percent Methylation") + xlab("") + theme_bw() + 
+            theme(axis.text=element_text(size=14),
+                  axis.title=element_text(size=15,face="bold"),legend.position = "none") +
+            ggtitle("Endonuclease III-like protein 1 ") + ylim(0,95)
+
+
+AH_snp2 <- df.plot %>% filter(snp=="LS068114.1:6322") %>% 
+            ggplot(., aes(x=group, y=methylation, color=group, fill=group)) +
+              stat_summary(fun.data = "mean_se", size = 2) +
+              geom_jitter(width = 0.1, size=3, pch=21, color="black")  +
+            ylab("") + xlab("") + theme_bw() + 
+            theme(axis.text=element_text(size=14),
+                  axis.title=element_text(size=15,face="bold"),legend.position = "none") +
+            ggtitle("Deoxyuridine 5’-triphosphate nucleotidohydrolase") + ylim(0,95)
+
+
+AH_snp3 <- df.plot %>% filter(snp=="LS328870.1:810") %>% 
+            ggplot(., aes(x=group, y=methylation, color=group, fill=group)) +
+              stat_summary(fun.data = "mean_se", size = 2) +
+              geom_jitter(width = 0.1, size=3, pch=21, color="black")  +
+            ylab("") + xlab("") + theme_bw() + 
+            theme(axis.text=element_text(size=14),
+                  axis.title=element_text(size=15,face="bold")) + 
+            ggtitle("Retrovirus-related Pol polyprotein from transposon 17.6") + ylim(0,95)
 ```
 
  
@@ -938,31 +976,88 @@ head(df.plot)
 
 # looking at snp LS042748.1:7742
 
-HH_snp <- df.plot %>% filter(snp=="LS042748.1:7742") %>% 
+HH_snp <- df.plot %>% filter(snp=="LS219431.1:243") %>% 
             ggplot(., aes(x=group, y=methylation, color=group, fill=group)) +
               stat_summary(fun.data = "mean_se", size = 2) +
               geom_jitter(width = 0.1, size=3, pch=21, color="black")
 ggplotly(HH_snp)
+```
 
 
-## write bed file for intersection with genome annotation
-write.table(file = "C:\\Epigenetics_data\\Epigenetics_data\\bed_files\\AA_HH_diffmeth.bed",
-          data.frame(chr= df.out$chr, start = df.out$start, end = df.out$end),
-          row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
+```{r}
+# write bed file for intersection with genome annotation
+# write.table(file = "C:\\Epigenetics_data\\Epigenetics_data\\bed_files\\AA_HH_diffmeth.bed",
+#           data.frame(chr= df.out$chr, start = df.out$start, end = df.out$end),
+#           row.names=FALSE, col.names=FALSE, quote=FALSE, sep="\t")
 
 ```
+
+```{r}
+# summary table
+df.plot_filter1 <- df.plot %>% filter(group=="AA") %>% 
+                    group_by(snp) %>% 
+                    summarize(avgMeth = mean(methylation, na.rm = TRUE))
+df.plot_filter1$Group <- "AA"
+
+df.plot_filter2 <- df.plot %>% filter(group=="HH") %>% 
+                    group_by(snp) %>% 
+                    summarize(avgMeth = mean(methylation, na.rm = TRUE))
+df.plot_filter2$Group <- "HH"
+
+df.plot_filtered <- merge(df.plot_filter1,df.plot_filter2, by="snp") 
+
+df.plot_filtered <- df.plot_filtered %>% arrange(desc(avgMeth.x))
+head(df.plot_filtered) # the highest average methylated snps
+```
+
+```{r}
+HH_snp1 <- df.plot %>% filter(snp=="LS049748.1:4514") %>% 
+            ggplot(., aes(x=group, y=methylation, color=group, fill=group)) +
+              stat_summary(fun.data = "mean_se", size = 2) +
+              geom_jitter(width = 0.1, size=3, pch=21, color="black")  +
+            ylab("Percent Methylation") + xlab("") + theme_bw() + 
+            theme(axis.text=element_text(size=14),
+                  axis.title=element_text(size=15,face="bold"),legend.position = "none") +
+            ggtitle("STE20-like serine/threonine-protein kinase") + ylim(0,95)
+
+
+HH_snp2 <- df.plot %>% filter(snp=="LS051669.1:9015") %>% 
+            ggplot(., aes(x=group, y=methylation, color=group, fill=group)) +
+              stat_summary(fun.data = "mean_se", size = 2) +
+              geom_jitter(width = 0.1, size=3, pch=21, color="black")  +
+            ylab("") + xlab("Treatment") + theme_bw() + 
+            theme(axis.text=element_text(size=14),
+                  axis.title=element_text(size=15,face="bold"),legend.position = "none") +
+            ggtitle("Probable RNA-directed DNA polymerase from transposon BS") + ylim(0,95)
+
+
+HH_snp3 <- df.plot %>% filter(snp=="LS070286.1:6277") %>% 
+            ggplot(., aes(x=group, y=methylation, color=group, fill=group)) +
+              stat_summary(fun.data = "mean_se", size = 2) +
+              geom_jitter(width = 0.1, size=3, pch=21, color="black")  +
+            ylab("") + xlab("") + theme_bw() + 
+            theme(axis.text=element_text(size=14),
+                  axis.title=element_text(size=15,face="bold")) + 
+            ggtitle("Indolethylamine N-methyltransferase") + ylim(0,95)
+```
+
 ## Plots  
 
 ```{r}
-
-AH_heat 
-
-HH_heat 
-
-
-AH_snp + HH_snp + plot_annotation(tag_levels = "A")
-
+AH_heat
 ```
+
+
+```{r}
+HH_heat
+```
+
+```{r}
+
+(AH_snp1 + AH_snp2 + AH_snp3) / (HH_snp1 + HH_snp2 + HH_snp3) + plot_annotation(tag_levels = "A")
+```
+
+
 
 
 
@@ -998,7 +1093,7 @@ awk '!seen[$8]++' AA_HH_hits.bed > AA_HH_uniqueHits.bed # save filename is hits.
 ```{r}
 AA_AH_hits <- read.csv("C:\\Epigenetics_data\\Epigenetics_data\\bed_files/AA_AH_hits.bed", sep="\t", header = FALSE)
 
-knitr::kable(AA_AH_hits[,c(1,10:13,16:18)], format="pandoc")
+knitr::kable(AA_AH_hits[,c(1:2,10:13,16:18)], format="pandoc")
 
 ```
 
@@ -1007,7 +1102,7 @@ knitr::kable(AA_AH_hits[,c(1,10:13,16:18)], format="pandoc")
 AA_AH_unique_hits <- read.csv("C:\\Epigenetics_data\\Epigenetics_data\\bed_files/AA_AH_uniqueHits.bed", sep="\t", header = FALSE)
 
 # only unique 
-knitr::kable(AA_AH_unique_hits[unique(AA_AH_unique_hits$V10),c(1,10:13,16:18)],
+knitr::kable(AA_AH_unique_hits[unique(AA_AH_unique_hits$V10),c(1:2,10:13,16:18)],
              format="pandoc")
 ```
 
@@ -1015,16 +1110,19 @@ knitr::kable(AA_AH_unique_hits[unique(AA_AH_unique_hits$V10),c(1,10:13,16:18)],
 ```{r}
 AA_HH_hits <- read.csv("C:\\Epigenetics_data\\Epigenetics_data\\bed_files/AA_HH_hits.bed", sep="\t", header = FALSE)
 
-knitr::kable(AA_HH_hits[,c(1,10:13,16:18)], format="pandoc")
+knitr::kable(AA_HH_hits[,c(1:2,10:13,16:18)], format="pandoc")
 ```
 
 ## AA_HH_uniqueHits
 ```{r}
-AA_HH_unique_hits <- read.csv("C:\\Epigenetics_data\\Epigenetics_data\\bed_files/AA_HH_uniqueHits.bed", sep="\t", header = FALSE)
+AA_HH_unique_hits <- read.csv("C:\\Epigenetics_data\\Epigenetics_data\\bed_files/AA_HH_uniqueHits.bed",
+                              sep="\t", header = FALSE)
 
 # only unique 
-knitr::kable(AA_HH_unique_hits[unique(AA_HH_unique_hits$V10),c(1,10:13,16:18)],
+knitr::kable(AA_HH_unique_hits[unique(AA_HH_unique_hits$V10),c(1:2,10:13,16:18)],
              format="pandoc")
+
+
 ```
 
 # Extra notes  
@@ -1054,4 +1152,6 @@ that code will remove duplicate lines and only print columns with the name of th
 
 
 ```
+
+
 

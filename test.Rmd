@@ -34,6 +34,6 @@ knitr::kable(AA_AH_hits[,c(1,10:13,16:18)], format="pandoc")
 ```{r}
 AA_AH_unique_hits <- read.csv("C:\\Epigenetics_data\\Epigenetics_data\\bed_files/AA_AH_uniqueHits.bed", sep="\t", header = FALSE)
 
-k <- AA_AH_unique_hits[unique(AA_AH_unique_hits$V10),] # only unique 
+# only unique 
 knitr::kable(AA_AH_unique_hits[unique(AA_AH_unique_hits$V10),c(1,10:13,16:18)], format="pandoc")
 ```
