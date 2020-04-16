@@ -1,0 +1,258 @@
+---
+title: "GWAS and GEA"
+author: "Anoob Prakash"
+date: "14/04/2020"
+output:
+  rmarkdown::html_document:
+    theme: cosmo  
+    number_sections: false
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Troubleshooting pipeline  {.tabset .tabset-fade .tabset-pills}   
+
+https://mac-theobio.github.io/QMEE/MultivariateMixed.html#mixed-models  
+
+## Estimate blups
+```{r}
+
+```
+
+## Estimate PCA scores  
+```{r}
+
+```
+
+
+## Defining variables   
+
+blups for the edge region family located on the server:  
+/data/project_data/RS_ExomeSeq/ANGSD/blups/Ht_EDGE_MD.blups  
+
+**Setting file locations**  
+```{bash eval = FALSE}
+# location of family blups for height trait 
+blups="/data/project_data/RS_ExomeSeq/ANGSD/blups"
+
+# location of the PC score files files
+PC="/data/project_data/RS_ExomeSeq/ANGSD"
+
+# output folder - also location of bam file lists  
+OUT="/data/project_data/GroupProjects/GWAS_env/"
+
+# Location of the reference genome
+REF="/data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa"
+
+## breaking into contigs to look at a smaller subset at a time  
+contigs="/data/project_data/RS_ExomeSeq/ANGSD/contig_splits"
+mycontigs="xaa"
+
+```
+
+**Make a list of .bam files**  
+```{bash eval=F}
+
+ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam >${OUT}/bam/all/all_bam.list
+
+```
+grep  
+  - source: https://www.howtogeek.com/496056/how-to-use-the-grep-command-on-linux/  
+  - Regex in grep: https://linuxize.com/post/regular-expressions-in-grep/  
+  - linux manual: http://linuxcommand.org/lc3_man_pages/grep1.html  
+```{bash eval=F}
+
+# pull inds from meta data that belong to edge pops
+
+cat /data/project_data/RS_ExomeSeq/metadata/RS_Exome_metadata.txt | grep -w "E" | cut -f1 | uniq >${OUT}/edge_ind.txt
+
+# -w      : match the whole word
+# -v      : invert match; opposite of -w 
+# cut -f1 : cut the first column  
+# uniq    : only uniques are selected
+
+## match the edge inds with bam list to create edge_bam.list
+
+ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam | grep -f ${OUT}/edge_ind.txt | uniq >${OUT}/bam/edge/edge_bam.list
+
+# -f : match pattern from a file
+
+```
+
+
+
+## GWAS Edge-subsetted  
+```{bash eval=F}
+
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge_sub/Ht_EDGE_MD_PC12_${mycontigs} \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-rf ${contigs}/${mycontigs} \
+-cov ${PC}/PCA/EDGE_PC12.txt
+
+```
+
+
+## GWAS Edge   
+```{bash eval=F}
+
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-cov ${PC}/PCA/EDGE_PC12.txt
+
+```
+
+# GWAS for height phenotype  {.tabset .tabset-fade .tabset-pills}   
+
+
+
+
+## Estimate PCA scores  
+```{r}
+
+```
+
+## Height blups
+```{r}
+
+```
+
+## Defining variables   
+
+blups for the edge region family located on the server:  
+/data/project_data/RS_ExomeSeq/ANGSD/blups/Ht_EDGE_MD.blups  
+
+**Setting file locations**  
+```{bash eval = FALSE}
+# location of family blups for height trait 
+blups="/data/project_data/RS_ExomeSeq/ANGSD/blups"
+
+# location of the PC score files files
+PC="/data/project_data/RS_ExomeSeq/ANGSD"
+
+# output folder - also location of bam file lists  
+OUT="/data/project_data/GroupProjects/GWAS_env/"
+
+# Location of the reference genome
+REF="/data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa"
+
+## breaking into contigs to look at a smaller subset at a time  
+contigs="/data/project_data/RS_ExomeSeq/ANGSD/contig_splits"
+mycontigs="xaa"
+
+```
+
+**Make a list of .bam files**  
+```{bash eval=F}
+
+ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam >${OUT}/bam/all/all_bam.list
+
+```
+
+## GWAS Height   
+```{bash eval=F}
+
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-cov ${PC}/PCA/EDGE_PC12.txt
+
+```
+
+## error 
+```{bash eval=F}
+-> angsd version: 0.931-14-gb9c8ddd (htslib: 1.10.2-19-gecf0216) build(Feb  2 2020 10:28:09)
+        -> Reading fasta: /data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa
+        -> SNP-filter using a pvalue: 1.000000e-06 correspond to 23.928127 likelihood units
+[bammer_main] 4 samples in 4 input files
+        -> Parsing 4 number of samples
+        -> Region lookup 1/1280
+The number of sequenced individuals (4) does not match the number of phenotypes (108)
+
+```
+
+
+
+
+
+zoe.m.portlas@gmail.com
+
+aehall26@gmail.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

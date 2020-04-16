@@ -37,29 +37,25 @@ knitr::opts_chunk$set(echo = TRUE)
 # Working with the terminal <a name="terminal"></a>  
 **Log into UNIX server through RStudio terminal**  
 
-Update: No need to use the ssh package, just go straight to the terminal and start typing.  
-require(ssh)
-session <- ssh_connect("ap1@pbio381.uvm.edu")
-print(session)
 
-Start a Rmarkdown file. Go to terminal on RStudio, type in the following to get root access:  
+Start a Rmarkdown file. Go to terminal on RStudio, type in the following to change the language to bash:  
 
 `/usr/bin/env bash -l`  
 
-type in your password  
+Might want to use putty software to connect to server, if for some reason the terminal throws permission denied message when trying to connect to the server using the `ssh` command.  
 
-You have root access now:
- type in the details to login to the server  
  
- `ssh servername`
+Type in the details to login to the server:  
  
- For this course, type in netID followed by the server ID. For example:
+ `ssh` `username`@`servername`  
  
- `ssh ap1@pbio381.uvm.edu`  
+ For example, type in netID followed by the server ID:  
+ 
+ `ssh netID@pbio381.uvm.edu`  
 
-Next type in your net ID password, and now you can accesss the UNIX shell like you would be accesssing through the terminal on MAC or through PUTTY on Windows.
+Next type in your net ID password, and now you can accesss the UNIX shell like you would be accesssing through the terminal on MAC or through PUTTY on Windows.  
 
-If you want run the codes that you currently have Rmarkdown, use `Ctrl + Shift + Enter`
+If you want run the codes that you currently have Rmarkdown, use `Ctrl + Alt + Enter`  
 
 Additonal tip for Windows users, there is an alterantive to putty on windows store. Just download and install ubuntu and it works as a linux shell. It seems more integrated and part of the windows system, however you cannot save login credentials like you can on putty.  
    
@@ -101,7 +97,7 @@ Once you remove a file with `rm` command on the UNIX server, its lost for good. 
 2. List hidden files (`ll -a`)  
 3. Open **.bashrc** - contains settings for when you want to interact with the server - with `vim .bashrc` or any other text editor you use on the server.  
 4. Type in the following command under **# User specific aliases and functions** by going into the insert mode (by pressing *i* on the keyboard): `alias rm='rm -i'`  
-5. Your file should look like thw following  
+5. Your file should look like the following  
 ```{}
 # .bashrc
 
@@ -583,12 +579,12 @@ Shanon-Wiener diversity index (H)
 ### `Epigenomics pipeline`  
 [Pipeline Code](./EpigenomicsPipeline.html)  
 
-# Group projects  
+# Group projects   
 
 GWAS and env group  
 
-
-
+### `GWAS and GEA`  
+[Pipeline Code](./GWAS_GEA.html)  
 
 
 

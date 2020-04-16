@@ -12,7 +12,7 @@
 <meta name="author" content="Anoob Prakash" />
 
 
-<title>Ecological Genomics</title>
+<title>GWAS and GEA</title>
 
 <script>/*! jQuery v1.11.3 | (c) 2005, 2015 jQuery Foundation, Inc. | jquery.org/license */
 !function(a,b){"object"==typeof module&&"object"==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error("jQuery requires a window with a document");return b(a)}:b(a)}("undefined"!=typeof window?window:this,function(a,b){var c=[],d=c.slice,e=c.concat,f=c.push,g=c.indexOf,h={},i=h.toString,j=h.hasOwnProperty,k={},l="1.11.3",m=function(a,b){return new m.fn.init(a,b)},n=/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,o=/^-ms-/,p=/-([\da-z])/gi,q=function(a,b){return b.toUpperCase()};m.fn=m.prototype={jquery:l,constructor:m,selector:"",length:0,toArray:function(){return d.call(this)},get:function(a){return null!=a?0>a?this[a+this.length]:this[a]:d.call(this)},pushStack:function(a){var b=m.merge(this.constructor(),a);return b.prevObject=this,b.context=this.context,b},each:function(a,b){return m.each(this,a,b)},map:function(a){return this.pushStack(m.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return this.pushStack(d.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(0>a?b:0);return this.pushStack(c>=0&&b>c?[this[c]]:[])},end:function(){return this.prevObject||this.constructor(null)},push:f,sort:c.sort,splice:c.splice},m.extend=m.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for("boolean"==typeof g&&(j=g,g=arguments[h]||{},h++),"object"==typeof g||m.isFunction(g)||(g={}),h===i&&(g=this,h--);i>h;h++)if(null!=(e=arguments[h]))for(d in e)a=g[d],c=e[d],g!==c&&(j&&c&&(m.isPlainObject(c)||(b=m.isArray(c)))?(b?(b=!1,f=a&&m.isArray(a)?a:[]):f=a&&m.isPlainObject(a)?a:{},g[d]=m.extend(j,f,c)):void 0!==c&&(g[d]=c));return g},m.extend({expando:"jQuery"+(l+Math.random()).replace(/\D/g,""),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return"function"===m.type(a)},isArray:Array.isArray||function(a){return"array"===m.type(a)},isWindow:function(a){return null!=a&&a==a.window},isNumeric:function(a){return!m.isArray(a)&&a-parseFloat(a)+1>=0},isEmptyObject:function(a){var b;for(b in a)return!1;return!0},isPlainObject:function(a){var b;if(!a||"object"!==m.type(a)||a.nodeType||m.isWindow(a))return!1;try{if(a.constructor&&!j.call(a,"constructor")&&!j.call(a.constructor.prototype,"isPrototypeOf"))return!1}catch(c){return!1}if(k.ownLast)for(b in a)return j.call(a,b);for(b in a);return void 0===b||j.call(a,b)},type:function(a){return null==a?a+"":"object"==typeof a||"function"==typeof a?h[i.call(a)]||"object":typeof a},globalEval:function(b){b&&m.trim(b)&&(a.execScript||function(b){a.eval.call(a,b)})(b)},camelCase:function(a){return a.replace(o,"ms-").replace(p,q)},nodeName:function(a,b){return a.nodeName&&a.nodeName.toLowerCase()===b.toLowerCase()},each:function(a,b,c){var d,e=0,f=a.length,g=r(a);if(c){if(g){for(;f>e;e++)if(d=b.apply(a[e],c),d===!1)break}else for(e in a)if(d=b.apply(a[e],c),d===!1)break}else if(g){for(;f>e;e++)if(d=b.call(a[e],e,a[e]),d===!1)break}else for(e in a)if(d=b.call(a[e],e,a[e]),d===!1)break;return a},trim:function(a){return null==a?"":(a+"").replace(n,"")},makeArray:function(a,b){var c=b||[];return null!=a&&(r(Object(a))?m.merge(c,"string"==typeof a?[a]:a):f.call(c,a)),c},inArray:function(a,b,c){var d;if(b){if(g)return g.call(b,a,c);for(d=b.length,c=c?0>c?Math.max(0,d+c):c:0;d>c;c++)if(c in b&&b[c]===a)return c}return-1},merge:function(a,b){var c=+b.length,d=0,e=a.length;while(c>d)a[e++]=b[d++];if(c!==c)while(void 0!==b[d])a[e++]=b[d++];return a.length=e,a},grep:function(a,b,c){for(var d,e=[],f=0,g=a.length,h=!c;g>f;f++)d=!b(a[f],f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,f=0,g=a.length,h=r(a),i=[];if(h)for(;g>f;f++)d=b(a[f],f,c),null!=d&&i.push(d);else for(f in a)d=b(a[f],f,c),null!=d&&i.push(d);return e.apply([],i)},guid:1,proxy:function(a,b){var c,e,f;return"string"==typeof b&&(f=a[b],b=a,a=f),m.isFunction(a)?(c=d.call(arguments,2),e=function(){return a.apply(b||this,c.concat(d.call(arguments)))},e.guid=a.guid=a.guid||m.guid++,e):void 0},now:function(){return+new Date},support:k}),m.each("Boolean Number String Function Array Date RegExp Object Error".split(" "),function(a,b){h["[object "+b+"]"]=b.toLowerCase()});function r(a){var b="length"in a&&a.length,c=m.type(a);return"function"===c||m.isWindow(a)?!1:1===a.nodeType&&b?!0:"array"===c||0===b||"number"==typeof b&&b>0&&b-1 in a}var s=function(a){var b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u="sizzle"+1*new Date,v=a.document,w=0,x=0,y=ha(),z=ha(),A=ha(),B=function(a,b){return a===b&&(l=!0),0},C=1<<31,D={}.hasOwnProperty,E=[],F=E.pop,G=E.push,H=E.push,I=E.slice,J=function(a,b){for(var c=0,d=a.length;d>c;c++)if(a[c]===b)return c;return-1},K="checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",L="[\\x20\\t\\r\\n\\f]",M="(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",N=M.replace("w","w#"),O="\\["+L+"*("+M+")(?:"+L+"*([*^$|!~]?=)"+L+"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|("+N+"))|)"+L+"*\\]",P=":("+M+")(?:\\((('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|((?:\\\\.|[^\\\\()[\\]]|"+O+")*)|.*)\\)|)",Q=new RegExp(L+"+","g"),R=new RegExp("^"+L+"+|((?:^|[^\\\\])(?:\\\\.)*)"+L+"+$","g"),S=new RegExp("^"+L+"*,"+L+"*"),T=new RegExp("^"+L+"*([>+~]|"+L+")"+L+"*"),U=new RegExp("="+L+"*([^\\]'\"]*?)"+L+"*\\]","g"),V=new RegExp(P),W=new RegExp("^"+N+"$"),X={ID:new RegExp("^#("+M+")"),CLASS:new RegExp("^\\.("+M+")"),TAG:new RegExp("^("+M.replace("w","w*")+")"),ATTR:new RegExp("^"+O),PSEUDO:new RegExp("^"+P),CHILD:new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\("+L+"*(even|odd|(([+-]|)(\\d*)n|)"+L+"*(?:([+-]|)"+L+"*(\\d+)|))"+L+"*\\)|)","i"),bool:new RegExp("^(?:"+K+")$","i"),needsContext:new RegExp("^"+L+"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\("+L+"*((?:-\\d)?\\d*)"+L+"*\\)|)(?=[^-]|$)","i")},Y=/^(?:input|select|textarea|button)$/i,Z=/^h\d$/i,$=/^[^{]+\{\s*\[native \w/,_=/^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,aa=/[+~]/,ba=/'|\\/g,ca=new RegExp("\\\\([\\da-f]{1,6}"+L+"?|("+L+")|.)","ig"),da=function(a,b,c){var d="0x"+b-65536;return d!==d||c?b:0>d?String.fromCharCode(d+65536):String.fromCharCode(d>>10|55296,1023&d|56320)},ea=function(){m()};try{H.apply(E=I.call(v.childNodes),v.childNodes),E[v.childNodes.length].nodeType}catch(fa){H={apply:E.length?function(a,b){G.apply(a,I.call(b))}:function(a,b){var c=a.length,d=0;while(a[c++]=b[d++]);a.length=c-1}}}function ga(a,b,d,e){var f,h,j,k,l,o,r,s,w,x;if((b?b.ownerDocument||b:v)!==n&&m(b),b=b||n,d=d||[],k=b.nodeType,"string"!=typeof a||!a||1!==k&&9!==k&&11!==k)return d;if(!e&&p){if(11!==k&&(f=_.exec(a)))if(j=f[1]){if(9===k){if(h=b.getElementById(j),!h||!h.parentNode)return d;if(h.id===j)return d.push(h),d}else if(b.ownerDocument&&(h=b.ownerDocument.getElementById(j))&&t(b,h)&&h.id===j)return d.push(h),d}else{if(f[2])return H.apply(d,b.getElementsByTagName(a)),d;if((j=f[3])&&c.getElementsByClassName)return H.apply(d,b.getElementsByClassName(j)),d}if(c.qsa&&(!q||!q.test(a))){if(s=r=u,w=b,x=1!==k&&a,1===k&&"object"!==b.nodeName.toLowerCase()){o=g(a),(r=b.getAttribute("id"))?s=r.replace(ba,"\\$&"):b.setAttribute("id",s),s="[id='"+s+"'] ",l=o.length;while(l--)o[l]=s+ra(o[l]);w=aa.test(a)&&pa(b.parentNode)||b,x=o.join(",")}if(x)try{return H.apply(d,w.querySelectorAll(x)),d}catch(y){}finally{r||b.removeAttribute("id")}}}return i(a.replace(R,"$1"),b,d,e)}function ha(){var a=[];function b(c,e){return a.push(c+" ")>d.cacheLength&&delete b[a.shift()],b[c+" "]=e}return b}function ia(a){return a[u]=!0,a}function ja(a){var b=n.createElement("div");try{return!!a(b)}catch(c){return!1}finally{b.parentNode&&b.parentNode.removeChild(b),b=null}}function ka(a,b){var c=a.split("|"),e=a.length;while(e--)d.attrHandle[c[e]]=b}function la(a,b){var c=b&&a,d=c&&1===a.nodeType&&1===b.nodeType&&(~b.sourceIndex||C)-(~a.sourceIndex||C);if(d)return d;if(c)while(c=c.nextSibling)if(c===b)return-1;return a?1:-1}function ma(a){return function(b){var c=b.nodeName.toLowerCase();return"input"===c&&b.type===a}}function na(a){return function(b){var c=b.nodeName.toLowerCase();return("input"===c||"button"===c)&&b.type===a}}function oa(a){return ia(function(b){return b=+b,ia(function(c,d){var e,f=a([],c.length,b),g=f.length;while(g--)c[e=f[g]]&&(c[e]=!(d[e]=c[e]))})})}function pa(a){return a&&"undefined"!=typeof a.getElementsByTagName&&a}c=ga.support={},f=ga.isXML=function(a){var b=a&&(a.ownerDocument||a).documentElement;return b?"HTML"!==b.nodeName:!1},m=ga.setDocument=function(a){var b,e,g=a?a.ownerDocument||a:v;return g!==n&&9===g.nodeType&&g.documentElement?(n=g,o=g.documentElement,e=g.defaultView,e&&e!==e.top&&(e.addEventListener?e.addEventListener("unload",ea,!1):e.attachEvent&&e.attachEvent("onunload",ea)),p=!f(g),c.attributes=ja(function(a){return a.className="i",!a.getAttribute("className")}),c.getElementsByTagName=ja(function(a){return a.appendChild(g.createComment("")),!a.getElementsByTagName("*").length}),c.getElementsByClassName=$.test(g.getElementsByClassName),c.getById=ja(function(a){return o.appendChild(a).id=u,!g.getElementsByName||!g.getElementsByName(u).length}),c.getById?(d.find.ID=function(a,b){if("undefined"!=typeof b.getElementById&&p){var c=b.getElementById(a);return c&&c.parentNode?[c]:[]}},d.filter.ID=function(a){var b=a.replace(ca,da);return function(a){return a.getAttribute("id")===b}}):(delete d.find.ID,d.filter.ID=function(a){var b=a.replace(ca,da);return function(a){var c="undefined"!=typeof a.getAttributeNode&&a.getAttributeNode("id");return c&&c.value===b}}),d.find.TAG=c.getElementsByTagName?function(a,b){return"undefined"!=typeof b.getElementsByTagName?b.getElementsByTagName(a):c.qsa?b.querySelectorAll(a):void 0}:function(a,b){var c,d=[],e=0,f=b.getElementsByTagName(a);if("*"===a){while(c=f[e++])1===c.nodeType&&d.push(c);return d}return f},d.find.CLASS=c.getElementsByClassName&&function(a,b){return p?b.getElementsByClassName(a):void 0},r=[],q=[],(c.qsa=$.test(g.querySelectorAll))&&(ja(function(a){o.appendChild(a).innerHTML="<a id='"+u+"'></a><select id='"+u+"-\f]' msallowcapture=''><option selected=''></option></select>",a.querySelectorAll("[msallowcapture^='']").length&&q.push("[*^$]="+L+"*(?:''|\"\")"),a.querySelectorAll("[selected]").length||q.push("\\["+L+"*(?:value|"+K+")"),a.querySelectorAll("[id~="+u+"-]").length||q.push("~="),a.querySelectorAll(":checked").length||q.push(":checked"),a.querySelectorAll("a#"+u+"+*").length||q.push(".#.+[+~]")}),ja(function(a){var b=g.createElement("input");b.setAttribute("type","hidden"),a.appendChild(b).setAttribute("name","D"),a.querySelectorAll("[name=d]").length&&q.push("name"+L+"*[*^$|!~]?="),a.querySelectorAll(":enabled").length||q.push(":enabled",":disabled"),a.querySelectorAll("*,:x"),q.push(",.*:")})),(c.matchesSelector=$.test(s=o.matches||o.webkitMatchesSelector||o.mozMatchesSelector||o.oMatchesSelector||o.msMatchesSelector))&&ja(function(a){c.disconnectedMatch=s.call(a,"div"),s.call(a,"[s!='']:x"),r.push("!=",P)}),q=q.length&&new RegExp(q.join("|")),r=r.length&&new RegExp(r.join("|")),b=$.test(o.compareDocumentPosition),t=b||$.test(o.contains)?function(a,b){var c=9===a.nodeType?a.documentElement:a,d=b&&b.parentNode;return a===d||!(!d||1!==d.nodeType||!(c.contains?c.contains(d):a.compareDocumentPosition&&16&a.compareDocumentPosition(d)))}:function(a,b){if(b)while(b=b.parentNode)if(b===a)return!0;return!1},B=b?function(a,b){if(a===b)return l=!0,0;var d=!a.compareDocumentPosition-!b.compareDocumentPosition;return d?d:(d=(a.ownerDocument||a)===(b.ownerDocument||b)?a.compareDocumentPosition(b):1,1&d||!c.sortDetached&&b.compareDocumentPosition(a)===d?a===g||a.ownerDocument===v&&t(v,a)?-1:b===g||b.ownerDocument===v&&t(v,b)?1:k?J(k,a)-J(k,b):0:4&d?-1:1)}:function(a,b){if(a===b)return l=!0,0;var c,d=0,e=a.parentNode,f=b.parentNode,h=[a],i=[b];if(!e||!f)return a===g?-1:b===g?1:e?-1:f?1:k?J(k,a)-J(k,b):0;if(e===f)return la(a,b);c=a;while(c=c.parentNode)h.unshift(c);c=b;while(c=c.parentNode)i.unshift(c);while(h[d]===i[d])d++;return d?la(h[d],i[d]):h[d]===v?-1:i[d]===v?1:0},g):n},ga.matches=function(a,b){return ga(a,null,null,b)},ga.matchesSelector=function(a,b){if((a.ownerDocument||a)!==n&&m(a),b=b.replace(U,"='$1']"),!(!c.matchesSelector||!p||r&&r.test(b)||q&&q.test(b)))try{var d=s.call(a,b);if(d||c.disconnectedMatch||a.document&&11!==a.document.nodeType)return d}catch(e){}return ga(b,n,null,[a]).length>0},ga.contains=function(a,b){return(a.ownerDocument||a)!==n&&m(a),t(a,b)},ga.attr=function(a,b){(a.ownerDocument||a)!==n&&m(a);var e=d.attrHandle[b.toLowerCase()],f=e&&D.call(d.attrHandle,b.toLowerCase())?e(a,b,!p):void 0;return void 0!==f?f:c.attributes||!p?a.getAttribute(b):(f=a.getAttributeNode(b))&&f.specified?f.value:null},ga.error=function(a){throw new Error("Syntax error, unrecognized expression: "+a)},ga.uniqueSort=function(a){var b,d=[],e=0,f=0;if(l=!c.detectDuplicates,k=!c.sortStable&&a.slice(0),a.sort(B),l){while(b=a[f++])b===a[f]&&(e=d.push(f));while(e--)a.splice(d[e],1)}return k=null,a},e=ga.getText=function(a){var b,c="",d=0,f=a.nodeType;if(f){if(1===f||9===f||11===f){if("string"==typeof a.textContent)return a.textContent;for(a=a.firstChild;a;a=a.nextSibling)c+=e(a)}else if(3===f||4===f)return a.nodeValue}else while(b=a[d++])c+=e(b);return c},d=ga.selectors={cacheLength:50,createPseudo:ia,match:X,attrHandle:{},find:{},relative:{">":{dir:"parentNode",first:!0}," ":{dir:"parentNode"},"+":{dir:"previousSibling",first:!0},"~":{dir:"previousSibling"}},preFilter:{ATTR:function(a){return a[1]=a[1].replace(ca,da),a[3]=(a[3]||a[4]||a[5]||"").replace(ca,da),"~="===a[2]&&(a[3]=" "+a[3]+" "),a.slice(0,4)},CHILD:function(a){return a[1]=a[1].toLowerCase(),"nth"===a[1].slice(0,3)?(a[3]||ga.error(a[0]),a[4]=+(a[4]?a[5]+(a[6]||1):2*("even"===a[3]||"odd"===a[3])),a[5]=+(a[7]+a[8]||"odd"===a[3])):a[3]&&ga.error(a[0]),a},PSEUDO:function(a){var b,c=!a[6]&&a[2];return X.CHILD.test(a[0])?null:(a[3]?a[2]=a[4]||a[5]||"":c&&V.test(c)&&(b=g(c,!0))&&(b=c.indexOf(")",c.length-b)-c.length)&&(a[0]=a[0].slice(0,b),a[2]=c.slice(0,b)),a.slice(0,3))}},filter:{TAG:function(a){var b=a.replace(ca,da).toLowerCase();return"*"===a?function(){return!0}:function(a){return a.nodeName&&a.nodeName.toLowerCase()===b}},CLASS:function(a){var b=y[a+" "];return b||(b=new RegExp("(^|"+L+")"+a+"("+L+"|$)"))&&y(a,function(a){return b.test("string"==typeof a.className&&a.className||"undefined"!=typeof a.getAttribute&&a.getAttribute("class")||"")})},ATTR:function(a,b,c){return function(d){var e=ga.attr(d,a);return null==e?"!="===b:b?(e+="","="===b?e===c:"!="===b?e!==c:"^="===b?c&&0===e.indexOf(c):"*="===b?c&&e.indexOf(c)>-1:"$="===b?c&&e.slice(-c.length)===c:"~="===b?(" "+e.replace(Q," ")+" ").indexOf(c)>-1:"|="===b?e===c||e.slice(0,c.length+1)===c+"-":!1):!0}},CHILD:function(a,b,c,d,e){var f="nth"!==a.slice(0,3),g="last"!==a.slice(-4),h="of-type"===b;return 1===d&&0===e?function(a){return!!a.parentNode}:function(b,c,i){var j,k,l,m,n,o,p=f!==g?"nextSibling":"previousSibling",q=b.parentNode,r=h&&b.nodeName.toLowerCase(),s=!i&&!h;if(q){if(f){while(p){l=b;while(l=l[p])if(h?l.nodeName.toLowerCase()===r:1===l.nodeType)return!1;o=p="only"===a&&!o&&"nextSibling"}return!0}if(o=[g?q.firstChild:q.lastChild],g&&s){k=q[u]||(q[u]={}),j=k[a]||[],n=j[0]===w&&j[1],m=j[0]===w&&j[2],l=n&&q.childNodes[n];while(l=++n&&l&&l[p]||(m=n=0)||o.pop())if(1===l.nodeType&&++m&&l===b){k[a]=[w,n,m];break}}else if(s&&(j=(b[u]||(b[u]={}))[a])&&j[0]===w)m=j[1];else while(l=++n&&l&&l[p]||(m=n=0)||o.pop())if((h?l.nodeName.toLowerCase()===r:1===l.nodeType)&&++m&&(s&&((l[u]||(l[u]={}))[a]=[w,m]),l===b))break;return m-=e,m===d||m%d===0&&m/d>=0}}},PSEUDO:function(a,b){var c,e=d.pseudos[a]||d.setFilters[a.toLowerCase()]||ga.error("unsupported pseudo: "+a);return e[u]?e(b):e.length>1?(c=[a,a,"",b],d.setFilters.hasOwnProperty(a.toLowerCase())?ia(function(a,c){var d,f=e(a,b),g=f.length;while(g--)d=J(a,f[g]),a[d]=!(c[d]=f[g])}):function(a){return e(a,0,c)}):e}},pseudos:{not:ia(function(a){var b=[],c=[],d=h(a.replace(R,"$1"));return d[u]?ia(function(a,b,c,e){var f,g=d(a,null,e,[]),h=a.length;while(h--)(f=g[h])&&(a[h]=!(b[h]=f))}):function(a,e,f){return b[0]=a,d(b,null,f,c),b[0]=null,!c.pop()}}),has:ia(function(a){return function(b){return ga(a,b).length>0}}),contains:ia(function(a){return a=a.replace(ca,da),function(b){return(b.textContent||b.innerText||e(b)).indexOf(a)>-1}}),lang:ia(function(a){return W.test(a||"")||ga.error("unsupported lang: "+a),a=a.replace(ca,da).toLowerCase(),function(b){var c;do if(c=p?b.lang:b.getAttribute("xml:lang")||b.getAttribute("lang"))return c=c.toLowerCase(),c===a||0===c.indexOf(a+"-");while((b=b.parentNode)&&1===b.nodeType);return!1}}),target:function(b){var c=a.location&&a.location.hash;return c&&c.slice(1)===b.id},root:function(a){return a===o},focus:function(a){return a===n.activeElement&&(!n.hasFocus||n.hasFocus())&&!!(a.type||a.href||~a.tabIndex)},enabled:function(a){return a.disabled===!1},disabled:function(a){return a.disabled===!0},checked:function(a){var b=a.nodeName.toLowerCase();return"input"===b&&!!a.checked||"option"===b&&!!a.selected},selected:function(a){return a.parentNode&&a.parentNode.selectedIndex,a.selected===!0},empty:function(a){for(a=a.firstChild;a;a=a.nextSibling)if(a.nodeType<6)return!1;return!0},parent:function(a){return!d.pseudos.empty(a)},header:function(a){return Z.test(a.nodeName)},input:function(a){return Y.test(a.nodeName)},button:function(a){var b=a.nodeName.toLowerCase();return"input"===b&&"button"===a.type||"button"===b},text:function(a){var b;return"input"===a.nodeName.toLowerCase()&&"text"===a.type&&(null==(b=a.getAttribute("type"))||"text"===b.toLowerCase())},first:oa(function(){return[0]}),last:oa(function(a,b){return[b-1]}),eq:oa(function(a,b,c){return[0>c?c+b:c]}),even:oa(function(a,b){for(var c=0;b>c;c+=2)a.push(c);return a}),odd:oa(function(a,b){for(var c=1;b>c;c+=2)a.push(c);return a}),lt:oa(function(a,b,c){for(var d=0>c?c+b:c;--d>=0;)a.push(d);return a}),gt:oa(function(a,b,c){for(var d=0>c?c+b:c;++d<b;)a.push(d);return a})}},d.pseudos.nth=d.pseudos.eq;for(b in{radio:!0,checkbox:!0,file:!0,password:!0,image:!0})d.pseudos[b]=ma(b);for(b in{submit:!0,reset:!0})d.pseudos[b]=na(b);function qa(){}qa.prototype=d.filters=d.pseudos,d.setFilters=new qa,g=ga.tokenize=function(a,b){var c,e,f,g,h,i,j,k=z[a+" "];if(k)return b?0:k.slice(0);h=a,i=[],j=d.preFilter;while(h){(!c||(e=S.exec(h)))&&(e&&(h=h.slice(e[0].length)||h),i.push(f=[])),c=!1,(e=T.exec(h))&&(c=e.shift(),f.push({value:c,type:e[0].replace(R," ")}),h=h.slice(c.length));for(g in d.filter)!(e=X[g].exec(h))||j[g]&&!(e=j[g](e))||(c=e.shift(),f.push({value:c,type:g,matches:e}),h=h.slice(c.length));if(!c)break}return b?h.length:h?ga.error(a):z(a,i).slice(0)};function ra(a){for(var b=0,c=a.length,d="";c>b;b++)d+=a[b].value;return d}function sa(a,b,c){var d=b.dir,e=c&&"parentNode"===d,f=x++;return b.first?function(b,c,f){while(b=b[d])if(1===b.nodeType||e)return a(b,c,f)}:function(b,c,g){var h,i,j=[w,f];if(g){while(b=b[d])if((1===b.nodeType||e)&&a(b,c,g))return!0}else while(b=b[d])if(1===b.nodeType||e){if(i=b[u]||(b[u]={}),(h=i[d])&&h[0]===w&&h[1]===f)return j[2]=h[2];if(i[d]=j,j[2]=a(b,c,g))return!0}}}function ta(a){return a.length>1?function(b,c,d){var e=a.length;while(e--)if(!a[e](b,c,d))return!1;return!0}:a[0]}function ua(a,b,c){for(var d=0,e=b.length;e>d;d++)ga(a,b[d],c);return c}function va(a,b,c,d,e){for(var f,g=[],h=0,i=a.length,j=null!=b;i>h;h++)(f=a[h])&&(!c||c(f,d,e))&&(g.push(f),j&&b.push(h));return g}function wa(a,b,c,d,e,f){return d&&!d[u]&&(d=wa(d)),e&&!e[u]&&(e=wa(e,f)),ia(function(f,g,h,i){var j,k,l,m=[],n=[],o=g.length,p=f||ua(b||"*",h.nodeType?[h]:h,[]),q=!a||!f&&b?p:va(p,m,a,h,i),r=c?e||(f?a:o||d)?[]:g:q;if(c&&c(q,r,h,i),d){j=va(r,n),d(j,[],h,i),k=j.length;while(k--)(l=j[k])&&(r[n[k]]=!(q[n[k]]=l))}if(f){if(e||a){if(e){j=[],k=r.length;while(k--)(l=r[k])&&j.push(q[k]=l);e(null,r=[],j,i)}k=r.length;while(k--)(l=r[k])&&(j=e?J(f,l):m[k])>-1&&(f[j]=!(g[j]=l))}}else r=va(r===g?r.splice(o,r.length):r),e?e(null,g,r,i):H.apply(g,r)})}function xa(a){for(var b,c,e,f=a.length,g=d.relative[a[0].type],h=g||d.relative[" "],i=g?1:0,k=sa(function(a){return a===b},h,!0),l=sa(function(a){return J(b,a)>-1},h,!0),m=[function(a,c,d){var e=!g&&(d||c!==j)||((b=c).nodeType?k(a,c,d):l(a,c,d));return b=null,e}];f>i;i++)if(c=d.relative[a[i].type])m=[sa(ta(m),c)];else{if(c=d.filter[a[i].type].apply(null,a[i].matches),c[u]){for(e=++i;f>e;e++)if(d.relative[a[e].type])break;return wa(i>1&&ta(m),i>1&&ra(a.slice(0,i-1).concat({value:" "===a[i-2].type?"*":""})).replace(R,"$1"),c,e>i&&xa(a.slice(i,e)),f>e&&xa(a=a.slice(e)),f>e&&ra(a))}m.push(c)}return ta(m)}function ya(a,b){var c=b.length>0,e=a.length>0,f=function(f,g,h,i,k){var l,m,o,p=0,q="0",r=f&&[],s=[],t=j,u=f||e&&d.find.TAG("*",k),v=w+=null==t?1:Math.random()||.1,x=u.length;for(k&&(j=g!==n&&g);q!==x&&null!=(l=u[q]);q++){if(e&&l){m=0;while(o=a[m++])if(o(l,g,h)){i.push(l);break}k&&(w=v)}c&&((l=!o&&l)&&p--,f&&r.push(l))}if(p+=q,c&&q!==p){m=0;while(o=b[m++])o(r,s,g,h);if(f){if(p>0)while(q--)r[q]||s[q]||(s[q]=F.call(i));s=va(s)}H.apply(i,s),k&&!f&&s.length>0&&p+b.length>1&&ga.uniqueSort(i)}return k&&(w=v,j=t),r};return c?ia(f):f}return h=ga.compile=function(a,b){var c,d=[],e=[],f=A[a+" "];if(!f){b||(b=g(a)),c=b.length;while(c--)f=xa(b[c]),f[u]?d.push(f):e.push(f);f=A(a,ya(e,d)),f.selector=a}return f},i=ga.select=function(a,b,e,f){var i,j,k,l,m,n="function"==typeof a&&a,o=!f&&g(a=n.selector||a);if(e=e||[],1===o.length){if(j=o[0]=o[0].slice(0),j.length>2&&"ID"===(k=j[0]).type&&c.getById&&9===b.nodeType&&p&&d.relative[j[1].type]){if(b=(d.find.ID(k.matches[0].replace(ca,da),b)||[])[0],!b)return e;n&&(b=b.parentNode),a=a.slice(j.shift().value.length)}i=X.needsContext.test(a)?0:j.length;while(i--){if(k=j[i],d.relative[l=k.type])break;if((m=d.find[l])&&(f=m(k.matches[0].replace(ca,da),aa.test(j[0].type)&&pa(b.parentNode)||b))){if(j.splice(i,1),a=f.length&&ra(j),!a)return H.apply(e,f),e;break}}}return(n||h(a,o))(f,b,!p,e,aa.test(a)&&pa(b.parentNode)||b),e},c.sortStable=u.split("").sort(B).join("")===u,c.detectDuplicates=!!l,m(),c.sortDetached=ja(function(a){return 1&a.compareDocumentPosition(n.createElement("div"))}),ja(function(a){return a.innerHTML="<a href='#'></a>","#"===a.firstChild.getAttribute("href")})||ka("type|href|height|width",function(a,b,c){return c?void 0:a.getAttribute(b,"type"===b.toLowerCase()?1:2)}),c.attributes&&ja(function(a){return a.innerHTML="<input/>",a.firstChild.setAttribute("value",""),""===a.firstChild.getAttribute("value")})||ka("value",function(a,b,c){return c||"input"!==a.nodeName.toLowerCase()?void 0:a.defaultValue}),ja(function(a){return null==a.getAttribute("disabled")})||ka(K,function(a,b,c){var d;return c?void 0:a[b]===!0?b.toLowerCase():(d=a.getAttributeNode(b))&&d.specified?d.value:null}),ga}(a);m.find=s,m.expr=s.selectors,m.expr[":"]=m.expr.pseudos,m.unique=s.uniqueSort,m.text=s.getText,m.isXMLDoc=s.isXML,m.contains=s.contains;var t=m.expr.match.needsContext,u=/^<(\w+)\s*\/?>(?:<\/\1>|)$/,v=/^.[^:#\[\.,]*$/;function w(a,b,c){if(m.isFunction(b))return m.grep(a,function(a,d){return!!b.call(a,d,a)!==c});if(b.nodeType)return m.grep(a,function(a){return a===b!==c});if("string"==typeof b){if(v.test(b))return m.filter(b,a,c);b=m.filter(b,a)}return m.grep(a,function(a){return m.inArray(a,b)>=0!==c})}m.filter=function(a,b,c){var d=b[0];return c&&(a=":not("+a+")"),1===b.length&&1===d.nodeType?m.find.matchesSelector(d,a)?[d]:[]:m.find.matches(a,m.grep(b,function(a){return 1===a.nodeType}))},m.fn.extend({find:function(a){var b,c=[],d=this,e=d.length;if("string"!=typeof a)return this.pushStack(m(a).filter(function(){for(b=0;e>b;b++)if(m.contains(d[b],this))return!0}));for(b=0;e>b;b++)m.find(a,d[b],c);return c=this.pushStack(e>1?m.unique(c):c),c.selector=this.selector?this.selector+" "+a:a,c},filter:function(a){return this.pushStack(w(this,a||[],!1))},not:function(a){return this.pushStack(w(this,a||[],!0))},is:function(a){return!!w(this,"string"==typeof a&&t.test(a)?m(a):a||[],!1).length}});var x,y=a.document,z=/^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,A=m.fn.init=function(a,b){var c,d;if(!a)return this;if("string"==typeof a){if(c="<"===a.charAt(0)&&">"===a.charAt(a.length-1)&&a.length>=3?[null,a,null]:z.exec(a),!c||!c[1]&&b)return!b||b.jquery?(b||x).find(a):this.constructor(b).find(a);if(c[1]){if(b=b instanceof m?b[0]:b,m.merge(this,m.parseHTML(c[1],b&&b.nodeType?b.ownerDocument||b:y,!0)),u.test(c[1])&&m.isPlainObject(b))for(c in b)m.isFunction(this[c])?this[c](b[c]):this.attr(c,b[c]);return this}if(d=y.getElementById(c[2]),d&&d.parentNode){if(d.id!==c[2])return x.find(a);this.length=1,this[0]=d}return this.context=y,this.selector=a,this}return a.nodeType?(this.context=this[0]=a,this.length=1,this):m.isFunction(a)?"undefined"!=typeof x.ready?x.ready(a):a(m):(void 0!==a.selector&&(this.selector=a.selector,this.context=a.context),m.makeArray(a,this))};A.prototype=m.fn,x=m(y);var B=/^(?:parents|prev(?:Until|All))/,C={children:!0,contents:!0,next:!0,prev:!0};m.extend({dir:function(a,b,c){var d=[],e=a[b];while(e&&9!==e.nodeType&&(void 0===c||1!==e.nodeType||!m(e).is(c)))1===e.nodeType&&d.push(e),e=e[b];return d},sibling:function(a,b){for(var c=[];a;a=a.nextSibling)1===a.nodeType&&a!==b&&c.push(a);return c}}),m.fn.extend({has:function(a){var b,c=m(a,this),d=c.length;return this.filter(function(){for(b=0;d>b;b++)if(m.contains(this,c[b]))return!0})},closest:function(a,b){for(var c,d=0,e=this.length,f=[],g=t.test(a)||"string"!=typeof a?m(a,b||this.context):0;e>d;d++)for(c=this[d];c&&c!==b;c=c.parentNode)if(c.nodeType<11&&(g?g.index(c)>-1:1===c.nodeType&&m.find.matchesSelector(c,a))){f.push(c);break}return this.pushStack(f.length>1?m.unique(f):f)},index:function(a){return a?"string"==typeof a?m.inArray(this[0],m(a)):m.inArray(a.jquery?a[0]:a,this):this[0]&&this[0].parentNode?this.first().prevAll().length:-1},add:function(a,b){return this.pushStack(m.unique(m.merge(this.get(),m(a,b))))},addBack:function(a){return this.add(null==a?this.prevObject:this.prevObject.filter(a))}});function D(a,b){do a=a[b];while(a&&1!==a.nodeType);return a}m.each({parent:function(a){var b=a.parentNode;return b&&11!==b.nodeType?b:null},parents:function(a){return m.dir(a,"parentNode")},parentsUntil:function(a,b,c){return m.dir(a,"parentNode",c)},next:function(a){return D(a,"nextSibling")},prev:function(a){return D(a,"previousSibling")},nextAll:function(a){return m.dir(a,"nextSibling")},prevAll:function(a){return m.dir(a,"previousSibling")},nextUntil:function(a,b,c){return m.dir(a,"nextSibling",c)},prevUntil:function(a,b,c){return m.dir(a,"previousSibling",c)},siblings:function(a){return m.sibling((a.parentNode||{}).firstChild,a)},children:function(a){return m.sibling(a.firstChild)},contents:function(a){return m.nodeName(a,"iframe")?a.contentDocument||a.contentWindow.document:m.merge([],a.childNodes)}},function(a,b){m.fn[a]=function(c,d){var e=m.map(this,b,c);return"Until"!==a.slice(-5)&&(d=c),d&&"string"==typeof d&&(e=m.filter(d,e)),this.length>1&&(C[a]||(e=m.unique(e)),B.test(a)&&(e=e.reverse())),this.pushStack(e)}});var E=/\S+/g,F={};function G(a){var b=F[a]={};return m.each(a.match(E)||[],function(a,c){b[c]=!0}),b}m.Callbacks=function(a){a="string"==typeof a?F[a]||G(a):m.extend({},a);var b,c,d,e,f,g,h=[],i=!a.once&&[],j=function(l){for(c=a.memory&&l,d=!0,f=g||0,g=0,e=h.length,b=!0;h&&e>f;f++)if(h[f].apply(l[0],l[1])===!1&&a.stopOnFalse){c=!1;break}b=!1,h&&(i?i.length&&j(i.shift()):c?h=[]:k.disable())},k={add:function(){if(h){var d=h.length;!function f(b){m.each(b,function(b,c){var d=m.type(c);"function"===d?a.unique&&k.has(c)||h.push(c):c&&c.length&&"string"!==d&&f(c)})}(arguments),b?e=h.length:c&&(g=d,j(c))}return this},remove:function(){return h&&m.each(arguments,function(a,c){var d;while((d=m.inArray(c,h,d))>-1)h.splice(d,1),b&&(e>=d&&e--,f>=d&&f--)}),this},has:function(a){return a?m.inArray(a,h)>-1:!(!h||!h.length)},empty:function(){return h=[],e=0,this},disable:function(){return h=i=c=void 0,this},disabled:function(){return!h},lock:function(){return i=void 0,c||k.disable(),this},locked:function(){return!i},fireWith:function(a,c){return!h||d&&!i||(c=c||[],c=[a,c.slice?c.slice():c],b?i.push(c):j(c)),this},fire:function(){return k.fireWith(this,arguments),this},fired:function(){return!!d}};return k},m.extend({Deferred:function(a){var b=[["resolve","done",m.Callbacks("once memory"),"resolved"],["reject","fail",m.Callbacks("once memory"),"rejected"],["notify","progress",m.Callbacks("memory")]],c="pending",d={state:function(){return c},always:function(){return e.done(arguments).fail(arguments),this},then:function(){var a=arguments;return m.Deferred(function(c){m.each(b,function(b,f){var g=m.isFunction(a[b])&&a[b];e[f[1]](function(){var a=g&&g.apply(this,arguments);a&&m.isFunction(a.promise)?a.promise().done(c.resolve).fail(c.reject).progress(c.notify):c[f[0]+"With"](this===d?c.promise():this,g?[a]:arguments)})}),a=null}).promise()},promise:function(a){return null!=a?m.extend(a,d):d}},e={};return d.pipe=d.then,m.each(b,function(a,f){var g=f[2],h=f[3];d[f[1]]=g.add,h&&g.add(function(){c=h},b[1^a][2].disable,b[2][2].lock),e[f[0]]=function(){return e[f[0]+"With"](this===e?d:this,arguments),this},e[f[0]+"With"]=g.fireWith}),d.promise(e),a&&a.call(e,e),e},when:function(a){var b=0,c=d.call(arguments),e=c.length,f=1!==e||a&&m.isFunction(a.promise)?e:0,g=1===f?a:m.Deferred(),h=function(a,b,c){return function(e){b[a]=this,c[a]=arguments.length>1?d.call(arguments):e,c===i?g.notifyWith(b,c):--f||g.resolveWith(b,c)}},i,j,k;if(e>1)for(i=new Array(e),j=new Array(e),k=new Array(e);e>b;b++)c[b]&&m.isFunction(c[b].promise)?c[b].promise().done(h(b,k,c)).fail(g.reject).progress(h(b,j,i)):--f;return f||g.resolveWith(k,c),g.promise()}});var H;m.fn.ready=function(a){return m.ready.promise().done(a),this},m.extend({isReady:!1,readyWait:1,holdReady:function(a){a?m.readyWait++:m.ready(!0)},ready:function(a){if(a===!0?!--m.readyWait:!m.isReady){if(!y.body)return setTimeout(m.ready);m.isReady=!0,a!==!0&&--m.readyWait>0||(H.resolveWith(y,[m]),m.fn.triggerHandler&&(m(y).triggerHandler("ready"),m(y).off("ready")))}}});function I(){y.addEventListener?(y.removeEventListener("DOMContentLoaded",J,!1),a.removeEventListener("load",J,!1)):(y.detachEvent("onreadystatechange",J),a.detachEvent("onload",J))}function J(){(y.addEventListener||"load"===event.type||"complete"===y.readyState)&&(I(),m.ready())}m.ready.promise=function(b){if(!H)if(H=m.Deferred(),"complete"===y.readyState)setTimeout(m.ready);else if(y.addEventListener)y.addEventListener("DOMContentLoaded",J,!1),a.addEventListener("load",J,!1);else{y.attachEvent("onreadystatechange",J),a.attachEvent("onload",J);var c=!1;try{c=null==a.frameElement&&y.documentElement}catch(d){}c&&c.doScroll&&!function e(){if(!m.isReady){try{c.doScroll("left")}catch(a){return setTimeout(e,50)}I(),m.ready()}}()}return H.promise(b)};var K="undefined",L;for(L in m(k))break;k.ownLast="0"!==L,k.inlineBlockNeedsLayout=!1,m(function(){var a,b,c,d;c=y.getElementsByTagName("body")[0],c&&c.style&&(b=y.createElement("div"),d=y.createElement("div"),d.style.cssText="position:absolute;border:0;width:0;height:0;top:0;left:-9999px",c.appendChild(d).appendChild(b),typeof b.style.zoom!==K&&(b.style.cssText="display:inline;margin:0;border:0;padding:1px;width:1px;zoom:1",k.inlineBlockNeedsLayout=a=3===b.offsetWidth,a&&(c.style.zoom=1)),c.removeChild(d))}),function(){var a=y.createElement("div");if(null==k.deleteExpando){k.deleteExpando=!0;try{delete a.test}catch(b){k.deleteExpando=!1}}a=null}(),m.acceptData=function(a){var b=m.noData[(a.nodeName+" ").toLowerCase()],c=+a.nodeType||1;return 1!==c&&9!==c?!1:!b||b!==!0&&a.getAttribute("classid")===b};var M=/^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,N=/([A-Z])/g;function O(a,b,c){if(void 0===c&&1===a.nodeType){var d="data-"+b.replace(N,"-$1").toLowerCase();if(c=a.getAttribute(d),"string"==typeof c){try{c="true"===c?!0:"false"===c?!1:"null"===c?null:+c+""===c?+c:M.test(c)?m.parseJSON(c):c}catch(e){}m.data(a,b,c)}else c=void 0}return c}function P(a){var b;for(b in a)if(("data"!==b||!m.isEmptyObject(a[b]))&&"toJSON"!==b)return!1;
@@ -1527,916 +1527,197 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Ecological Genomics</h1>
+<h1 class="title toc-ignore">GWAS and GEA</h1>
 <h4 class="author">Anoob Prakash</h4>
+<h4 class="date">14/04/2020</h4>
 
 </div>
 
 
-<p><strong>Affiliation</strong>: Keller Lab; Department of Plant Biology, University of Vermont<br />
-<strong>E-mail contact</strong>: <a href="mailto:anoob.prakash@uvm.edu" class="email">anoob.prakash@uvm.edu</a><br />
-<strong>Start Date</strong>: 2020-01-13<br />
-<strong>End Date</strong>: 2020-05-08<br />
-<strong>Project Descriptions</strong>: Climate change adaptation in red spruce</p>
-<!-- ## Table of Contents:   -->
-<!-- [Working with the terminal ](#terminal)   -->
-<!-- [bash commands](#basicBash)  -->
-<!-- [Working with fastq](./fastq.html)    -->
-<!-- [Trimmomatic]()   -->
-<!-- [Course Materials](https://docs.google.com/document/d/1MuXPS3hNg3wIxsKw-jQmKY7y57Ka2qqZwHYKRAbpNMw/edit?usp=sharing)  -->
-<!-- [UNIX cheatsheet](https://files.fosswire.com/2007/08/fwunixref.pdf) -->
-<hr />
-<div id="working-with-the-terminal" class="section level1">
-<h1>Working with the terminal <a name="terminal"></a></h1>
-<p><strong>Log into UNIX server through RStudio terminal</strong></p>
-<p>Start a Rmarkdown file. Go to terminal on RStudio, type in the following to change the language to bash:</p>
-<p><code>/usr/bin/env bash -l</code></p>
-<p>Might want to use putty software to connect to server, if for some reason the terminal throws permission denied message when trying to connect to the server using the <code>ssh</code> command.</p>
-<p>Type in the details to login to the server:</p>
-<p><code>ssh</code> <code>username</code>@<code>servername</code></p>
-<p>For example, type in netID followed by the server ID:</p>
-<p><code>ssh netID@pbio381.uvm.edu</code></p>
-<p>Next type in your net ID password, and now you can accesss the UNIX shell like you would be accesssing through the terminal on MAC or through PUTTY on Windows.</p>
-<p>If you want run the codes that you currently have Rmarkdown, use <code>Ctrl + Alt + Enter</code></p>
-<p>Additonal tip for Windows users, there is an alterantive to putty on windows store. Just download and install ubuntu and it works as a linux shell. It seems more integrated and part of the windows system, however you cannot save login credentials like you can on putty.</p>
-<p>More details on RStudio terminal can be found here: <a href="https://support.rstudio.com/hc/en-us/articles/115010737148-Using-the-RStudio-Terminal" class="uri">https://support.rstudio.com/hc/en-us/articles/115010737148-Using-the-RStudio-Terminal</a></p>
-<p><strong>Location of shared data on the server:</strong> <code>/data/project_data/RS_ExomeSeq</code></p>
-<hr />
-<div id="bash-commands" class="section level2">
-<h2>bash commands <a name="basicBash"></a></h2>
-<table>
-<colgroup>
-<col width="85%"></col>
-<col width="14%"></col>
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th>Commands</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Finding what directory you’re in:</td>
-<td><code>pwd</code></td>
-</tr>
-<tr class="even">
-<td>Listing files in your current directory:</td>
-<td><code>ll</code> <code>ls</code></td>
-</tr>
-<tr class="odd">
-<td>Changing to a new directory:</td>
-<td><code>cd</code></td>
-</tr>
-<tr class="even">
-<td>Making a new folder</td>
-<td><code>mkdir</code> <em>foldername</em></td>
-</tr>
-<tr class="odd">
-<td>Copying or moving files from one location to another</td>
-<td><code>cp</code> <em>filename destinationpath/</em>, <code>mv</code> <em>filename destinationpath/</em></td>
-</tr>
-<tr class="even">
-<td>Peeking into the first or last few lines of a file</td>
-<td><code>head</code> <em>filename</em>, <code>tail</code> <em>filename</em></td>
-</tr>
-<tr class="odd">
-<td>Searching within a file for a match</td>
-<td><code>grep</code> <strong>search string</strong> <em>filename</em></td>
-</tr>
-<tr class="even">
-<td>Outputing the results of a command to a new file</td>
-<td><code>grep</code> <strong>search string</strong> <em>filename</em> &gt;outputfilename</td>
-</tr>
-<tr class="odd">
-<td>Using the “pipe” to send the output of one command to the input of another</td>
-<td><code>grep</code> **text</td>
-</tr>
-<tr class="even">
-<td>Removing files or folders [use with caution as the action is irreversible]</td>
-<td><code>rm</code></td>
-</tr>
-</tbody>
-</table>
-<p style="color:green">
-Github specific
-</p>
-<table>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th>Commands</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Cloning a git repo</td>
-<td><code>git clone</code></td>
-</tr>
-<tr class="even">
-<td>Pull from the server</td>
-<td><code>git pull</code></td>
-</tr>
-<tr class="odd">
-<td>Git add</td>
-<td><code>git add --all</code></td>
-</tr>
-<tr class="even">
-<td>Commit changes</td>
-<td><code>git commit -m</code> <em>comment about the commit</em></td>
-</tr>
-<tr class="odd">
-<td>Push to the server</td>
-<td><code>git push</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Tweaking the rm command on the server</strong><br />
-Once you remove a file with <code>rm</code> command on the UNIX server, its lost for good. In order to make sure that its not an accidental deletition, we can make the server ask the user to confirm before deletion. For that, the following steps need to be followed.<br />
-1. Go to your home directory (<code>cd ~/</code>)<br />
-2. List hidden files (<code>ll -a</code>)<br />
-3. Open <strong>.bashrc</strong> - contains settings for when you want to interact with the server - with <code>vim .bashrc</code> or any other text editor you use on the server.<br />
-4. Type in the following command under <strong># User specific aliases and functions</strong> by going into the insert mode (by pressing <em>i</em> on the keyboard): <code>alias rm=&#39;rm -i&#39;</code><br />
-5. Your file should look like the following</p>
-<pre><code># .bashrc
+<div id="troubleshooting-pipeline" class="section level1 tabset tabset-fade tabset-pills">
+<h1>Troubleshooting pipeline</h1>
+<p><a href="https://mac-theobio.github.io/QMEE/MultivariateMixed.html#mixed-models" class="uri">https://mac-theobio.github.io/QMEE/MultivariateMixed.html#mixed-models</a></p>
+<div id="estimate-blups" class="section level2">
+<h2>Estimate blups</h2>
+</div>
+<div id="estimate-pca-scores" class="section level2">
+<h2>Estimate PCA scores</h2>
+</div>
+<div id="defining-variables" class="section level2">
+<h2>Defining variables</h2>
+<p>blups for the edge region family located on the server:<br />
+/data/project_data/RS_ExomeSeq/ANGSD/blups/Ht_EDGE_MD.blups</p>
+<p><strong>Setting file locations</strong></p>
+<pre class="bash"><code># location of family blups for height trait 
+blups=&quot;/data/project_data/RS_ExomeSeq/ANGSD/blups&quot;
 
-  # Source global definitions
-  if [ -f /etc/bashrc ]; then
-          . /etc/bashrc
-  fi
+# location of the PC score files files
+PC=&quot;/data/project_data/RS_ExomeSeq/ANGSD&quot;
 
-  # Uncomment the following line if you don&#39;t like systemctl&#39;s auto-paging feature:
-  # export SYSTEMD_PAGER=
+# output folder - also location of bam file lists  
+OUT=&quot;/data/project_data/GroupProjects/GWAS_env/&quot;
 
-  # User specific aliases and functions
+# Location of the reference genome
+REF=&quot;/data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa&quot;
 
-  alias rm=&#39;rm -i&#39;</code></pre>
-<ol start="6" style="list-style-type: decimal">
-<li>Press <strong>esc</strong> on the keyboard to exit out of the edit mode.<br />
-</li>
-<li>Type <code>:wq</code> (<code>w</code> is to write the changes and <code>q</code> is to quit out of the editor)<br />
-</li>
-<li><code>exit</code> out of the server for the changes to take place.</li>
-</ol>
+## breaking into contigs to look at a smaller subset at a time  
+contigs=&quot;/data/project_data/RS_ExomeSeq/ANGSD/contig_splits&quot;
+mycontigs=&quot;xaa&quot;
+</code></pre>
+<p><strong>Make a list of .bam files</strong></p>
+<pre class="bash"><code>
+ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam &gt;${OUT}/bam/all/all_bam.list
+</code></pre>
+<p>grep<br />
+- source: <a href="https://www.howtogeek.com/496056/how-to-use-the-grep-command-on-linux/" class="uri">https://www.howtogeek.com/496056/how-to-use-the-grep-command-on-linux/</a><br />
+- Regex in grep: <a href="https://linuxize.com/post/regular-expressions-in-grep/" class="uri">https://linuxize.com/post/regular-expressions-in-grep/</a><br />
+- linux manual: <a href="http://linuxcommand.org/lc3_man_pages/grep1.html" class="uri">http://linuxcommand.org/lc3_man_pages/grep1.html</a></p>
+<pre class="bash"><code>
+# pull inds from meta data that belong to edge pops
+
+cat /data/project_data/RS_ExomeSeq/metadata/RS_Exome_metadata.txt | grep -w &quot;E&quot; | cut -f1 | uniq &gt;${OUT}/edge_ind.txt
+
+# -w      : match the whole word
+# -v      : invert match; opposite of -w 
+# cut -f1 : cut the first column  
+# uniq    : only uniques are selected
+
+## match the edge inds with bam list to create edge_bam.list
+
+ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam | grep -f ${OUT}/edge_ind.txt | uniq &gt;${OUT}/bam/edge/edge_bam.list
+
+# -f : match pattern from a file
+</code></pre>
 </div>
-<div id="file-transfer-protocol" class="section level2">
-<h2>File transfer protocol</h2>
-<p>Files can be transfered from the server to the local machine through pushing it to the github. However, when the files are too large to commit a push to the GitHub server, a file transfer software like <a href="https://winscp.net/eng/index.php">WinSCP</a> is required ( <a href="https://filezilla-project.org/?AFFILIATE=6732&amp;__c=1">FileZilla</a> or <a href="https://cyberduck.io/">Cyberduck</a> for Mac ). Such transfer clients helps to establish a secure connection and carry out file transfer between a local and a remote computer. Just the server credentials are required to start using the software. Make sure the connection type is SFTP, which stands for SSH File Transfer Protocol, or Secure File Transfer Protocol.</p>
+<div id="gwas-edge-subsetted" class="section level2">
+<h2>GWAS Edge-subsetted</h2>
+<pre class="bash"><code>
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge_sub/Ht_EDGE_MD_PC12_${mycontigs} \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-rf ${contigs}/${mycontigs} \
+-cov ${PC}/PCA/EDGE_PC12.txt
+</code></pre>
 </div>
-</div>
-<div id="population-genomics" class="section level1">
-<h1>Population genomics</h1>
-<p>Study Species: Red Spruce (<em>Picea rubens</em>)</p>
-<ul>
-<li>It is a coniferous tree that plays a prominent role in montane communities throughout the Appalachians.<br />
-</li>
-<li>It thrives in the cool, moist climates of the high elevation mountains of the Apppalachians and northward along the coastal areas of Atlantic Canada.<br />
-</li>
-<li>Towards the southern ranges of the population, they are mostly limited to higher altitudes, existing in the form of “sky islands”<br />
-</li>
-<li>The trees retreated to the mountain top refugia as the climate warmed. this caused them to be highly isolated from other stands.<br />
-</li>
-<li>The effect of environmental change is difficult can be tracked via changes in the species abundance and distribution across the latitude.</li>
-</ul>
-<p>Challenges: The effect of climate change is difficult to differentiate between demographic history (<span class="math inline">\(\Delta\)</span>abundance and <span class="math inline">\(\Delta\)</span>distribution) of the species or selection acting on it.</p>
-<div id="why-population-genomics" class="section level2">
-<h2>Why population genomics:</h2>
-<p>Why study across the genome?</p>
-<ol style="list-style-type: decimal">
-<li>Genomic context</li>
-</ol>
-<ul>
-<li>To recognise the huge amount of variation in the genome through sampling
-<ul>
-<li>RADseq can help with that<br />
-</li>
-</ul></li>
-<li>The <strong>effect of genentic drift is global and selection is local</strong> in the genome<br />
-</li>
-<li>Small population sizes and drift act on the entire genome.</li>
-</ul>
-<ol start="2" style="list-style-type: decimal">
-<li>Demographic history</li>
-</ol>
-<ul>
-<li><p>Effective population size (<span class="math inline">\(N_e\)</span>)</p></li>
-<li><p>Migration (gene flow)</p>
-<ul>
-<li>migration amoung populations -&gt; “genetic populations” aka “demes”</li>
-</ul></li>
-<li><p>Divergence times</p>
-<ul>
-<li>divergence time between demes</li>
-</ul></li>
-<li><p>Wright Fisher model</p>
-<ul>
-<li>everyone has equal chance of mating</li>
-</ul></li>
-<li><p>Coalscent theory</p>
-<ul>
-<li><p>The model of gene variants sampled from a popultion maybe have originated from a common ancestor.</p></li>
-<li><p>In an expanding population, coalescent events are more frequent in past and less frequent in the present due to larger <span class="math inline">\(N_e\)</span>.</p></li>
-<li><p>High rate of coalescence can be a reason to differentiate populations. Since coalescence events are more frequent with in a population than if it was a single big population.</p></li>
-<li><p>tMRCA - stands for time to the most recent common ancestor</p></li>
-<li><p>The concept and mathematical proof for coalescent theory was brought forward by John Kingman</p></li>
-<li><p>Watterson put forth the estimator</p></li>
-<li><p>Tajima - Tajima’s D</p></li>
-<li><p>Hudson - more recently developed gene genealogies computational approaches</p></li>
-<li><p><span class="math inline">\(\pi\)</span> is an estimator of <span class="math inline">\(\theta\)</span>.</p></li>
-</ul></li>
-</ul>
-<div class="figure">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAnoAAAJFCAMAAAB9WKpGAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAMAUExURf///wAAAPf39+bv5ubm3tbOztbW3sW9vQgACBAZGRAICCEZISkpKUI6QmNja1JaWrW9vc7OzqWtraWcpbW1rZSMlIyMhDExMToxOlJKUpScnGtza3t7c2NaWkJKSoSEhBljShneexneMRmcexmcMbXmpd6Ua0JjhM6UpbWUa2sQSlree1reMVqce1qcMWsxGa2U3jEQSoxjnLXm79aczpQQe3OcnN7mrWsxSilavSkZvQhavQgZvYyUY/daKfcZKfecKWuc72ucxWvO5r1je9YQe2vOrdZrGdYpGRkxStac76VrGaUpGVprvRDv5lopvRCt5hDvrRCtrdZKGdYIGaVKGaUIGVpKvRDO5loIvRCM5hDOrRCMrfdaeyla7ykZ76Va76Xva6XeOik6hKUZ76WcOggQQqVaxaXFa6XeECkQhKUZxaWcEJQQnPcZeyneWineECmcWimcEPece5Qxewha7wgZ74Ra74Tva4TeOgg6hIQZ74ScOoRaxYTFa4TeEAgQhIQZxYScEAjeWgjeEAicWgicEPfeKdZrSmNjjNYpSqVrSqUpShBjlIxac9ZKStYISqVKSqUIShBjc9Zr79bve1pr70Lv5vfee9bvOjprGYyc71o6lFop70Kt5tYp79atOntjOkLvrUKtrYycxdZrxdbFe9bvEBBrGVoQlNYpxdatEHtjEGvv5r1jnNYQnGvvrVrvWlrvEFqtWlqtEHsQGYzO5t5je9Yxe4zOrdZK79bvWlpK70LO5tbOOjpKGVo6c1oI70KM5tYI79aMOlpjOkLOrUKMrdZKxdbFWtbOEBBKGVoQc9YIxdaMEFpjEFrOWlrOEFqMWlqMEFoQGfel1vdC1vdz1vcQ1pQxnPfezozv5t5jnNYxnIzvrUJjSrXmzjEQCNa9pa293hAxENa95joQIToxEPf/e3tSWnNzWkIxUt7vztbv7xAxKebW91JrWvfW99bW7wgIGaW1nJR7c969vbXOzub39wAQCObW3ggZCBAZCAAACPf//wAAALOOYRwAAAEAdFJOU////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wBT9wclAAAACXBIWXMAABcRAAAXEQHKJvM/AABCYUlEQVR4Xu2d23LjutKYBUAECwRFADxBpEjoNk/wv2MezC+Rq+gilSpVrWhqYmXbLHlVAIr2eGZ8kC2C4ulbe49IWZZ1aDa6G31YzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMfBsszuDm/G9Qczsz0ybwDtTQvWju+ZNDCJujmZkWgT4gKgjoo8zf1m5iT8NZ781YwAcZdxzOdttawPiyvvcXIX1MDs3xzEx7PFBQmNtcpocF4mlW5FzLIBJRnocCLXAJQOnUD52ZaRUfBOYmX28RCjPqk90qhgsRyJ1clxzGCgCf14+cmWkTSMFe/ysCmqJ4RVOeq0d1WKRAFakiElUFeCze935nZr4NBUQGTFIpII5zHKcrQDAqCOM/nUjbfynwoj/tv5mZ68Fa9NZFwPYhXMC4VCtJPFkt0h1lrIi1utsC8l7YZWbm+yBOT1nEY461b6FXXanWO0/hhdgyeaIsNloPzKI30z4o3NH8+bgk2tZLFPCXCAscMepJY/URMceUZ1oHhUQ+ix5fAxqiUAEPh0pqcdNSh42tN8dWZtrncL8jz6IHGQA7QoAWOKcE8hhIclcvuMG84s60DhQsiJvjRcSUZEGgVhUMmfRVFsRwEWqP9+URMzOtcQjdlx1azKP7WLixdnYrHhV5KCBc4HA/x/Vm2md2IGZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZsYIcsOqOZyZ6RJcqLmr1MwtcJQXNoczM10iKIiaw5mZDkE5AO+0VJ6ZsQk+AnCc671nuidcA8DmBisz3ZMCAF4aT83MdEcterOLO9M5gmnR26XN2cxMZxRUi97TtjmbmekMo/S0nzG7uDPdArGqRW82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" alt="Fig. 1. The genealogy of a sample of five alleles, showing the time intervals between coalescent events (Hudson, 1990)" width="60%" />
-<p class="caption">
-Fig. 1. The genealogy of a sample of five alleles, showing the time intervals between coalescent events (Hudson, 1990)
-</p>
-</div>
-<ul>
-<li>Site Frequency Spectrum (SFS)
-<ul>
-<li>number of individuals (frequency) plotted against number of differentiated SNPS (polymorphisms)</li>
-</ul></li>
-</ul>
-<ol start="3" style="list-style-type: decimal">
-<li>Selection</li>
-</ol>
-</div>
-<div id="the-pipeline-for-cleaning-genomic-data" class="section level2">
-<h2>The pipeline for cleaning genomic data</h2>
-</div>
-<div id="population-xgl" class="section level2">
-<h2>Population: <code>XGL</code></h2>
-<ol style="list-style-type: decimal">
-<li><p>Visualize, Clean, Visualize</p>
-<p><strong>Visualize</strong><br />
-Visualize the quality of raw data (Program: <code>FastQC</code>)</p>
-<p><strong>Clean</strong><br />
-Clean raw data (Program: Trimmomatic)</p>
-<p><strong>Visualize</strong><br />
-Visualize the quality of cleaned data (Program: <code>FastQC</code>)</p></li>
-<li><p>Calculate the number of cleaned, high quality reads going into mapping</p></li>
-<li><p><strong>Mapping</strong>: Map (a.k.a. Align) cleaned reads from each sample to the reference assembly to generate sequence alignment files (Program: bwa, Input: .fastq, Output: .sam).</p>
-3.1 Mapping cleaned and trimmed reads against reference genome
-<ul>
-<li>reference genome from Norway spruce <a href="http://congenie.org/">Congenie</a><br />
-</li>
-<li>This reduced reference contains:
-<ul>
-<li>668,091,227 bp (~668 Mbp) in 33,679 contigs<br />
-</li>
-<li>The mean (median) contig size is 10.5 (12.9) kbp<br />
-</li>
-<li>The N50 of the reduced reference is 101,375 bp</li>
-</ul></li>
-</ul></li>
-<li><p>Remove PCR duplicates identified during mapping, and calculate alignment statistics (% of reads mapping succesully, mapping quality scores, average depth of coverage per individual)</p></li>
-<li><p>Estimating diversity and population structure</p></li>
-</ol>
-</div>
-<div id="popgen-pipeline" class="section level2">
-<h2><code>POPGEN pipeline</code></h2>
-<p><a href="./fastq.html">Pipeline Code</a></p>
+<div id="gwas-edge" class="section level2">
+<h2>GWAS Edge</h2>
+<pre class="bash"><code>
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-cov ${PC}/PCA/EDGE_PC12.txt
+</code></pre>
 </div>
 </div>
-<div id="transcriptomics" class="section level1">
-<h1>Transcriptomics</h1>
-<div id="objectives" class="section level2">
-<h2>Objectives</h2>
-<ol style="list-style-type: decimal">
-<li>Review Red Spruce ecology and biogeography and the transcriptomics experimental design.<br />
-</li>
-<li>Articulate the questions we can address and hypotheses we can test with this experimental design.<br />
-</li>
-<li>Understand the general work flow or “pipeline” for processing and analyzing RNAseq data.<br />
-</li>
-<li>Review how to make/write a bash script and how write a script to process files in batches.<br />
-</li>
-<li>Visualize and interpret Illumina data quality (Run FastQC on raw and cleaned reads).<br />
-</li>
-<li>Start mapping reads and quantifying abundance simultaneously using Salmon.<br />
-</li>
-<li>Import quant.sf files generated by Salmon into DESeq2 for analysis and visualization.</li>
-</ol>
+<div id="gwas-for-height-phenotype" class="section level1 tabset tabset-fade tabset-pills">
+<h1>GWAS for height phenotype</h1>
+<div id="estimate-pca-scores-1" class="section level2">
+<h2>Estimate PCA scores</h2>
 </div>
-<div id="transcriptomics-experiment" class="section level2">
-<h2>Transcriptomics experiment</h2>
-<p>Red spruce is a montane coniferous tree that inhabits cool moist habitats in the northeast. Occasionally it also less ideal sites that are warmer and drier, particularly driven by microsite differences in aspect and substrate (rocky scree slopes exposed to direct sun). The purpose of this experiment was to sample red spruce genetic variation from sites that were polarized into cool &amp; wet vs. hot and dry based on historic climate (based on Bio18 (precip of warmest quarter) and Bio5 (temp of warmest month), and to assess the gene expression responses of individuals from these habitats in response to experimental treatments of heat and heat+drought.</p>
+<div id="height-blups" class="section level2">
+<h2>Height blups</h2>
 </div>
-<div id="notes" class="section level2 tabset tabset-fade tabset-pills">
-<h2>Notes</h2>
-<p>Transcriptomics:<br />
-- <code>Experimentally</code> hold / control environmental consitions constant to reveal genetically controlled differences of phenotype at the molecular levels</p>
-<p>Phenotype:<br />
-- Characteristics of an organisms that can be observed<br />
-- Range of observations for phenotype: It ranges from Morphological scale (color) to the Cellular and molecular level (disease resistance/susceptibility)</p>
-<div id="central-dogma-of-molecular-biology" class="section level3">
-<h3>Central dogma of molecular biology</h3>
-<ul>
-<li><p>DNA —–transcription—-&gt; RNA ——-translation———&gt; Protein = phenotype of interest</p></li>
-<li>reverse ecology- signatures from DNA to indicate the phenotypes</li>
-<li>transcriptomics: measures functional expression in route to a specific phenotype</li>
-<li>mutation - coding regions- protein functions- phenotype
-<ul>
-<li>splice site variation - intron exon</li>
-<li>promoter and enhancers affecting expression level in the cells and timing of expression or the cell/tissue type in which the gene is expressed, conditions of expression</li>
-<li>microRNA- modifications at the RNA level</li>
-</ul></li>
-<li>Proteins- post translational modifications i.e. phosphorylation</li>
-<li>Epigenetic modifications</li>
-<li><p>Benefits: active expression good link to phenotype, global/unbiased, illumina (cheap), de novo transcriptome</p></li>
-</ul>
-<p><strong>P = G + E + (G <span class="math inline">\(\times\)</span> E)</strong><br />
-- control E- hold it constant</p>
-<p>Experimentally induce the phenotype of interest<br />
-<strong>goal: molecular underpinnings of a phenotype</strong></p>
-<p><strong>Question</strong>: what do you want to know/what’s your hypothesis? this will effect the factors</p>
-<p><strong>Factors to consider while doing transcriptomics</strong><br />
-- Common gardens : controlling the environmental condition<br />
-- Treatments / conditions: related to phenotype of interest<br />
-- Population - to see transcriptionally controlled differences betwenn populations - Tissue, cell, life history stage<br />
-- Transgenerational environment<br />
-- Can have a large effect<br />
-- Might need CG of atleast three generations<br />
-- Needs money and foresight for long lived species like trees<br />
-- sex of the organism and reproductive stage can affect the gene expression</p>
+<div id="defining-variables-1" class="section level2">
+<h2>Defining variables</h2>
+<p>blups for the edge region family located on the server:<br />
+/data/project_data/RS_ExomeSeq/ANGSD/blups/Ht_EDGE_MD.blups</p>
+<p><strong>Setting file locations</strong></p>
+<pre class="bash"><code># location of family blups for height trait 
+blups=&quot;/data/project_data/RS_ExomeSeq/ANGSD/blups&quot;
+
+# location of the PC score files files
+PC=&quot;/data/project_data/RS_ExomeSeq/ANGSD&quot;
+
+# output folder - also location of bam file lists  
+OUT=&quot;/data/project_data/GroupProjects/GWAS_env/&quot;
+
+# Location of the reference genome
+REF=&quot;/data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa&quot;
+
+## breaking into contigs to look at a smaller subset at a time  
+contigs=&quot;/data/project_data/RS_ExomeSeq/ANGSD/contig_splits&quot;
+mycontigs=&quot;xaa&quot;
+</code></pre>
+<p><strong>Make a list of .bam files</strong></p>
+<pre class="bash"><code>
+ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam &gt;${OUT}/bam/all/all_bam.list
+</code></pre>
 </div>
-<div id="workflow" class="section level3">
-<h3>Workflow</h3>
-<ol style="list-style-type: decimal">
-<li>careful experimental design
-<ul>
-<li>question, hypothesis, broad ’omics, a priori hypothesis<br />
-</li>
-<li>Factors<br />
-</li>
-</ul></li>
-<li>Experiment
-<ul>
-<li>sample tissues individuals<br />
-</li>
-<li>save RNA
-<ul>
-<li>extract, prepare, sequence- whole mRNA sequencing or 3’ tag sequencing<br />
-</li>
-</ul></li>
-</ul></li>
-<li>Process and analyze data
-<ul>
-<li>check quality –&gt; clean –&gt; check quality again<br />
-</li>
-<li>map to reference transcriptome and extract count data (how many reads aligned to a particular gene?)<br />
-</li>
-<li>normalization step<br />
-</li>
-<li>count data matrix<br />
-</li>
-<li>use factors to run statistical analysis i.e. ANOVA<br />
-</li>
-<li>counts can be used to make reaction norms across different conditions
-<ul>
-<li>expression ~ treatment + family + treatment*family<br />
-</li>
-</ul></li>
-</ul></li>
-<li>GO enrichment functional analysis:
-<ul>
-<li>GO, network analysis, identify gene correlations in expression, identify the function of correlated genes, generate diversity stats, integrate microbiome data, integrate with epigenetic and proteomic data, and environmental data</li>
-</ul></li>
-</ol>
+<div id="gwas-height" class="section level2">
+<h2>GWAS Height</h2>
+<pre class="bash"><code>
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-cov ${PC}/PCA/EDGE_PC12.txt
+</code></pre>
 </div>
-<div id="outline" class="section level3">
-<h3>Outline</h3>
-</div>
-</div>
-<div id="differential-gene-expression" class="section level2">
-<h2>Differential gene expression</h2>
-<ul>
-<li>Diffrences in transcript abundance bw experimental group or pops<br />
-</li>
-<li>To understand why specific genes are changing<br />
-</li>
-<li>How genotype leads to phenotypes: control for the environment to parse out the effects due to G and GxE</li>
-</ul>
-<p>Framework of DGE<br />
-Sample prep –&gt; RNA extraction –&gt; library prep –&gt; Sequencing—[bioinfomatics pipeline]—&gt;Quality Control (fastqc,trimmomatic)–&gt;Mapping and counting(salmon)–&gt; Normalization</p>
-<p>Normalization<br />
-- Data matrix/gene count table</p>
-<table>
-<thead>
-<tr class="header">
-<th>SlNo.</th>
-<th>Sample1</th>
-<th>Sample2</th>
-<th>Sample3</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Gene1</td>
-<td>120</td>
-<td>60</td>
-<td>22</td>
-</tr>
-<tr class="even">
-<td>Gene2</td>
-<td>50</td>
-<td>25</td>
-<td>9</td>
-</tr>
-<tr class="odd">
-<td>Gene3</td>
-<td>75</td>
-<td>35</td>
-<td>14</td>
-</tr>
-<tr class="even">
-<td>Gene4</td>
-<td>0</td>
-<td>0</td>
-<td>200</td>
-</tr>
-<tr class="odd">
-<td>Total</td>
-<td>245</td>
-<td>122</td>
-<td>245</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><p>Two problems to address:<br />
-○ Depth - library size<br />
-○ Library composition - gene3 is taking away the depth of the samples</p></li>
-<li><p>Normalization methods</p></li>
-</ul>
-<table>
-<colgroup>
-<col width="43%"></col>
-<col width="56%"></col>
-</colgroup>
-<thead>
-<tr class="header">
-<th>Counts per million (CPM)</th>
-<th>deals only with sequencing depth</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Transcripts per kilo base million</td>
-<td>accounts for library depth and gene length</td>
-</tr>
-<tr class="even">
-<td>Fragments per kilobase million</td>
-<td>accounts for library depth and gene length</td>
-</tr>
-<tr class="odd">
-<td>Edge R</td>
-<td>Accounts for depth, gene size and library composition</td>
-</tr>
-<tr class="even">
-<td>DESeq2</td>
-<td>Accounts for depth and composition</td>
-</tr>
-</tbody>
-</table>
-<p><strong>DESeq2</strong><br />
-- Log transforms the values<br />
-- They average per genes<br />
-- Zero are log transformed to negative infinity and thus they are thrwon out during the analysis</p>
-<table>
-<thead>
-<tr class="header">
-<th>SlNo.</th>
-<th>Sample1</th>
-<th>Sample2</th>
-<th>Sample3</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Gene1</td>
-<td>54</td>
-<td>54</td>
-<td>54</td>
-</tr>
-<tr class="even">
-<td>Gene2</td>
-<td>22</td>
-<td>23</td>
-<td>22</td>
-</tr>
-<tr class="odd">
-<td>Gene3</td>
-<td>34</td>
-<td>33</td>
-<td>33</td>
-</tr>
-<tr class="even">
-<td>Gene4</td>
-<td>0</td>
-<td>0</td>
-<td>487</td>
-</tr>
-<tr class="odd">
-<td>Total</td>
-<td>245</td>
-<td>122</td>
-<td>245</td>
-</tr>
-<tr class="even">
-<td>Scaling factor</td>
-<td>2.23</td>
-<td>1.11</td>
-<td>0.41</td>
-</tr>
-</tbody>
-</table>
-<p>The new values are divided by the scaling factors</p>
-<div id="dge-modelling" class="section level3">
-<h3>DGE modelling</h3>
-<ul>
-<li><p>False positives</p></li>
-<li>Independent filtering
-<ul>
-<li>Limiting the no. of tests based on the cut offs
-<ul>
-<li>Base Mean<br />
-</li>
-<li>NA</li>
-</ul></li>
-</ul></li>
-<li>Benjaminin Hochberg (BH)
-<ul>
-<li>Adjusted p-value
-<ul>
-<li>To control for false positives<br />
-</li>
-<li>FDR - false discovery rate</li>
-</ul></li>
-</ul></li>
-<li>GLM
-<ul>
-<li>Based on negative binomial distribution<br />
-</li>
-<li>DESeq2 runs by default Wald test to get the p-value</li>
-</ul></li>
-</ul>
-<p>Statistical models<br />
-- How well the variables predict the expression levels based on statistical models</p>
-</div>
-<div id="visualization" class="section level3">
-<h3>Visualization</h3>
-<ul>
-<li>Sequencing summary statistics
-<ul>
-<li>The gene 1 has low read counts<br />
-</li>
-<li>Check for # null genes<br />
-</li>
-<li>Then plot normalised counts<br />
-</li>
-<li>Once done, look at the PCA to see where they fall in relational space<br />
-</li>
-<li>Heat maps<br />
-○ The sample genes that are similar in expression are clustered together and the samples that are similar are also lying close together<br />
-</li>
-<li>Venn diagram<br />
-</li>
-<li>MA plots<br />
-</li>
-<li>Volcano plots<br />
-</li>
-<li>Individual gene treatment response curve</li>
-</ul></li>
-</ul>
-</div>
-<div id="enrichment-analysis" class="section level3">
-<h3>Enrichment analysis</h3>
-<ul>
-<li>Functional database
-<ul>
-<li>Molecular functions - aderlyate cyclase pathway<br />
-</li>
-<li>Bio process - pyramidine biosynthesis<br />
-</li>
-<li>Cell compartment - ribosome<br />
-</li>
-<li>KEGG pathway –&gt; ID enriched paths<br />
-</li>
-<li>Pfam enrich –&gt; ID protein (gene fams)</li>
-</ul></li>
-<li>Methods
-<ul>
-<li>Over representation analysis</li>
-</ul></li>
-</ul>
-<table>
-<thead>
-<tr class="header">
-<th>N</th>
-<th>All</th>
-<th>GeneSet1</th>
-<th>GEneSet2</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>DEG</td>
-<td>2200</td>
-<td>24</td>
-<td>18</td>
-</tr>
-<tr class="even">
-<td>Total</td>
-<td>15000</td>
-<td>75</td>
-<td>120</td>
-</tr>
-<tr class="odd">
-<td>.</td>
-<td>14%</td>
-<td>32%</td>
-<td>15%</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>Gene set enrichment analysis
-<ul>
-<li>Rank based method
-<ul>
-<li>Usually LFC<br />
-</li>
-</ul></li>
-<li>Are genes within the set clustered towards the end of the ranked list<br />
-</li>
-<li>Uses the whole distribution</li>
-</ul></li>
-</ul>
-<p>Notes: the SARTools are good for visaulisation for DEG</p>
-</div>
-</div>
-<div id="transcriptomics-pipeline" class="section level2">
-<h2><code>Transcriptomics pipeline</code></h2>
-<p><a href="./TranscriptomicsPipeline.html">Pipeline Code</a></p>
-</div>
-<div id="type-of-data" class="section level2">
-<h2>Type of data</h2>
-<ul>
-<li>Gene expression
-<ul>
-<li>counts(normalized by length etc)<br />
-</li>
-<li>quantitative</li>
-</ul></li>
-<li>Sequence data
-<ul>
-<li>fastq, SNPs, QTL<br />
-</li>
-<li>pie, theta, AMOVA (Analysis of Molecular Variance) test</li>
-</ul></li>
-<li>Environmental data
-<ul>
-<li>Stress exposure, temperature gradient<br />
-</li>
-<li>Discrete measurements of environment, or continuous measures</li>
-</ul></li>
-<li>Gene copy number
-<ul>
-<li><p>ref genome —- | —– | —- | —- …<br />
-sample1 —- | —– |<br />
-sample2 —- | —– | —- |<br />
-.<br />
-.</p></li>
-<li>forms of duplication. deletion<br />
-</li>
-<li>alignment depth<br />
-</li>
-<li>Its usually measured in reference to a reference genome<br />
-</li>
-<li>CNVs - Copy number variants<br />
-</li>
-<li>Its common to remove short CNVs, or overly widespread/ represented CNVs, since if there are CNVs common in most individuals, it might be due to actual divergence<br />
-</li>
-</ul></li>
-<li>Functional enrichent (GO) - genes expressed with hierechy of thier functions<br />
-</li>
-<li>Chromatin state
-<ul>
-<li>accessible vs non accessible<br />
-</li>
-<li>specific histone modifications</li>
-</ul></li>
-</ul>
-<div id="type-of-interactions" class="section level3">
-<h3>Type of interactions</h3>
-<ul>
-<li>Expression <span class="math inline">\(\times\)</span> discrete factor data (environment, chromatin state)
-<ul>
-<li>P = G <span class="math inline">\(\times\)</span> E <span class="math inline">\(\times\)</span> …<br />
-</li>
-<li>chromatin state influences transcription access, influnces expression<br />
-</li>
-<li>Require observations for each combination of levels<br />
-</li>
-</ul></li>
-<li>Expression <span class="math inline">\(\times\)</span> continuous factors (pop. diversity, env. gradient etc.)
-<ul>
-<li>Requires acceptance of a model for <code>missing</code> obseravations / holes in the data<br />
-</li>
-</ul></li>
-<li>Expression vs physical space
-<ul>
-<li>Approaches from spatial statistics - like for example the differnce in expression levels with regards to distance<br />
-</li>
-</ul></li>
-<li>Expression vs GO terms
-<ul>
-<li>Serves as a preliminary step to check for under or over represented genes<br />
-</li>
-<li>Helps detanglng causal relationships in DE data<br />
-</li>
-</ul></li>
-<li>Gene - phenotype mapping
-<ul>
-<li>change in gene/ set of genes causes a change in trait<br />
-</li>
-<li>QTL –&gt; Trait mapping<br />
-</li>
-<li>Gene Regulatory Network (GRN) directed edges as DE in target node<br />
-</li>
-<li>Genotype networks</li>
-</ul></li>
-</ul>
-</div>
-<div id="analysis" class="section level3">
-<h3>Analysis</h3>
-<ul>
-<li>Expression <span class="math inline">\(\times\)</span> discrete factor
-<ul>
-<li>Two-way ANOVA: continuous variable ~ discrete factors (2+) + interations
-<ul>
-<li><p><span class="math inline">\(Y_{ijk}\)</span> = intercept + indepedendent effect of factor i [check notebook]</p></li>
-<li>ANCOVA
-<ul>
-<li>add a “nuisance” variable, allowed to be a covariate in analysis<br />
-</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>Expression <span class="math inline">\(\times\)</span> continuous factors
-<ul>
-<li>Correlation (Pearson’s rho)<br />
-</li>
-<li>Linear / higher order regression where you are fitting a model or explaining your data
-<ul>
-<li>Canalization<br />
-</li>
-</ul></li>
-<li>Higher dimension expression perturbations in reaction norm space<br />
-</li>
-</ul></li>
-<li>Geno-Pheno mapping
-<ul>
-<li>Modularity in the graphs
-<ul>
-<li>Pleiotropic effects within the modules</li>
-<li>Explore indepence between trait sets / modules</li>
-</ul></li>
-</ul></li>
-</ul>
-<hr />
-<p>Parallel diveregence<br />
-- same genetic standing variance often get seleceted in similar environments</p>
-<p><span class="math inline">\(P_{CT}\)</span><br />
-- C stands for continent, similar to the usage of <span class="math inline">\(P_{ST}\)</span> when common gardens are not used rather field data are used.<br />
-- differentiation in expression<br />
-- similar to <span class="math inline">\(Q_{ST}\)</span> but does not take in to the fact that the pehnotype change might be due to environment too, rather than just the genotype</p>
-<hr />
-</div>
-</div>
-</div>
-<div id="epigenetics" class="section level1">
-<h1>Epigenetics</h1>
-<ul>
-<li>Waddington in 1940s defined epigenetics<br />
-</li>
-<li>changes to gene expression that are not due to changes in DNA sequences<br />
-</li>
-<li>General definition: stable, long term alterations in transcriptional potential of cell that are not necessarily heritable (NIH epigenomics roadmap)</li>
-</ul>
-<div id="why-do-we-care" class="section level3">
-<h3>Why do we care</h3>
-<ul>
-<li><span class="math inline">\(V_P\)</span> = <span class="math inline">\(V_G\)</span> + <span class="math inline">\(V_E\)</span> + <span class="math inline">\(V_{G x E}\)</span>
-<ul>
-<li>epigenetic variations mostly influences <span class="math inline">\(V_E\)</span> and some times even have an effect on <span class="math inline">\(V_G\)</span><br />
-</li>
-</ul></li>
-<li>Reponse to environment<br />
-</li>
-<li>Persistence under environmental change
-<ul>
-<li>acclimation<br />
-</li>
-<li>adaptation<br />
-</li>
-</ul></li>
-<li>Methylation is promminently absent in drosophila and yeast<br />
-</li>
-<li></li>
-</ul>
-</div>
-<div id="mechanisms-of-epigenitics" class="section level3">
-<h3>Mechanisms of epigenitics</h3>
-<ul>
-<li>phosphorylation<br />
-</li>
-<li>non-coding RNAa (microRNAs) - gene silencing<br />
-</li>
-<li>small interfering RNAs<br />
-</li>
-<li>Histone modifications - tagSeq is used to study this<br />
-</li>
-<li>DNA methylation
-<ul>
-<li>At cytosine, a methy group is added resulting in 5-methylcytosine<br />
-</li>
-<li>deamination of cytosince results in converting Uracil back to Cytosine, while deamination of methylated cytosine results in Thyamine and it does not get corrected back</li>
-</ul></li>
-</ul>
-</div>
-<div id="functional-consequences-of-methylation" class="section level3">
-<h3>Functional consequences of methylation</h3>
-<ul>
-<li>Promorters/ enhancers
-<ul>
-<li>High methylation = repression of expression<br />
-</li>
-<li>Inhibits binding of the transcription factors (TFs)<br />
-</li>
-<li>Chromatin structure</li>
-</ul></li>
-<li>Intergenic regions
-<ul>
-<li>Silencing TEs, etc.</li>
-</ul></li>
-<li><p>Gene body methylation</p>
-<ul>
-<li>Hypothesis 2: genes with low methylation levels are more responsive to environmental changes<br />
-The patterns of methylation are different across species. The most common type of methyaltion is CpG methylation (C group folowed by G group/residue), then there are CHG (higher in plants) and CHH, where H stands for a different residue other than G or C.</li>
-</ul></li>
-</ul>
-</div>
-<div id="sequencing-methods" class="section level3">
-<h3>Sequencing methods</h3>
-<p>Bisulfite sequencing<br />
-- Main way to quantify methylation.<br />
-- Addition of Sodium bisulfite at low pHs, it converts Cytosine to Uracil, and thus during sequencing these U’s will go to T’s. While in methylated sequences, the addition of sodium bisulfite does not take place. Thus during PCR applification, there will be higher T’s if it was not methylated, while higher C’s in methyalted sequences.<br />
-- From this we want to see how much methylation is happening at a loci.</p>
-<p>MSAP<br />
-- Methylation Sensitive Amplification Polymorphisim<br />
--</p>
-<p>Other notes:<br />
-AFLP<br />
-- Quikly generates a large no. of marker fragments<br />
-- Requires small amount of starting template<br />
-- High reproducibility<br />
-- Labour intensive<br />
-- Generate genetic maps</p>
-<p>Shanon-Wiener diversity index (H)<br />
-- measures of diversity that combines species richness (the no. of sps. in a given area) and their relative abundance<br />
-- increases as richness and eveness of the community increases</p>
-</div>
-<div id="epigenomics-pipeline" class="section level3">
-<h3><code>Epigenomics pipeline</code></h3>
-<p><a href="./EpigenomicsPipeline.html">Pipeline Code</a></p>
-</div>
-</div>
-<div id="group-projects" class="section level1">
-<h1>Group projects</h1>
-<p>GWAS and env group</p>
-<div id="gwas-and-gea" class="section level3">
-<h3><code>GWAS and GEA</code></h3>
-<p><a href="./GWAS_GEA.html">Pipeline Code</a></p>
-<hr />
-</div>
-</div>
-<div id="course-materials-and-notes" class="section level1">
-<h1>Course Materials and Notes</h1>
-<div id="sequencing-methods-1" class="section level2">
-<h2><a href="https://docs.google.com/document/d/1MuXPS3hNg3wIxsKw-jQmKY7y57Ka2qqZwHYKRAbpNMw/edit?usp=sharing">Sequencing methods</a></h2>
-<p><a href="https://pespenilab.github.io/Ecological-Genomics/Tutorial/2020-01-22_Command_Line_Unix.html">Tutorial on bash</a><br />
-<a href="https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf">github cheat sheet</a><br />
-<a href="https://codata-rda-advanced-bioinformatics-2018.readthedocs.io/en/latest/4.Day4.html">Epigenomics bioinformatics</a></p>
-<div id="course-website" class="section level3">
-<h3><a href="https://pespenilab.github.io/Ecological-Genomics/">Course website</a></h3>
-<hr />
-</div>
-</div>
-<div id="references" class="section level2">
-<h2>References</h2>
-<p>Hudson, Richard R. “Gene genealogies and the coalescent process.” Oxford surveys in evolutionary biology 7.1 (1990): 44.</p>
+<div id="error" class="section level2">
+<h2>error</h2>
+<pre class="bash"><code>-&gt; angsd version: 0.931-14-gb9c8ddd (htslib: 1.10.2-19-gecf0216) build(Feb  2 2020 10:28:09)
+        -&gt; Reading fasta: /data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa
+        -&gt; SNP-filter using a pvalue: 1.000000e-06 correspond to 23.928127 likelihood units
+[bammer_main] 4 samples in 4 input files
+        -&gt; Parsing 4 number of samples
+        -&gt; Region lookup 1/1280
+The number of sequenced individuals (4) does not match the number of phenotypes (108)
+</code></pre>
+<p><a href="mailto:zoe.m.portlas@gmail.com" class="email">zoe.m.portlas@gmail.com</a></p>
+<p><a href="mailto:aehall26@gmail.com" class="email">aehall26@gmail.com</a></p>
 </div>
 </div>
 
