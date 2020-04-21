@@ -1534,10 +1534,8 @@ div.tocify {
 </div>
 
 
-<div id="trait-data" class="section level1 tabset tabset-fade tabset-pills">
+<div id="trait-data" class="section level1">
 <h1>Trait data</h1>
-<div id="combined" class="section level2">
-<h2>Combined</h2>
 <pre class="r"><code>finalHeight &lt;- read.csv(&quot;C:/Dropbox/Spruce_CommonGarden_Data/trait_data/final_ht_2019.csv&quot;)
 nrow(finalHeight) # 5177</code></pre>
 <pre><code>## [1] 5177</code></pre>
@@ -1589,82 +1587,153 @@ names(tdata)[21] &lt;- &quot;lon&quot;
 names(tdata)[22] &lt;- &quot;lat&quot;
 tdata$Growth &lt;- tdata$final_ht - tdata$initial_ht</code></pre>
 </div>
-<div id="height-growth" class="section level2">
-<h2>Height growth</h2>
-<pre class="r"><code>finalHeight &lt;- read.csv(&quot;C:/Dropbox/Spruce_CommonGarden_Data/trait_data/final_ht_2019.csv&quot;)
-nrow(finalHeight) # 5177</code></pre>
-<pre><code>## [1] 5177</code></pre>
-<pre class="r"><code>initialHeight &lt;- read.csv(&quot;C:/Dropbox/Spruce_CommonGarden_Data/trait_data/initialHt.csv&quot;)
-nrow(initialHeight) #5048</code></pre>
-<pre><code>## [1] 5048</code></pre>
-<pre class="r"><code>heightData &lt;- merge(initialHeight,finalHeight,
-                    all.x = TRUE, all.y = TRUE)
-
-heightData &lt;- heightData[unique(heightData$plant_ID),]
-nrow(heightData)</code></pre>
-<pre><code>## [1] 5190</code></pre>
-<pre class="r"><code>ht_data &lt;- heightData
-
-# modifying longitude
-ht_data$Longitude &lt;- ht_data$Longitude * -1
-
-# adding garden IDs to the beds
-ht_data &lt;- ht_data %&gt;% tidyr::unite(mBed, Garden, Bed, sep = &quot;_&quot;, remove = FALSE)
-
-# converting to factors
-ht_data$mBed &lt;- as.factor(ht_data$mBed)
-
-# reordering factors
-ht_data$Region &lt;- factor(ht_data$Region,
-                         levels = c(&quot;C&quot;, &quot;M&quot;, &quot;E&quot;))
-
-ht_data$Garden &lt;- factor(ht_data$Garden,
-                         levels = c(&quot;VT&quot;, &quot;MD&quot;, &quot;NC&quot;))
-
-
-# rearraging and renaming the dataframe
-ht_data &lt;- ht_data[,c(1:5,10,9,11:16,18,20,17,19,7,6,8)]
-names(ht_data)[17] &lt;- &quot;final_ht&quot;
-names(ht_data)[15] &lt;- &quot;final_ht_notes&quot;
-names(ht_data)[18] &lt;- &quot;lon&quot;
-names(ht_data)[19] &lt;- &quot;lat&quot;
-ht_data$Growth &lt;- ht_data$final_ht - ht_data$initial_ht
-
-ht_data &lt;- ht_data[!is.na(ht_data$final_ht),]
-ht_data &lt;- ht_data[!is.na(ht_data$initial_ht),]</code></pre>
-</div>
-<div id="bud-set" class="section level2">
-<h2>Bud set</h2>
-<pre class="r"><code>BudSet &lt;- read.csv(&quot;C:/Dropbox/Spruce_CommonGarden_Data/trait_data/BudSet2019_december.csv&quot;)
-nrow(BudSet) # 5085</code></pre>
-<pre><code>## [1] 5085</code></pre>
-<pre class="r"><code>require(tidyr)
-# modifying longitude
-BudSet &lt;- BudSet %&gt;% dplyr::mutate(Longitude, mLongitude = Longitude * -1)
-
-# adding garden IDs to the beds
-BudSet &lt;- BudSet %&gt;% tidyr::unite(mBed, Garden, Bed, sep = &quot;_&quot;, remove = FALSE)
-
-# converting to factors
-BudSet$mBed &lt;- as.factor(BudSet$mBed)
-
-
-# reordering factors
-BudSet$Region &lt;- factor(BudSet$Region,
-                       levels = c(&quot;C&quot;, &quot;M&quot;, &quot;E&quot;))
-
-BudSet$Garden &lt;- factor(BudSet$Garden,
-                       levels = c(&quot;VT&quot;, &quot;MD&quot;, &quot;NC&quot;))
-
-
-# rearraging and renaming the dataframe
-budset_dat &lt;- BudSet[,c(1:5,10,9,11:18,19,6,8)]
-names(budset_dat)[16] &lt;- &quot;lon&quot;
-names(budset_dat)[17] &lt;- &quot;lat&quot;</code></pre>
-</div>
-</div>
-<div id="troubleshooting-pipeline" class="section level1 tabset tabset-fade tabset-pills">
+<div id="troubleshooting-pipeline" class="section level1">
 <h1>Troubleshooting pipeline</h1>
+<p><a href="https://mac-theobio.github.io/QMEE/MultivariateMixed.html#mixed-models" class="uri">https://mac-theobio.github.io/QMEE/MultivariateMixed.html#mixed-models</a></p>
+<div id="blups---edge" class="section level2">
+<h2>Blups - Edge</h2>
+<pre class="r"><code>require(tidyr)
+require(lme4)</code></pre>
+<pre class="r"><code>tdata_edge &lt;- tdata %&gt;% dplyr::filter(Region==&quot;E&quot;)
+
+
+ht_mod1 &lt;- lmer(data = tdata_edge, 
+               final_ht ~ Garden +  
+               (1|Family) + (1|mBed))
+
+coef_ht &lt;- coef(ht_mod1)
+head(coef_ht[[1]][,1]) # family coefficients</code></pre>
+<pre><code>## [1] 28.45843 28.30326 31.76877 29.65182 25.90660 26.90671</code></pre>
+<pre class="r"><code>ranef_ht &lt;- ranef(ht_mod1)
+head(ranef_ht[[1]][,1]) # family slope</code></pre>
+<pre><code>## [1] -1.0547628 -1.2099349  2.2555739  0.1386296 -3.6065956 -2.6064832</code></pre>
+<pre class="r"><code># calculating blups from the coefficients and slope
+blups_ht &lt;- cbind(ranef_ht$Family,coef_ht$Family$`(Intercept)`)
+names(blups_ht)[1] &lt;- &quot;ranef&quot;
+names(blups_ht)[2] &lt;- &quot;coef&quot;
+blups_ht$blups &lt;- blups_ht$coef + (blups_ht$ranef)
+head(blups_ht)</code></pre>
+<pre><code>##            ranef     coef    blups
+## AB_01 -1.0547628 28.45843 27.40367
+## AB_02 -1.2099349 28.30326 27.09332
+## AB_03  2.2555739 31.76877 34.02434
+## AB_04  0.1386296 29.65182 29.79045
+## AB_05 -3.6065956 25.90660 22.30000
+## AB_06 -2.6064832 26.90671 24.30023</code></pre>
+<pre class="r"><code>blups &lt;- blups_ht %&gt;% dplyr::select(blups)
+blups &lt;- cbind(Family=rownames(blups),blups) # add family id based on row names
+rownames(blups) &lt;- NULL # remove row names
+
+# write.csv(blups,&quot;./blups/blups_edge_trial.txt&quot;, row.names = TRUE)
+
+
+# read in the bam files
+edge.bam &lt;- read.table(&quot;./bam.files/edge_bam.list&quot;, stringsAsFactors =F)
+edge.bam &lt;- as.data.frame(edge.bam)
+head(edge.bam)</code></pre>
+<pre><code>##                                                            V1
+## 1  /data/project_data/RS_ExomeSeq/mapping/all/AB_05.final.bam
+## 2  /data/project_data/RS_ExomeSeq/mapping/all/AB_08.final.bam
+## 3  /data/project_data/RS_ExomeSeq/mapping/all/AB_12.final.bam
+## 4  /data/project_data/RS_ExomeSeq/mapping/all/AB_16.final.bam
+## 5  /data/project_data/RS_ExomeSeq/mapping/all/AB_18.final.bam
+## 6 /data/project_data/RS_ExomeSeq/mapping/all/BFA_01.final.bam</code></pre>
+<pre class="r"><code>names(edge.bam)[1] &lt;- &quot;Family&quot;
+
+edge.bam$Family &lt;- gsub(&quot;/data/project_data/RS_ExomeSeq/mapping/all/&quot;,&quot;&quot;,edge.bam$Family)
+edge.bam$Family &lt;- gsub(&quot;.final.bam&quot;,&quot;&quot;,edge.bam$Family)
+
+# filter out blups for families absent in the bam file
+
+blups_s &lt;- merge(edge.bam, blups,
+                 by=&quot;Family&quot;, all.x=TRUE)
+blups_s &lt;- na.omit(blups_s)
+blups_s</code></pre>
+<pre><code>##    Family    blups
+## 1   AB_05 22.30000
+## 2   AB_08 29.23345
+## 3   AB_12 28.52159
+## 4   AB_16 33.24872
+## 5   AB_18 29.61746
+## 6  BFA_01 40.34869
+## 7  BFA_02 27.33249
+## 8  BFA_03 30.04701
+## 9  BFA_04 23.26107
+## 10 BFA_05 32.08091
+## 11 BRB_01 31.01311
+## 12 BRB_02 24.54678
+## 13 BRB_03 33.80972
+## 14 BRB_04 31.41989
+## 15  CR_03 33.97534
+## 16  CR_04 28.46883
+## 17  CR_05 32.65244
+## 18  CR_06 27.31190
+## 19  CR_07 29.31463
+## 20 CRA_01 32.52891
+## 21 CRA_02 29.69108
+## 22 CRA_03 21.49321
+## 23 CRA_04 34.24875
+## 24 CRA_05 34.02413
+## 25 CRA_06 30.70749
+## 28  DG_04 23.21939
+## 29  DG_05 35.13175
+## 30  DG_06 34.16565
+## 31  DG_08 18.82375
+## 32  DG_10 28.34951
+## 33 GFM_48 35.78027
+## 34 GFM_49 43.92835
+## 35 GFM_50 39.40870
+## 36 GFM_51 31.48387
+## 37 GFM_55 18.50195
+## 38 GPA_01 25.15414
+## 39 GPA_02 34.63585
+## 40 GPA_03 32.42177
+## 41 GPA_04 31.16565
+## 42  HR_01 35.48768
+## 43  HR_02 44.04675
+## 44  HR_03 35.48768
+## 45  HR_05 34.51105
+## 46  HR_06 40.31819
+## 47  HR_07 31.82381
+## 48  HR_10 23.74321
+## 49 KOS_01 31.99320
+## 50 KOS_02 35.74192
+## 51 KOS_03 21.96228
+## 52 KOS_04 20.08092
+## 53 KOS_05 31.43975
+## 54 KOS_07 18.76797
+## 55 MRC_02 29.10035
+## 56 MRC_07 19.87984
+## 57 MRC_08 21.55148
+## 58 MRC_16 31.16565
+## 59 MRC_18 32.10034
+## 60  MT_01 19.91323
+## 61  MT_04 33.35209
+## 62  MT_05 32.58248
+## 63  MT_07 30.96226
+## 64  MT_08 29.11297
+## 65  MT_09 40.52158
+## 66  MT_10 48.96224
+## 67  MT_12 32.26106
+## 68 PRK_01 19.77584
+## 69 PRK_02 26.17645
+## 70 PRK_03 18.04703
+## 71 PRK_04 32.90391
+## 72 PRK_05 39.19954
+## 73  RP_01 31.51106
+## 74  RP_03 39.27890
+## 75  RP_05 35.69107
+## 76  RP_06 26.31463
+## 77  RP_11 30.61331</code></pre>
+<p><strong>Match blup files to bam list - still in works to set it up</strong></p>
+<pre class="bash"><code>grep -f /data/project_data/GroupProjects/GWAS_env/bam/edge/edge.bam.list /data/project_data/GroupProjects/GWAS_env/blups/blups_edge_trial.txt 
+
+| grep -w &quot;E&quot; | cut -f1 | uniq &gt;${OUT}/edge_ind.txt
+</code></pre>
+</div>
+<div id="estimate-pca-scores" class="section level2">
+<h2>Estimate PCA scores</h2>
+</div>
 <div id="defining-variables" class="section level2">
 <h2>Defining variables</h2>
 <p>blups for the edge region family located on the server:<br />
@@ -1766,203 +1835,25 @@ ANGSD -b ${OUT}/bam/edge/edge_bam.list \
 -cov ${PC}/PCA/EDGE_PC12.txt
 </code></pre>
 </div>
-<div id="estimate-pca-scores" class="section level2">
+</div>
+<div id="gwas-for-height-phenotype" class="section level1 tabset tabset-fade tabset-pills">
+<h1>GWAS for height phenotype</h1>
+<div id="estimate-pca-scores-1" class="section level2">
 <h2>Estimate PCA scores</h2>
-<pre class="bash"><code>## beagle
-cd /data/project_data/GroupProjects/GWAS_env/bam/edge/
-
-ANGSD -GL 2 -out edge -nThreads 1 -doGlf 2 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -bam edge_bam.list
-
-# change python s/w env to v3
-scl enable rh-python36 bash
-
-## PCA angsd
-python pcangsd.py -beagle edge.beagle.gz -admix -o edge_PC -threads 1
-
-
-
-ANGSD -beagle edge.beagle.gz -admix -out edge_PC -threads 1 -fai </code></pre>
 </div>
+<div id="height-blups" class="section level2">
+<h2>Height blups</h2>
 </div>
-<div id="blups" class="section level1 tabset tabset-fade tabset-pills">
-<h1>Blups</h1>
-<pre class="r"><code>require(tidyr)
-require(lme4)</code></pre>
-<div id="height-growth-1" class="section level2">
-<h2>Height growth</h2>
-<pre class="r"><code># ht_data &lt;--- cleaned data for height growth
-
-ht_mod1 &lt;- lmer(data = ht_data, 
-               Growth ~ Garden +  
-               (1|Family) + (1|mBed))
-
-coef_ht &lt;- coef(ht_mod1) # nrow = 368
-head(coef_ht[[1]][,1]) # family coefficients</code></pre>
-<pre><code>## [1]  9.815585 10.587683 12.698083 11.775678 11.942354  9.712639</code></pre>
-<pre class="r"><code>ranef_ht &lt;- ranef(ht_mod1)
-head(ranef_ht[[1]][,1]) # family slope</code></pre>
-<pre><code>## [1] -1.8599643 -1.0878666  1.0225337  0.1001283  0.2668043 -1.9629106</code></pre>
-<pre class="r"><code># calculating blups from the coefficients and slope
-blups_ht &lt;- cbind(ranef_ht$Family,coef_ht$Family$`(Intercept)`)
-names(blups_ht)[1] &lt;- &quot;ranef&quot;
-names(blups_ht)[2] &lt;- &quot;coef&quot;
-blups_ht$blups &lt;- blups_ht$coef + (blups_ht$ranef)
-head(blups_ht)</code></pre>
-<pre><code>##            ranef      coef     blups
-## AB_01 -1.8599643  9.815585  7.955621
-## AB_02 -1.0878666 10.587683  9.499816
-## AB_03  1.0225337 12.698083 13.720617
-## AB_04  0.1001283 11.775678 11.875806
-## AB_05  0.2668043 11.942354 12.209158
-## AB_06 -1.9629106  9.712639  7.749728</code></pre>
-<pre class="r"><code>blups &lt;- blups_ht %&gt;% dplyr::select(blups)
-blups &lt;- cbind(Family=rownames(blups),blups) # add family id based on row names
-rownames(blups) &lt;- NULL # remove row names
-
-# write.csv(blups,&quot;./blups/blups_edge_trial.txt&quot;, row.names = TRUE)
-
-
-# read in the bam files
-all.bam &lt;- read.table(&quot;./bam.files/all_bam.list&quot;, stringsAsFactors =F)
-all.bam &lt;- as.data.frame(all.bam)
-head(all.bam)</code></pre>
-<pre><code>##                                                            V1
-## 1  /data/project_data/RS_ExomeSeq/mapping/all/AB_05.final.bam
-## 2  /data/project_data/RS_ExomeSeq/mapping/all/AB_08.final.bam
-## 3  /data/project_data/RS_ExomeSeq/mapping/all/AB_12.final.bam
-## 4  /data/project_data/RS_ExomeSeq/mapping/all/AB_16.final.bam
-## 5  /data/project_data/RS_ExomeSeq/mapping/all/AB_18.final.bam
-## 6 /data/project_data/RS_ExomeSeq/mapping/all/ALB_01.final.bam</code></pre>
-<pre class="r"><code>names(all.bam)[1] &lt;- &quot;path&quot;
-
-all.bam$Family &lt;- gsub(&quot;/data/project_data/RS_ExomeSeq/mapping/all/&quot;,&quot;&quot;,
-                       all.bam$path)
-all.bam$Family &lt;- gsub(&quot;.final.bam&quot;,&quot;&quot;,all.bam$Family)
-
-# filter out blups for families absent in the bam file
-
-blups_ht &lt;- merge(all.bam, blups,
-                 by=&quot;Family&quot;, all.x=TRUE)
-blups_ht &lt;- na.omit(blups_ht)
-str(blups_ht) # 307 blups and bam file paths</code></pre>
-<pre><code>## &#39;data.frame&#39;:    307 obs. of  3 variables:
-##  $ Family: chr  &quot;AB_05&quot; &quot;AB_08&quot; &quot;AB_12&quot; &quot;AB_16&quot; ...
-##  $ path  : chr  &quot;/data/project_data/RS_ExomeSeq/mapping/all/AB_05.final.bam&quot; &quot;/data/project_data/RS_ExomeSeq/mapping/all/AB_08.final.bam&quot; &quot;/data/project_data/RS_ExomeSeq/mapping/all/AB_12.final.bam&quot; &quot;/data/project_data/RS_ExomeSeq/mapping/all/AB_16.final.bam&quot; ...
-##  $ blups : num  12.2 14 9.8 15.4 10.9 ...
-##  - attr(*, &quot;na.action&quot;)= &#39;omit&#39; Named int  257 309 310 311 312 313 314 315 316 317 ...
-##   ..- attr(*, &quot;names&quot;)= chr  &quot;257&quot; &quot;309&quot; &quot;310&quot; &quot;311&quot; ...</code></pre>
-<pre class="r"><code>head(blups_ht[3])</code></pre>
-<pre><code>##       blups
-## 1 12.209158
-## 2 13.974468
-## 3  9.796934
-## 4 15.442995
-## 5 10.901730
-## 6 13.297030</code></pre>
-<p><strong>Write out bam list and blups for height growth</strong></p>
-<pre class="r"><code># # write bam file list
-# dest &lt;- file(&quot;./bam.files/ht_bam.list&quot;, open=&quot;wb&quot;)
-# write.table(blups_ht[,2], file=dest,col.names = FALSE,
-#             row.names = FALSE, sep=&quot;&quot;,quote = FALSE, eol = &quot;\n&quot;)
-# close(dest) # required to close the file connection
-# 
-# 
-# # write blups
-# dest &lt;- file(&quot;./blups/ht_blups.list&quot;, open=&quot;wb&quot;)
-# write.table(blups_ht[,3], file=dest,col.names = FALSE,
-#             row.names = FALSE, sep=&quot; &quot;,quote = FALSE, eol = &quot;\n&quot;)
-# close(dest)</code></pre>
-</div>
-<div id="bud-set-1" class="section level2">
-<h2>Bud set</h2>
-<pre class="r"><code># budset_dat &lt;--- cleaned data for bud set
-
-# lmer for budset  
-budset_mod1 &lt;- lmer(data = budset_dat, 
-                     BudSet ~ Garden +  
-                     (1|Family) + (1|mBed))
-
-
-coef_budset &lt;- coef(budset_mod1)
-head(coef_budset[[1]][,1]) # family coefficients</code></pre>
-<pre><code>## [1] 266.1273 271.1599 264.6810 260.9723 272.0779 276.2823</code></pre>
-<pre class="r"><code>ranef_budset &lt;- ranef(budset_mod1)
-head(ranef_budset[[1]][,1]) # family slope</code></pre>
-<pre><code>## [1] -1.857712  3.174821 -3.304098 -7.012775  4.092804  8.297221</code></pre>
-<pre class="r"><code># calculating blups from the coefficients and slope
-blups_budset &lt;- cbind(ranef_budset$Family,coef_budset$Family$`(Intercept)`)
-names(blups_budset)[1] &lt;- &quot;ranef&quot;
-names(blups_budset)[2] &lt;- &quot;coef&quot;
-blups_budset$blups &lt;- blups_budset$coef + (blups_budset$ranef)
-head(blups_budset)</code></pre>
-<pre><code>##           ranef     coef    blups
-## AB_01 -1.857712 266.1273 264.2696
-## AB_02  3.174821 271.1599 274.3347
-## AB_03 -3.304098 264.6810 261.3769
-## AB_04 -7.012775 260.9723 253.9595
-## AB_05  4.092804 272.0779 276.1707
-## AB_06  8.297221 276.2823 284.5795</code></pre>
-<pre class="r"><code>blups_budset &lt;- blups_budset %&gt;% dplyr::select(blups)
-blups_budset &lt;- cbind(Family=rownames(blups_budset),blups_budset) # add family id based on row names
-rownames(blups_budset) &lt;- NULL # remove row names
-
-# write.csv(blups,&quot;./blups/blups_edge_trial.txt&quot;, row.names = TRUE)
-
-
-# read in the bam files
-# all.bam &lt;- read.table(&quot;./bam.files/all_bam.list&quot;, stringsAsFactors =F)
-# all.bam &lt;- as.data.frame(all.bam)
-# head(all.bam)
-# names(all.bam)[1] &lt;- &quot;path&quot;
-# 
-# all.bam$Family &lt;- gsub(&quot;/data/project_data/RS_ExomeSeq/mapping/all/&quot;,&quot;&quot;,
-#                        all.bam$path)
-# all.bam$Family &lt;- gsub(&quot;.final.bam&quot;,&quot;&quot;,all.bam$Family)
-
-
-
-# filter out blups for families absent in the bam file
-blups_bs &lt;- merge(all.bam, blups_budset,
-                 by=&quot;Family&quot;, all.x=TRUE)
-blups_bs &lt;- na.omit(blups_bs)
-str(blups_bs) # 307 blups and bam file paths</code></pre>
-<pre><code>## &#39;data.frame&#39;:    339 obs. of  3 variables:
-##  $ Family: chr  &quot;AB_05&quot; &quot;AB_08&quot; &quot;AB_12&quot; &quot;AB_16&quot; ...
-##  $ path  : chr  &quot;/data/project_data/RS_ExomeSeq/mapping/all/AB_05.final.bam&quot; &quot;/data/project_data/RS_ExomeSeq/mapping/all/AB_08.final.bam&quot; &quot;/data/project_data/RS_ExomeSeq/mapping/all/AB_12.final.bam&quot; &quot;/data/project_data/RS_ExomeSeq/mapping/all/AB_16.final.bam&quot; ...
-##  $ blups : num  276 284 277 277 264 ...
-##  - attr(*, &quot;na.action&quot;)= &#39;omit&#39; Named int 257
-##   ..- attr(*, &quot;names&quot;)= chr &quot;257&quot;</code></pre>
-<pre class="r"><code>head(blups_bs[3])</code></pre>
-<pre><code>##      blups
-## 1 276.1707
-## 2 283.7646
-## 3 276.9489
-## 4 276.6855
-## 5 264.2613
-## 6 266.6415</code></pre>
-<p><strong>Write out bam list and blups for budset</strong></p>
-<pre class="r"><code># # write bam file list
-# dest &lt;- file(&quot;./bam.files/bs_bam.list&quot;, open=&quot;wb&quot;)
-# write.table(blups_bs[,2], file=dest,col.names = FALSE,
-#             row.names = FALSE, sep=&quot;&quot;,quote = FALSE, eol = &quot;\n&quot;)
-# close(dest) # required to close the file connection
-# 
-# 
-# # write blups
-# dest &lt;- file(&quot;./blups/bs_blups.list&quot;, open=&quot;wb&quot;)
-# write.table(blups_bs[,3], file=dest,col.names = FALSE,
-#             row.names = FALSE, sep=&quot; &quot;,quote = FALSE, eol = &quot;\n&quot;)
-# close(dest)</code></pre>
-</div>
-</div>
-<div id="defining-variables-1" class="section level1">
-<h1>Defining variables</h1>
+<div id="defining-variables-1" class="section level2">
+<h2>Defining variables</h2>
 <p>blups for the edge region family located on the server:<br />
 /data/project_data/RS_ExomeSeq/ANGSD/blups/Ht_EDGE_MD.blups</p>
 <p><strong>Setting file locations</strong></p>
-<pre class="bash"><code>
+<pre class="bash"><code># location of family blups for height trait 
+blups=&quot;/data/project_data/RS_ExomeSeq/ANGSD/blups&quot;
+
 # location of the PC score files files
-PC=&quot;/data/project_data/GroupProjects/GWAS_env/PCA/&quot;
+PC=&quot;/data/project_data/RS_ExomeSeq/ANGSD&quot;
 
 # output folder - also location of bam file lists  
 OUT=&quot;/data/project_data/GroupProjects/GWAS_env/&quot;
@@ -1979,64 +1870,8 @@ mycontigs=&quot;xaa&quot;
 ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam &gt;${OUT}/bam/all/all_bam.list
 </code></pre>
 </div>
-<div id="gwas" class="section level1 tabset tabset-fade tabset-pills">
-<h1>GWAS</h1>
-<div id="trial" class="section level2">
-<h2>trial</h2>
-<pre class="bash"><code>
-ANGSD -b ${OUT}/bam/edge/edge_budset_bam.list \
--ref ${REF} \
--out ${OUT}/ANGSD/GWAS/GWAS_BS_Edge/budset_EDGE_MD_PC12 \
--remove_bads 1 \
--C 50 \
--baq 1 \
--minMapQ 20 \
--minQ 20 \
--setMinDepth 3 \
--minInd 2 \
--setMinDepthInd 1 \
--setMaxDepthInd 17 \
--skipTriallelic 1 \
--GL 1 \
--doPost 1 \
--doCounts 1 \
--doMajorMinor 1 \
--doMaf 1 \
--SNP_pval 1e-6 \
--yQuant ${OUT}/blups/edge_budset_blups.list \
--doAsso 5 \
--cov ${PC}/PCA/EDGE_PC12.txt
-</code></pre>
-</div>
-<div id="height-growth-2" class="section level2">
-<h2>Height growth</h2>
-<pre class="bash"><code>
-ANGSD -b ${OUT}/bam/edge/edge_bam.list \
--ref ${REF} \
--out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
--remove_bads 1 \
--C 50 \
--baq 1 \
--minMapQ 20 \
--minQ 20 \
--setMinDepth 3 \
--minInd 2 \
--setMinDepthInd 1 \
--setMaxDepthInd 17 \
--skipTriallelic 1 \
--GL 1 \
--doPost 1 \
--doCounts 1 \
--doMajorMinor 1 \
--doMaf 1 \
--SNP_pval 1e-6 \
--yQuant ${blups}/Ht_EDGE_MD.blups \
--doAsso 5 \
--cov ${PC}/PCA/EDGE_PC12.txt
-</code></pre>
-</div>
-<div id="bud-set-2" class="section level2">
-<h2>Bud set</h2>
+<div id="gwas-height" class="section level2">
+<h2>GWAS Height</h2>
 <pre class="bash"><code>
 ANGSD -b ${OUT}/bam/edge/edge_bam.list \
 -ref ${REF} \

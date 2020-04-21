@@ -16,19 +16,144 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Trait data {.tabset .tabset-fade .tabset-pills}   
+
+## Combined   
+
+```{r}
+finalHeight <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/final_ht_2019.csv")
+nrow(finalHeight) # 5177
+
+initialHeight <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/initialHt.csv")
+nrow(initialHeight) #5048
+
+BudSet <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/BudSet2019_december.csv")
+nrow(BudSet) # 5085
+
+heightData <- merge(initialHeight,finalHeight,
+                    all.x = TRUE, all.y = TRUE)
+heightData <- merge(heightData, BudSet,
+                    all.x = T)
+heightData <- heightData[unique(heightData$plant_ID),]
+nrow(heightData)
+
+
+nrow(heightData)
+heightData <- heightData[unique(heightData$plant_ID),]
+nrow(heightData) #5190
+
+tdata <- heightData
+
+require(tidyr)
+# modifying longitude
+tdata <- tdata %>% dplyr::mutate(Longitude, mLongitude = Longitude * -1)
+
+# adding garden IDs to the beds
+tdata <- tdata %>% tidyr::unite(mBed, Garden, Bed, sep = "_", remove = FALSE)
+
+# converting to factors
+tdata$mBed <- as.factor(tdata$mBed)
+
+
+# reordering factors
+tdata$Region <- factor(tdata$Region,
+                       levels = c("C", "M", "E"))
+
+tdata$Garden <- factor(tdata$Garden,
+                       levels = c("VT", "MD", "NC"))
+
+
+# rearraging and renaming the dataframe
+tdata <- tdata[,c(1:5,10,9,11:16,18,20,22,17,19,21,8,23,6)]
+names(tdata)[18] <- "final_ht"
+names(tdata)[15] <- "final_ht_notes"
+names(tdata)[21] <- "lon"
+names(tdata)[22] <- "lat"
+tdata$Growth <- tdata$final_ht - tdata$initial_ht
+
+```
+## Height growth   
+```{r}
+finalHeight <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/final_ht_2019.csv")
+nrow(finalHeight) # 5177
+
+initialHeight <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/initialHt.csv")
+nrow(initialHeight) #5048
+
+
+heightData <- merge(initialHeight,finalHeight,
+                    all.x = TRUE, all.y = TRUE)
+
+heightData <- heightData[unique(heightData$plant_ID),]
+nrow(heightData)
+
+ht_data <- heightData
+
+# modifying longitude
+ht_data$Longitude <- ht_data$Longitude * -1
+
+# adding garden IDs to the beds
+ht_data <- ht_data %>% tidyr::unite(mBed, Garden, Bed, sep = "_", remove = FALSE)
+
+# converting to factors
+ht_data$mBed <- as.factor(ht_data$mBed)
+
+# reordering factors
+ht_data$Region <- factor(ht_data$Region,
+                         levels = c("C", "M", "E"))
+
+ht_data$Garden <- factor(ht_data$Garden,
+                         levels = c("VT", "MD", "NC"))
+
+
+# rearraging and renaming the dataframe
+ht_data <- ht_data[,c(1:5,10,9,11:16,18,20,17,19,7,6,8)]
+names(ht_data)[17] <- "final_ht"
+names(ht_data)[15] <- "final_ht_notes"
+names(ht_data)[18] <- "lon"
+names(ht_data)[19] <- "lat"
+ht_data$Growth <- ht_data$final_ht - ht_data$initial_ht
+
+ht_data <- ht_data[!is.na(ht_data$final_ht),]
+ht_data <- ht_data[!is.na(ht_data$initial_ht),]
+
+```
+
+## Bud set  
+
+```{r}
+BudSet <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/BudSet2019_december.csv")
+nrow(BudSet) # 5085
+
+require(tidyr)
+# modifying longitude
+BudSet <- BudSet %>% dplyr::mutate(Longitude, mLongitude = Longitude * -1)
+
+# adding garden IDs to the beds
+BudSet <- BudSet %>% tidyr::unite(mBed, Garden, Bed, sep = "_", remove = FALSE)
+
+# converting to factors
+BudSet$mBed <- as.factor(BudSet$mBed)
+
+
+# reordering factors
+BudSet$Region <- factor(BudSet$Region,
+                       levels = c("C", "M", "E"))
+
+BudSet$Garden <- factor(BudSet$Garden,
+                       levels = c("VT", "MD", "NC"))
+
+
+# rearraging and renaming the dataframe
+budset_dat <- BudSet[,c(1:5,10,9,11:18,19,6,8)]
+names(budset_dat)[16] <- "lon"
+names(budset_dat)[17] <- "lat"
+
+```
+
+
+
 # Troubleshooting pipeline  {.tabset .tabset-fade .tabset-pills}   
-
-https://mac-theobio.github.io/QMEE/MultivariateMixed.html#mixed-models  
-
-## Estimate blups
-```{r}
-
-```
-
-## Estimate PCA scores  
-```{r}
-
-```
 
 
 ## Defining variables   
@@ -84,8 +209,6 @@ ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam | grep -f ${OUT}/edge_i
 # -f : match pattern from a file
 
 ```
-
-
 
 ## GWAS Edge-subsetted  
 ```{bash eval=F}
@@ -145,33 +268,179 @@ ANGSD -b ${OUT}/bam/edge/edge_bam.list \
 
 ```
 
-# GWAS for height phenotype  {.tabset .tabset-fade .tabset-pills}   
-
-
 
 
 ## Estimate PCA scores  
+```{bash eval=F}
+## beagle
+cd /data/project_data/GroupProjects/GWAS_env/bam/edge/
+
+ANGSD -GL 2 -out edge -nThreads 1 -doGlf 2 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -bam edge_bam.list
+
+# change python s/w env to v3
+scl enable rh-python36 bash
+
+## PCA angsd
+python pcangsd.py -beagle edge.beagle.gz -admix -o edge_PC -threads 1
+
+
+
+ANGSD -beagle edge.beagle.gz -admix -out edge_PC -threads 1 -fai 
+```
+
+
+
+
+
+# Blups {.tabset .tabset-fade .tabset-pills}  
+```{r message=FALSE, warning=FALSE}
+require(tidyr)
+require(lme4)
+```
+
+## Height growth   
 ```{r}
+
+# ht_data <--- cleaned data for height growth
+
+ht_mod1 <- lmer(data = ht_data, 
+               Growth ~ Garden +  
+               (1|Family) + (1|mBed))
+
+coef_ht <- coef(ht_mod1) # nrow = 368
+head(coef_ht[[1]][,1]) # family coefficients
+ranef_ht <- ranef(ht_mod1)
+head(ranef_ht[[1]][,1]) # family slope
+
+# calculating blups from the coefficients and slope
+blups_ht <- cbind(ranef_ht$Family,coef_ht$Family$`(Intercept)`)
+names(blups_ht)[1] <- "ranef"
+names(blups_ht)[2] <- "coef"
+blups_ht$blups <- blups_ht$coef + (blups_ht$ranef)
+head(blups_ht)
+
+blups <- blups_ht %>% dplyr::select(blups)
+blups <- cbind(Family=rownames(blups),blups) # add family id based on row names
+rownames(blups) <- NULL # remove row names
+
+# write.csv(blups,"./blups/blups_edge_trial.txt", row.names = TRUE)
+
+
+# read in the bam files
+all.bam <- read.table("./bam.files/all_bam.list", stringsAsFactors =F)
+all.bam <- as.data.frame(all.bam)
+head(all.bam)
+names(all.bam)[1] <- "path"
+
+all.bam$Family <- gsub("/data/project_data/RS_ExomeSeq/mapping/all/","",
+                       all.bam$path)
+all.bam$Family <- gsub(".final.bam","",all.bam$Family)
+
+# filter out blups for families absent in the bam file
+
+blups_ht <- merge(all.bam, blups,
+                 by="Family", all.x=TRUE)
+blups_ht <- na.omit(blups_ht)
+str(blups_ht) # 307 blups and bam file paths
+head(blups_ht[3])
+```
+
+
+**Write out bam list and blups for height growth**  
+```{r}
+# # write bam file list
+# dest <- file("./bam.files/ht_bam.list", open="wb")
+# write.table(blups_ht[,2], file=dest,col.names = FALSE,
+#             row.names = FALSE, sep="",quote = FALSE, eol = "\n")
+# close(dest) # required to close the file connection
+# 
+# 
+# # write blups
+# dest <- file("./blups/ht_blups.list", open="wb")
+# write.table(blups_ht[,3], file=dest,col.names = FALSE,
+#             row.names = FALSE, sep=" ",quote = FALSE, eol = "\n")
+# close(dest)
+```
+
+
+## Bud set   
+```{r}
+# budset_dat <--- cleaned data for bud set
+
+# lmer for budset  
+budset_mod1 <- lmer(data = budset_dat, 
+                     BudSet ~ Garden +  
+                     (1|Family) + (1|mBed))
+
+
+coef_budset <- coef(budset_mod1)
+head(coef_budset[[1]][,1]) # family coefficients
+ranef_budset <- ranef(budset_mod1)
+head(ranef_budset[[1]][,1]) # family slope
+
+# calculating blups from the coefficients and slope
+blups_budset <- cbind(ranef_budset$Family,coef_budset$Family$`(Intercept)`)
+names(blups_budset)[1] <- "ranef"
+names(blups_budset)[2] <- "coef"
+blups_budset$blups <- blups_budset$coef + (blups_budset$ranef)
+head(blups_budset)
+
+blups_budset <- blups_budset %>% dplyr::select(blups)
+blups_budset <- cbind(Family=rownames(blups_budset),blups_budset) # add family id based on row names
+rownames(blups_budset) <- NULL # remove row names
+
+# write.csv(blups,"./blups/blups_edge_trial.txt", row.names = TRUE)
+
+
+# read in the bam files
+# all.bam <- read.table("./bam.files/all_bam.list", stringsAsFactors =F)
+# all.bam <- as.data.frame(all.bam)
+# head(all.bam)
+# names(all.bam)[1] <- "path"
+# 
+# all.bam$Family <- gsub("/data/project_data/RS_ExomeSeq/mapping/all/","",
+#                        all.bam$path)
+# all.bam$Family <- gsub(".final.bam","",all.bam$Family)
+
+
+
+# filter out blups for families absent in the bam file
+blups_bs <- merge(all.bam, blups_budset,
+                 by="Family", all.x=TRUE)
+blups_bs <- na.omit(blups_bs)
+str(blups_bs) # 307 blups and bam file paths
+head(blups_bs[3])
 
 ```
 
-## Height blups
+**Write out bam list and blups for budset**  
 ```{r}
-
+# # write bam file list
+# dest <- file("./bam.files/bs_bam.list", open="wb")
+# write.table(blups_bs[,2], file=dest,col.names = FALSE,
+#             row.names = FALSE, sep="",quote = FALSE, eol = "\n")
+# close(dest) # required to close the file connection
+# 
+# 
+# # write blups
+# dest <- file("./blups/bs_blups.list", open="wb")
+# write.table(blups_bs[,3], file=dest,col.names = FALSE,
+#             row.names = FALSE, sep=" ",quote = FALSE, eol = "\n")
+# close(dest)
 ```
 
-## Defining variables   
+
+
+# Defining variables   
 
 blups for the edge region family located on the server:  
 /data/project_data/RS_ExomeSeq/ANGSD/blups/Ht_EDGE_MD.blups  
 
 **Setting file locations**  
 ```{bash eval = FALSE}
-# location of family blups for height trait 
-blups="/data/project_data/RS_ExomeSeq/ANGSD/blups"
 
 # location of the PC score files files
-PC="/data/project_data/RS_ExomeSeq/ANGSD"
+PC="/data/project_data/GroupProjects/GWAS_env/PCA/"
 
 # output folder - also location of bam file lists  
 OUT="/data/project_data/GroupProjects/GWAS_env/"
@@ -192,7 +461,39 @@ ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam >${OUT}/bam/all/all_bam
 
 ```
 
-## GWAS Height   
+
+# GWAS {.tabset .tabset-fade .tabset-pills}   
+
+
+## trial     
+```{bash eval=F}
+
+ANGSD -b ${OUT}/bam/edge/edge_budset_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_BS_Edge/budset_EDGE_MD_PC12 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${OUT}/blups/edge_budset_blups.list \
+-doAsso 5 \
+-cov ${PC}/PCA/EDGE_PC12.txt
+
+```
+
+## Height growth   
 ```{bash eval=F}
 
 ANGSD -b ${OUT}/bam/edge/edge_bam.list \
@@ -220,25 +521,35 @@ ANGSD -b ${OUT}/bam/edge/edge_bam.list \
 
 ```
 
-## error 
+## Bud set   
 ```{bash eval=F}
--> angsd version: 0.931-14-gb9c8ddd (htslib: 1.10.2-19-gecf0216) build(Feb  2 2020 10:28:09)
-        -> Reading fasta: /data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa
-        -> SNP-filter using a pvalue: 1.000000e-06 correspond to 23.928127 likelihood units
-[bammer_main] 4 samples in 4 input files
-        -> Parsing 4 number of samples
-        -> Region lookup 1/1280
-The number of sequenced individuals (4) does not match the number of phenotypes (108)
+
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-cov ${PC}/PCA/EDGE_PC12.txt
 
 ```
 
 
-
-
-
-zoe.m.portlas@gmail.com
-
-aehall26@gmail.com
 
 
 

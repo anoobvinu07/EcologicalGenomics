@@ -1,0 +1,362 @@
+---
+title: "GWAS and GEA"
+author: "Anoob Prakash"
+date: "14/04/2020"
+output:
+  rmarkdown::html_document:
+    theme: cosmo  
+    number_sections: false
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Trait data
+
+```{r}
+finalHeight <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/final_ht_2019.csv")
+nrow(finalHeight) # 5177
+
+initialHeight <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/initialHt.csv")
+nrow(initialHeight) #5048
+
+BudSet <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/BudSet2019_december.csv")
+nrow(BudSet) # 5085
+
+heightData <- merge(initialHeight,finalHeight,
+                    all.x = TRUE, all.y = TRUE)
+heightData <- merge(heightData, BudSet,
+                    all.x = T)
+heightData <- heightData[unique(heightData$plant_ID),]
+nrow(heightData)
+
+
+nrow(heightData)
+heightData <- heightData[unique(heightData$plant_ID),]
+nrow(heightData) #5190
+
+tdata <- heightData
+
+require(tidyr)
+# modifying longitude
+tdata <- tdata %>% dplyr::mutate(Longitude, mLongitude = Longitude * -1)
+
+# adding garden IDs to the beds
+tdata <- tdata %>% tidyr::unite(mBed, Garden, Bed, sep = "_", remove = FALSE)
+
+# converting to factors
+tdata$mBed <- as.factor(tdata$mBed)
+
+
+# reordering factors
+tdata$Region <- factor(tdata$Region,
+                       levels = c("C", "M", "E"))
+
+tdata$Garden <- factor(tdata$Garden,
+                       levels = c("VT", "MD", "NC"))
+
+
+# rearraging and renaming the dataframe
+tdata <- tdata[,c(1:5,10,9,11:16,18,20,22,17,19,21,8,23,6)]
+names(tdata)[18] <- "final_ht"
+names(tdata)[15] <- "final_ht_notes"
+names(tdata)[21] <- "lon"
+names(tdata)[22] <- "lat"
+tdata$Growth <- tdata$final_ht - tdata$initial_ht
+
+```
+
+
+
+
+# Troubleshooting pipeline     
+
+https://mac-theobio.github.io/QMEE/MultivariateMixed.html#mixed-models  
+
+## Blups - Edge
+```{r message=FALSE, warning=FALSE}
+require(tidyr)
+require(lme4)
+```
+
+
+```{r}
+
+tdata_edge <- tdata %>% dplyr::filter(Region=="E")
+
+
+ht_mod1 <- lmer(data = tdata_edge, 
+               final_ht ~ Garden +  
+               (1|Family) + (1|mBed))
+
+coef_ht <- coef(ht_mod1)
+head(coef_ht[[1]][,1]) # family coefficients
+ranef_ht <- ranef(ht_mod1)
+head(ranef_ht[[1]][,1]) # family slope
+
+# calculating blups from the coefficients and slope
+blups_ht <- cbind(ranef_ht$Family,coef_ht$Family$`(Intercept)`)
+names(blups_ht)[1] <- "ranef"
+names(blups_ht)[2] <- "coef"
+blups_ht$blups <- blups_ht$coef + (blups_ht$ranef)
+head(blups_ht)
+
+blups <- blups_ht %>% dplyr::select(blups)
+blups <- cbind(Family=rownames(blups),blups) # add family id based on row names
+rownames(blups) <- NULL # remove row names
+
+# write.csv(blups,"./blups/blups_edge_trial.txt", row.names = TRUE)
+
+
+# read in the bam files
+edge.bam <- read.table("./bam.files/edge_bam.list", stringsAsFactors =F)
+edge.bam <- as.data.frame(edge.bam)
+head(edge.bam)
+names(edge.bam)[1] <- "Family"
+
+edge.bam$Family <- gsub("/data/project_data/RS_ExomeSeq/mapping/all/","",edge.bam$Family)
+edge.bam$Family <- gsub(".final.bam","",edge.bam$Family)
+
+# filter out blups for families absent in the bam file
+
+blups_s <- merge(edge.bam, blups,
+                 by="Family", all.x=TRUE)
+blups_s <- na.omit(blups_s)
+blups_s
+
+```
+**Match blup files to bam list - still in works to set it up**  
+```{bash eval=F}
+grep -f /data/project_data/GroupProjects/GWAS_env/bam/edge/edge.bam.list /data/project_data/GroupProjects/GWAS_env/blups/blups_edge_trial.txt 
+
+| grep -w "E" | cut -f1 | uniq >${OUT}/edge_ind.txt
+
+
+
+
+
+```
+
+
+
+
+## Estimate PCA scores  
+```{r}
+
+
+
+
+```
+
+
+## Defining variables   
+
+blups for the edge region family located on the server:  
+/data/project_data/RS_ExomeSeq/ANGSD/blups/Ht_EDGE_MD.blups  
+
+**Setting file locations**  
+```{bash eval = FALSE}
+# location of family blups for height trait 
+blups="/data/project_data/RS_ExomeSeq/ANGSD/blups"
+
+# location of the PC score files files
+PC="/data/project_data/RS_ExomeSeq/ANGSD"
+
+# output folder - also location of bam file lists  
+OUT="/data/project_data/GroupProjects/GWAS_env/"
+
+# Location of the reference genome
+REF="/data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa"
+
+## breaking into contigs to look at a smaller subset at a time  
+contigs="/data/project_data/RS_ExomeSeq/ANGSD/contig_splits"
+mycontigs="xaa"
+
+```
+
+**Make a list of .bam files**  
+```{bash eval=F}
+
+ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam >${OUT}/bam/all/all_bam.list
+
+```
+grep  
+  - source: https://www.howtogeek.com/496056/how-to-use-the-grep-command-on-linux/  
+  - Regex in grep: https://linuxize.com/post/regular-expressions-in-grep/  
+  - linux manual: http://linuxcommand.org/lc3_man_pages/grep1.html  
+```{bash eval=F}
+
+# pull inds from meta data that belong to edge pops
+
+cat /data/project_data/RS_ExomeSeq/metadata/RS_Exome_metadata.txt | grep -w "E" | cut -f1 | uniq >${OUT}/edge_ind.txt
+
+# -w      : match the whole word
+# -v      : invert match; opposite of -w 
+# cut -f1 : cut the first column  
+# uniq    : only uniques are selected
+
+## match the edge inds with bam list to create edge_bam.list
+
+ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam | grep -f ${OUT}/edge_ind.txt | uniq >${OUT}/bam/edge/edge_bam.list
+
+# -f : match pattern from a file
+
+```
+
+
+
+## GWAS Edge-subsetted  
+```{bash eval=F}
+
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge_sub/Ht_EDGE_MD_PC12_${mycontigs} \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-rf ${contigs}/${mycontigs} \
+-cov ${PC}/PCA/EDGE_PC12.txt
+
+```
+
+
+## GWAS Edge   
+```{bash eval=F}
+
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-cov ${PC}/PCA/EDGE_PC12.txt
+
+```
+
+# GWAS for height phenotype  {.tabset .tabset-fade .tabset-pills}   
+
+
+
+
+## Estimate PCA scores  
+```{r}
+
+```
+
+## Height blups
+```{r}
+
+```
+
+## Defining variables   
+
+blups for the edge region family located on the server:  
+/data/project_data/RS_ExomeSeq/ANGSD/blups/Ht_EDGE_MD.blups  
+
+**Setting file locations**  
+```{bash eval = FALSE}
+# location of family blups for height trait 
+blups="/data/project_data/RS_ExomeSeq/ANGSD/blups"
+
+# location of the PC score files files
+PC="/data/project_data/RS_ExomeSeq/ANGSD"
+
+# output folder - also location of bam file lists  
+OUT="/data/project_data/GroupProjects/GWAS_env/"
+
+# Location of the reference genome
+REF="/data/project_data/RS_ExomeSeq/ReferenceGenomes/Pabies1.0-genome_reduced.fa"
+
+## breaking into contigs to look at a smaller subset at a time  
+contigs="/data/project_data/RS_ExomeSeq/ANGSD/contig_splits"
+mycontigs="xaa"
+
+```
+
+**Make a list of .bam files**  
+```{bash eval=F}
+
+ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam >${OUT}/bam/all/all_bam.list
+
+```
+
+## GWAS Height   
+```{bash eval=F}
+
+ANGSD -b ${OUT}/bam/edge/edge_bam.list \
+-ref ${REF} \
+-out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 3 \
+-minInd 2 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant ${blups}/Ht_EDGE_MD.blups \
+-doAsso 5 \
+-cov ${PC}/PCA/EDGE_PC12.txt
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
