@@ -270,7 +270,7 @@ ANGSD -b ${OUT}/bam/edge/edge_bam.list \
 
 
 
-## Estimate PCA scores  
+## Beagle and PCangsd  
 ```{bash eval=F}
 ## beagle
 cd /data/project_data/GroupProjects/GWAS_env/bam/edge/
@@ -464,32 +464,161 @@ ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam >${OUT}/bam/all/all_bam
 
 # GWAS {.tabset .tabset-fade .tabset-pills}   
 
+## beagle
+```{bash eval=F}
+
+# beagle output for budset trait
+ANGSD -GL 1 \
+-out ${OUT}/ANGSD/beagle/bs/bs_beagle \
+-nThreads 1 \
+-doGlf 2 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-bam ${OUT}/bam/all/bs_bam.list
+
+# beagle output for growth ht trait
+ANGSD -GL 1 \
+-out ${OUT}/ANGSD/beagle/ht/ht_beagle \
+-nThreads 1 \
+-doGlf 2 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-bam ${OUT}/bam/all/ht_bam.list
+
+# beagle output for env vars
+ANGSD -GL 1 \
+-out ${OUT}/ANGSD/beagle/all/all_beagle \
+-nThreads 1 \
+-doGlf 2 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-bam ${OUT}/bam/all/all_bam.list
+```
+
+## PCAngsd  
+```{bash eval=FALSE}
+# set python env in the server to 3.0
+scl enable rh-python36 bash
+
+# check python version  
+python -V  # version 3.6.9
+
+
+## PC ANGSD for budset beagle files 
+
+python /data/popgen/pcangsd/pcangsd.py \
+-beagle /data/project_data/GroupProjects/GWAS_env/ANGSD/beagle/bs/bs_beagle.beagle.gz \
+-admix \
+-o /data/project_data/GroupProjects/GWAS_env/PCA/pcangsd/bs_PC \
+-threads 1
+
+## PC ANGSD for ht beagle files 
+
+python /data/popgen/pcangsd/pcangsd.py \
+-beagle /data/project_data/GroupProjects/GWAS_env/ANGSD/beagle/ht/ht_beagle.beagle.gz \
+-admix \
+-o /data/project_data/GroupProjects/GWAS_env/PCA/pcangsd/ht_PC \
+-threads 1
+
+## PC ANGSD for all beagle files 
+
+python /data/popgen/pcangsd/pcangsd.py \
+-beagle /data/project_data/GroupProjects/GWAS_env/ANGSD/beagle/all/all_beagle.beagle.gz \
+-admix \
+-o /data/project_data/GroupProjects/GWAS_env/PCA/pcangsd/all_PC \
+-threads 1
+
+```
+
+## PC scores  
+```{r message=FALSE, warning=FALSE}
+# install.packages('RcppCNPy')
+# install.packages('label.switching')
+
+library(RcppCNPy)
+library(tidyverse)
+library(ggfortify)
+```
+
+**Budset PC scores**
+```{r eval=FALSE}
+# reads results from admixure
+edge <-npyLoad('edge_PC.admix.Q.npy')
+edge <- as.data.frame(edge)
+edge
+
+bp = barplot(t(as.matrix(edge)), 
+             space = c(0.2),
+             col=rainbow(2),
+             xlab="Individual #", 
+             ylab="Ancestry",
+             border=NA)
+
+# reads estimated covariance matrix
+cov <- as.matrix(read.table("edge_PC.cov"))
+# compute eigenvalues and eigenvectors
+cov.eigen <- eigen(cov)
+
+plot(cov.eigen$values, xlab = 'Eigenvalue Number', ylab = 'Eigenvalue Size', main = 'Scree Graph')
+lines(cov.eigen$values)
+
+# Perform PCA on covariance matrix
+edge.pca <- prcomp(cov)
+edge.pca
+summary(edge.pca)
+
+# plot unscaled PCs
+pca.plot <- autoplot(edge.pca, data = edge)
+pca.plot
+
+# scaling
+scaling <- edge.pca$sdev[1:2] * sqrt(nrow(edge))
+
+pc1 <- rowSums(t(t(sweep(edge, 2 ,colMeans(edge))) *cov.eigen$vectors[,1] * -1) / scaling[1])
+pc2 <- rowSums(t(t(sweep(edge, 2, colMeans(edge))) *cov.eigen$vectors[,2]) / scaling[2])
+
+# collect PCs in data.frame and plot 
+df <- data.frame(pc1, pc2)
+
+ggplot(df, aes(x=pc1, y=pc2)) + 
+  geom_point()
+
+# # save df without row or column names for GWAS
+# write.table(df, "edge_PC.txt", 
+#             row.names = F, col.names = F)
+```
+
+
 
 ## trial     
 ```{bash eval=F}
+# notes: https://github.com/mfumagalli/ngsTools/blob/master/TUTORIAL.md 
 
 ANGSD -b ${OUT}/bam/edge/edge_budset_bam.list \
 -ref ${REF} \
 -out ${OUT}/ANGSD/GWAS/GWAS_BS_Edge/budset_EDGE_MD_PC12 \
--remove_bads 1 \
--C 50 \
--baq 1 \
--minMapQ 20 \
--minQ 20 \
--setMinDepth 3 \
--minInd 2 \
+-remove_bads 1 \     # Discard 'bad' reads, (flag >=256)
+-C 50 \              # adjust mapQ for excessive mismatches (as SAMtools), supply -ref
+-baq 1 \             # adjust qscores around indels (as SAMtools), supply -ref
+-minMapQ 20 \        # Discard reads with mapping quality below
+-minQ 20 \           # Discard bases with base quality below
+-setMinDepth 3 \     # minimum total depth
+-minInd 2 \          # use only sites with data from at least 2 individuals
 -setMinDepthInd 1 \
 -setMaxDepthInd 17 \
 -skipTriallelic 1 \
--GL 1 \
+-GL 1 \              # Estimate genotype likelihoods
 -doPost 1 \
--doCounts 1 \
--doMajorMinor 1 \
--doMaf 1 \
--SNP_pval 1e-6 \
+-doCounts 1 \        # Calculate various counts statistics
+-doMajorMinor 1 \    # Infer the major/minor using different approaches
+-doMaf 1 \           # Estimate allele frequencies
+-SNP_pval 1e-6 \     # Remove sites with a pvalue larger
 -yQuant ${OUT}/blups/edge_budset_blups.list \
 -doAsso 5 \
--cov ${PC}/PCA/EDGE_PC12.txt
+-cov ${OUT}/PCA/edge.txt
 
 ```
 

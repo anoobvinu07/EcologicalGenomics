@@ -16,7 +16,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Trait data
+# Trait data - combined
 
 ```{r}
 finalHeight <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/final_ht_2019.csv")
@@ -68,6 +68,91 @@ names(tdata)[15] <- "final_ht_notes"
 names(tdata)[21] <- "lon"
 names(tdata)[22] <- "lat"
 tdata$Growth <- tdata$final_ht - tdata$initial_ht
+
+```
+
+# Trait data - height
+
+```{r}
+finalHeight <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/final_ht_2019.csv")
+nrow(finalHeight) # 5177
+
+initialHeight <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/initialHt.csv")
+nrow(initialHeight) #5048
+
+
+heightData <- merge(initialHeight,finalHeight,
+                    all.x = TRUE, all.y = TRUE)
+heightData <- merge(heightData, BudSet,
+                    all.x = T)
+heightData <- heightData[unique(heightData$plant_ID),]
+nrow(heightData)
+
+
+nrow(heightData)
+heightData <- heightData[unique(heightData$plant_ID),]
+nrow(heightData) #5190
+
+tdata <- heightData
+
+require(tidyr)
+# modifying longitude
+tdata <- tdata %>% dplyr::mutate(Longitude, mLongitude = Longitude * -1)
+
+# adding garden IDs to the beds
+tdata <- tdata %>% tidyr::unite(mBed, Garden, Bed, sep = "_", remove = FALSE)
+
+# converting to factors
+tdata$mBed <- as.factor(tdata$mBed)
+
+
+# reordering factors
+tdata$Region <- factor(tdata$Region,
+                       levels = c("C", "M", "E"))
+
+tdata$Garden <- factor(tdata$Garden,
+                       levels = c("VT", "MD", "NC"))
+
+
+# rearraging and renaming the dataframe
+tdata <- tdata[,c(1:5,10,9,11:16,18,20,22,17,19,21,8,23,6)]
+names(tdata)[18] <- "final_ht"
+names(tdata)[15] <- "final_ht_notes"
+names(tdata)[21] <- "lon"
+names(tdata)[22] <- "lat"
+tdata$Growth <- tdata$final_ht - tdata$initial_ht
+
+```
+
+# Trait data - budset
+
+```{r}
+BudSet <- read.csv("C:/Dropbox/Spruce_CommonGarden_Data/trait_data/BudSet2019_december.csv")
+nrow(BudSet) # 5085
+
+require(tidyr)
+# modifying longitude
+BudSet <- BudSet %>% dplyr::mutate(Longitude, mLongitude = Longitude * -1)
+
+# adding garden IDs to the beds
+BudSet <- BudSet %>% tidyr::unite(mBed, Garden, Bed, sep = "_", remove = FALSE)
+
+# converting to factors
+BudSet$mBed <- as.factor(BudSet$mBed)
+
+
+# reordering factors
+BudSet$Region <- factor(BudSet$Region,
+                       levels = c("C", "M", "E"))
+
+BudSet$Garden <- factor(BudSet$Garden,
+                       levels = c("VT", "MD", "NC"))
+
+
+# rearraging and renaming the dataframe
+budset_dat <- BudSet[,c(1:5,10,9,11:18,19,6,8)]
+names(budset_dat)[16] <- "lon"
+names(budset_dat)[17] <- "lat"
 
 ```
 
