@@ -482,9 +482,11 @@ trait_df_biol_all <- cbind(tdata,bioT)
 **Bioclims used in the transcriptomics study**  
 - Bio18 (precip of warmest quarter)  
 - Bio5 (temp of warmest month)  
+- Bio10 (temp of the warmest quarter)  
 ```{r}
 bio18 <- trait_df_biol_all$bio18_13
 bio05 <- trait_df_biol_all$bio5_13
+bio10 <- trait_df_biol_all$bio10_13
 ```
 
 **Write out files**  
@@ -498,6 +500,11 @@ bio05 <- trait_df_biol_all$bio5_13
 # # write bio05
 # dest <- file("./blups/wright server/bio05", open="wb")
 # write.table(bio05, file=dest,col.names = FALSE,
+#             row.names = FALSE, sep=" ",quote = FALSE, eol = "\n")
+# close(dest)
+# # write bio10
+# dest <- file("./blups/wright server/bio10", open="wb")
+# write.table(bio10, file=dest,col.names = FALSE,
 #             row.names = FALSE, sep=" ",quote = FALSE, eol = "\n")
 # close(dest)
 ```
@@ -546,7 +553,7 @@ ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam >${OUT}/bam/all/all_bam
 ```
 
 
-# GWAS {.tabset .tabset-fade .tabset-pills}   
+# PCA {.tabset .tabset-fade .tabset-pills}   
 
 ## beagle (Wright server)
 ```{bash eval=F}
@@ -708,7 +715,7 @@ ht_df <- data.frame(htlist[,c(4,5)])
 
 ```
 
-
+# GWAS {.tabset .tabset-fade .tabset-pills}  
 ## Filter details     
 ```{bash eval=F}
 # notes: https://github.com/mfumagalli/ngsTools/blob/master/TUTORIAL.md 
@@ -795,63 +802,6 @@ angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/ht_bam.list \
 -cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/ht_PC.txt
 ```
 
-## bio clim variables  
-
-**Bio5 (temp of warmest month)**  
-```{bash eval=FALSE}
-angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/all_bam.list \
--ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa \
--out /home/Anoob/mydata/Anoob/ANGSD/GWAS/bio05/bio05 \
--remove_bads 1 \
--C 50 \
--baq 1 \
--minMapQ 20 \
--minQ 20 \
--setMinDepth 2 \
--minInd 20 \
--setMinDepthInd 1 \
--setMaxDepthInd 17 \
--skipTriallelic 1 \
--GL 1 \
--doPost 1 \
--doCounts 1 \
--doMajorMinor 1 \
--doMaf 1 \
--SNP_pval 1e-6 \
--yQuant /home/Anoob/mydata/Anoob/ANGSD/blups/bio05 \
--doAsso 5 \
--nThreads 4 \
--cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/all.txt
-```
-
-**Bio18 (precip of warmest quarter)**  
-```{bash eval=FALSE}
-angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/all_bam.list \
--ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa \
--out /home/Anoob/mydata/Anoob/ANGSD/GWAS/bio18/bio18 \
--remove_bads 1 \
--C 50 \
--baq 1 \
--minMapQ 20 \
--minQ 20 \
--setMinDepth 2 \
--minInd 20 \
--setMinDepthInd 1 \
--setMaxDepthInd 17 \
--skipTriallelic 1 \
--GL 1 \
--doPost 1 \
--doCounts 1 \
--doMajorMinor 1 \
--doMaf 1 \
--SNP_pval 1e-6 \
--yQuant /home/Anoob/mydata/Anoob/ANGSD/blups/bio18 \
--doAsso 5 \
--nThreads 4 \
--cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/all.txt
-```
-
-
 ## Height growth (Pbio server)   
 ```{bash eval=F}
 
@@ -879,6 +829,92 @@ ANGSD -b ${OUT}/bam/edge/edge_bam.list \
 -cov ${PC}/PCA/EDGE_PC12.txt
 
 ```
+
+
+# GEA {.tabset .tabset-fade .tabset-pills}  
+
+## Bio5 (temp of warmest month)  
+```{bash eval=FALSE}
+angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/all_bam.list \
+-ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa \
+-out /home/Anoob/mydata/Anoob/ANGSD/GWAS/bio05/bio05 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 2 \
+-minInd 20 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant /home/Anoob/mydata/Anoob/ANGSD/blups/bio05 \
+-doAsso 5 \
+-nThreads 4 \
+-cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/all.txt
+```
+
+## Bio18 (precip of warmest quarter)   
+```{bash eval=FALSE}
+angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/all_bam.list \
+-ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa \
+-out /home/Anoob/mydata/Anoob/ANGSD/GWAS/bio18/bio18 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 2 \
+-minInd 20 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant /home/Anoob/mydata/Anoob/ANGSD/blups/bio18 \
+-doAsso 5 \
+-nThreads 4 \
+-cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/all.txt
+```
+
+## Bio10 (temp of warmest quarter)  
+```{bash eval=FALSE}
+angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/all_bam.list \
+-ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa \
+-out /home/Anoob/mydata/Anoob/ANGSD/GWAS/bio10/bio10 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 2 \
+-minInd 20 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant /home/Anoob/mydata/Anoob/ANGSD/blups/bio10 \
+-doAsso 5 \
+-nThreads 4 \
+-cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/all.txt
+```
+
+
 
 # Analysis {.tabset .tabset-fade .tabset-pills}
 ## Importing in R  
@@ -1227,6 +1263,25 @@ bio18_man
 
 
 
+## tinkering with manhattan plot
+```{r}
+require(ggrepel)
+bio18_man1 <- ggplot(bio18_Gwa_flt, aes(Position2, p)) +
+                  geom_point(alpha=0.3) + theme_minimal() + 
+                  theme(
+                    legend.position = "none",
+                    panel.border = element_blank(),
+                    panel.grid.major.x = element_blank(),
+                    panel.grid.minor.x = element_blank(),
+                    axis.text.x = element_text(angle = 90, size = 8, vjust = 0.5)
+                  ) + xlab("Chromosome position") + ylab("-log10 (p-value)") + 
+            geom_point(data=bio18_outliers, 
+                       aes(x=Position2,y=p), color='blue',size=2) + 
+            geom_hline(yintercept=143.0102, linetype="dashed", color = "red") + 
+            geom_label_repel(data=bio18_outliers,
+                             aes(label=as.factor(Chromosome), alpha=0.7), size=5, force=1.3) 
+bio18_man1
+```
 
 
 
