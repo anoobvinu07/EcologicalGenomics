@@ -307,16 +307,24 @@ ht_mod1 <- lmer(data = ht_data,
                Growth ~ Garden +  
                (1|Family) + (1|mBed))
 
+ht_mod2 <- lmer(data = ht_data, 
+               Growth ~ Garden +  
+               (1|Family))
+
+AIC(ht_mod1, ht_mod2)
+
+plot(coef(ht_mod1)$Family[,1], coef(ht_mod2)$Family[,1])
+
+
+# setting up blups for height growth 
 coef_ht <- coef(ht_mod1) # nrow = 368
 head(coef_ht[[1]][,1]) # family coefficients
 ranef_ht <- ranef(ht_mod1)
 head(ranef_ht[[1]][,1]) # family slope
 
-# calculating blups from the coefficients and slope
 blups_ht <- cbind(ranef_ht$Family,coef_ht$Family$`(Intercept)`)
 names(blups_ht)[1] <- "ranef"
-names(blups_ht)[2] <- "coef"
-blups_ht$blups <- blups_ht$coef + (blups_ht$ranef)
+names(blups_ht)[2] <- "blups"
 head(blups_ht)
 
 blups <- blups_ht %>% dplyr::select(blups)
@@ -332,7 +340,7 @@ all.bam <- as.data.frame(all.bam)
 head(all.bam)
 names(all.bam)[1] <- "path"
 
-all.bam$Family <- gsub("/data/project_data/RS_ExomeSeq/mapping/all/","",
+all.bam$Family <- gsub("/home/Anoob/mydata/datashare/Spruce/exome_capture/WES_mapping/Mapping_WES/ref_Pabies/BWA/","",
                        all.bam$path)
 all.bam$Family <- gsub(".final.bam","",all.bam$Family)
 
@@ -348,7 +356,7 @@ head(blups_ht[3])
 
 **Write out bam list and blups for height growth**  
 ```{r}
-# # write bam file list
+# write bam file list
 # dest <- file("./bam.files/ht_bam.list", open="wb")
 # write.table(blups_ht[,2], file=dest,col.names = FALSE,
 #             row.names = FALSE, sep="",quote = FALSE, eol = "\n")
@@ -356,7 +364,7 @@ head(blups_ht[3])
 # 
 # 
 # # write blups
-# dest <- file("./blups/ht_blups.list", open="wb")
+# dest <- file("./blups/wright server/ht_blups", open="wb")
 # write.table(blups_ht[,3], file=dest,col.names = FALSE,
 #             row.names = FALSE, sep=" ",quote = FALSE, eol = "\n")
 # close(dest)
@@ -372,23 +380,22 @@ budset_mod1 <- lmer(data = budset_dat,
                      BudSet ~ Garden +  
                      (1|Family) + (1|mBed))
 
-
-coef_budset <- coef(budset_mod1)
+# setting up the blups for budset
+coef_budset <- coef(budset_mod1) # blups
 head(coef_budset[[1]][,1]) # family coefficients
 ranef_budset <- ranef(budset_mod1)
-head(ranef_budset[[1]][,1]) # family slope
+head(ranef_budset[[1]][,1]) # random effects
 
-# calculating blups from the coefficients and slope
 blups_budset <- cbind(ranef_budset$Family,coef_budset$Family$`(Intercept)`)
 names(blups_budset)[1] <- "ranef"
-names(blups_budset)[2] <- "coef"
-blups_budset$blups <- blups_budset$coef + (blups_budset$ranef)
+names(blups_budset)[2] <- "blups"
 head(blups_budset)
 
 blups_budset <- blups_budset %>% dplyr::select(blups)
 blups_budset <- cbind(Family=rownames(blups_budset),blups_budset) # add family id based on row names
 rownames(blups_budset) <- NULL # remove row names
 
+### code for bam list on the ecogen server
 # write.csv(blups,"./blups/blups_edge_trial.txt", row.names = TRUE)
 
 
@@ -401,15 +408,15 @@ rownames(blups_budset) <- NULL # remove row names
 # all.bam$Family <- gsub("/data/project_data/RS_ExomeSeq/mapping/all/","",
 #                        all.bam$path)
 # all.bam$Family <- gsub(".final.bam","",all.bam$Family)
-
+####
 
 
 # filter out blups for families absent in the bam file
 blups_bs <- merge(all.bam, blups_budset,
                  by="Family", all.x=TRUE)
 blups_bs <- na.omit(blups_bs)
-str(blups_bs) # 307 blups and bam file paths
-head(blups_bs[3])
+str(blups_bs) # 339 blups and bam file paths
+tail(blups_bs[3])
 
 ```
 
@@ -423,12 +430,77 @@ head(blups_bs[3])
 # 
 # 
 # # write blups
-# dest <- file("./blups/bs_blups.list", open="wb")
+# dest <- file("./blups/wright server/bs_blups", open="wb")
 # write.table(blups_bs[,3], file=dest,col.names = FALSE,
 #             row.names = FALSE, sep=" ",quote = FALSE, eol = "\n")
 # close(dest)
 ```
+## bioclim variables
+```{r}
+meta <- read.table("./mydata/metadata/RS_Exome_metadata.txt", sep="\t",header = T)
+meta <- meta[,c(3,5,7,8,9)]
+meta$Longitude <- meta$Longitude * -1
+```
 
+
+```{r message=FALSE, warning=FALSE}
+require(tidyr)
+require(raster)
+```
+
+
+```{r}
+### bioclim variables for provenances and sites
+bio_prov <- raster::getData("worldclim",var="bio",res=0.5,
+                         lon=-80, lat=50,
+                         download = TRUE,
+                         path = "D:/worldclim data/0.5/") 
+
+#bio1 - mean annual temp
+#bio12 - annual precipitation
+
+#Plot
+plot(bio_prov$bio1_13, main="Annual Mean Temperature")
+
+bio_prov@crs # to check the projection system # crs(bio_prov) - does the same function
+
+
+# points <- SpatialPoints(tdata[,c(22,23)], proj4string = bio_prov@crs)
+nrow(meta)
+tdata <- meta[!is.na(meta$Latitude),] 
+nrow(tdata)
+
+bioT <- raster::extract(bio_prov,
+                        coordinates(tdata[,c("Longitude","Latitude")]))
+
+# df <- cbind.data.frame(coordinates(points),values)
+
+head(bioT)
+trait_df_biol_all <- cbind(tdata,bioT)
+```
+
+**Bioclims used in the transcriptomics study**  
+- Bio18 (precip of warmest quarter)  
+- Bio5 (temp of warmest month)  
+```{r}
+bio18 <- trait_df_biol_all$bio18_13
+bio05 <- trait_df_biol_all$bio5_13
+```
+
+**Write out files**  
+```{r}
+# # write bio18
+# dest <- file("./blups/wright server/bio18", open="wb")
+# write.table(bio18, file=dest,col.names = FALSE,
+#             row.names = FALSE, sep=" ",quote = FALSE, eol = "\n")
+# close(dest)
+# 
+# # write bio05
+# dest <- file("./blups/wright server/bio05", open="wb")
+# write.table(bio05, file=dest,col.names = FALSE,
+#             row.names = FALSE, sep=" ",quote = FALSE, eol = "\n")
+# close(dest)
+```
 
 
 # Defining variables   
@@ -436,7 +508,19 @@ head(blups_bs[3])
 blups for the edge region family located on the server:  
 /data/project_data/RS_ExomeSeq/ANGSD/blups/Ht_EDGE_MD.blups  
 
-**Setting file locations**  
+**Setting file locations** 
+1. Wright  
+```{bash eval=FALSE}
+# bam files location on wright
+~/mydata/datashare/Spruce/exome_capture/WES_mapping/Mapping_WES/ref_Pabies/BWA
+
+# create bam list
+ls ~/mydata/datashare/Spruce/exome_capture/WES_mapping/Mapping_WES/ref_Pabies/BWA/*final.bam >/home/Anoob/mydata/Anoob/ANGSD/bam/all_bam.list
+
+```
+
+
+2. Ecogen server  
 ```{bash eval = FALSE}
 
 # location of the PC score files files
@@ -464,30 +548,35 @@ ls /data/project_data/RS_ExomeSeq/mapping/all/*final.bam >${OUT}/bam/all/all_bam
 
 # GWAS {.tabset .tabset-fade .tabset-pills}   
 
-## beagle
+## beagle (Wright server)
 ```{bash eval=F}
 
-# beagle output for budset trait
-ANGSD -GL 1 \
--out ${OUT}/ANGSD/beagle/bs/bs_beagle \
--nThreads 1 \
--doGlf 2 \
--doMajorMinor 1 \
--doMaf 1 \
--SNP_pval 1e-6 \
--bam ${OUT}/bam/all/bs_bam.list
 
-# beagle output for growth ht trait
-ANGSD -GL 1 \
--out ${OUT}/ANGSD/beagle/ht/ht_beagle \
--nThreads 1 \
--doGlf 2 \
--doMajorMinor 1 \
--doMaf 1 \
--SNP_pval 1e-6 \
--bam ${OUT}/bam/all/ht_bam.list
+# check error Killed
+ANGSD -b ${OUT}/bam/all/all_bam.list
 
 # beagle output for env vars
+angsd -GL 1 \
+-out /home/Anoob/mydata/Anoob/ANGSD/beagle/all \
+-nThreads 3 \
+-doGlf 2 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-bam /home/Anoob/mydata/Anoob/ANGSD/bam/all_bam.list \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 2 \
+-doCounts 1 \
+-minInd 20 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa
+
+# beagle output without relevant filters (Pbio Server)
 ANGSD -GL 1 \
 -out ${OUT}/ANGSD/beagle/all/all_beagle \
 -nThreads 1 \
@@ -496,9 +585,9 @@ ANGSD -GL 1 \
 -doMaf 1 \
 -SNP_pval 1e-6 \
 -bam ${OUT}/bam/all/all_bam.list
-```
 
-## PCAngsd  
+```
+## PCAngsd (EcoGen server) 
 ```{bash eval=FALSE}
 # set python env in the server to 3.0
 scl enable rh-python36 bash
@@ -506,30 +595,20 @@ scl enable rh-python36 bash
 # check python version  
 python -V  # version 3.6.9
 
-
-## PC ANGSD for budset beagle files 
-
-python /data/popgen/pcangsd/pcangsd.py \
--beagle /data/project_data/GroupProjects/GWAS_env/ANGSD/beagle/bs/bs_beagle.beagle.gz \
--admix \
--o /data/project_data/GroupProjects/GWAS_env/PCA/pcangsd/bs_PC \
--threads 1
-
-## PC ANGSD for ht beagle files 
-
-python /data/popgen/pcangsd/pcangsd.py \
--beagle /data/project_data/GroupProjects/GWAS_env/ANGSD/beagle/ht/ht_beagle.beagle.gz \
--admix \
--o /data/project_data/GroupProjects/GWAS_env/PCA/pcangsd/ht_PC \
--threads 1
-
 ## PC ANGSD for all beagle files 
 
 python /data/popgen/pcangsd/pcangsd.py \
--beagle /data/project_data/GroupProjects/GWAS_env/ANGSD/beagle/all/all_beagle.beagle.gz \
+-beagle /data/project_data/GroupProjects/GWAS_env/ANGSD/beagle/all/all.beagle.gz \
 -admix \
+-admix_auto 3 \
 -o /data/project_data/GroupProjects/GWAS_env/PCA/pcangsd/all_PC \
--threads 1
+-threads 5
+
+# without admix
+python /data/popgen/pcangsd/pcangsd.py \
+-beagle /data/project_data/GroupProjects/GWAS_env/ANGSD/beagle/all/all.beagle.gz \
+-o /data/project_data/GroupProjects/GWAS_env/PCA/pcangsd/all_Noadmix \
+-threads 5
 
 ```
 
@@ -543,10 +622,15 @@ library(tidyverse)
 library(ggfortify)
 ```
 
-**Budset PC scores**
+**PC scores**   
+Zoe:  
+  - To summarize what I did, I imported the covariance matrix (the .cov file) and the admixture results (the .npy file). 
+  - I made a quick and dirty barplot of the admixture results. The individuals are just in the same order as how they are in the .npy file so I suppose that's just the same order as the bam file list.  
+  - I performed PCA on the covariance matrix using prcomp() and then scaled it using the stdev. I'll send the plot but I think that will be more helpful for all the pops put together (we can compare with Thibaut's plot...).   
+  - Last, I wrote the scaled PCs to a txt file without col or row names. I didn't mess with the order at all, so hopefully it's in the order it's supposed to be!!  
 ```{r eval=FALSE}
 # reads results from admixure
-edge <-npyLoad('edge_PC.admix.Q.npy')
+edge <-npyLoad('./PCA/all_PC.admix.Q.npy')
 edge <- as.data.frame(edge)
 edge
 
@@ -558,7 +642,7 @@ bp = barplot(t(as.matrix(edge)),
              border=NA)
 
 # reads estimated covariance matrix
-cov <- as.matrix(read.table("edge_PC.cov"))
+cov <- as.matrix(read.table("./PCA/all_PC.cov"))
 # compute eigenvalues and eigenvectors
 cov.eigen <- eigen(cov)
 
@@ -586,14 +670,46 @@ df <- data.frame(pc1, pc2)
 ggplot(df, aes(x=pc1, y=pc2)) + 
   geom_point()
 
-# # save df without row or column names for GWAS
-# write.table(df, "edge_PC.txt", 
+
+# subset for budset phenotype
+famlist <- all.bam$Family
+famlist <- cbind(famlist,df)
+names(famlist)[1] <- "Family"
+bslist <-  na.omit(blups_bs)
+str(bslist)
+bslist <- merge(bslist,famlist, by="Family")
+bs_df <- data.frame(bslist[,c(4,5)])
+
+# subset for height phenotype
+famlist <- all.bam$Family
+famlist <- cbind(famlist,df)
+names(famlist)[1] <- "Family"
+htlist <-  na.omit(blups_ht)
+str(htlist)
+htlist <- merge(htlist,famlist, by="Family")
+ht_df <- data.frame(htlist[,c(4,5)])
+```
+
+**Write out files**   
+```{r eval=FALSE}
+# # save df without row or column names for GWAS - all
+# write.table(df, "./PCA/scores/all.txt",
 #             row.names = F, col.names = F)
+# 
+# # save df without row or column names for GWAS - budset
+# write.table(bs_df, "./PCA/scores/bc_PC.txt",
+#             row.names = F, col.names = F)
+# 
+# # save df without row or column names for GWAS - height
+# write.table(ht_df, "./PCA/scores/ht_PC.txt",
+#             row.names = F, col.names = F)
+
+
+
 ```
 
 
-
-## trial     
+## Filter details     
 ```{bash eval=F}
 # notes: https://github.com/mfumagalli/ngsTools/blob/master/TUTORIAL.md 
 
@@ -605,13 +721,13 @@ ANGSD -b ${OUT}/bam/edge/edge_budset_bam.list \
 -baq 1 \             # adjust qscores around indels (as SAMtools), supply -ref
 -minMapQ 20 \        # Discard reads with mapping quality below
 -minQ 20 \           # Discard bases with base quality below
--setMinDepth 3 \     # minimum total depth
--minInd 2 \          # use only sites with data from at least 2 individuals
+-setMinDepth 2 \     # minimum total depth
+-minInd 20 \          # use only sites with data from at least 2 individuals
 -setMinDepthInd 1 \
 -setMaxDepthInd 17 \
 -skipTriallelic 1 \
 -GL 1 \              # Estimate genotype likelihoods
--doPost 1 \
+<!-- -doPost 1 \ -->
 -doCounts 1 \        # Calculate various counts statistics
 -doMajorMinor 1 \    # Infer the major/minor using different approaches
 -doMaf 1 \           # Estimate allele frequencies
@@ -622,37 +738,123 @@ ANGSD -b ${OUT}/bam/edge/edge_budset_bam.list \
 
 ```
 
-## Height growth   
-```{bash eval=F}
-
-ANGSD -b ${OUT}/bam/edge/edge_bam.list \
--ref ${REF} \
--out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
--remove_bads 1 \
--C 50 \
--baq 1 \
--minMapQ 20 \
--minQ 20 \
--setMinDepth 3 \
--minInd 2 \
--setMinDepthInd 1 \
--setMaxDepthInd 17 \
--skipTriallelic 1 \
--GL 1 \
--doPost 1 \
--doCounts 1 \
--doMajorMinor 1 \
--doMaf 1 \
--SNP_pval 1e-6 \
--yQuant ${blups}/Ht_EDGE_MD.blups \
--doAsso 5 \
--cov ${PC}/PCA/EDGE_PC12.txt
-
-```
 
 ## Bud set   
 ```{bash eval=F}
 
+angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/bs_bam.list \
+-ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa \
+-out /home/Anoob/mydata/Anoob/ANGSD/GWAS/budset2019/budset \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 2 \
+-minInd 20 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant /home/Anoob/mydata/Anoob/ANGSD/blups/bs_blups \
+-doAsso 5 \
+-nThreads 4 \
+-cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/bc_PC.txt
+
+```
+
+## Height growth  
+```{bash eval=FALSE}
+angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/ht_bam.list \
+-ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa \
+-out /home/Anoob/mydata/Anoob/ANGSD/GWAS/height2019/height \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 2 \
+-minInd 20 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant /home/Anoob/mydata/Anoob/ANGSD/blups/ht_blups \
+-doAsso 5 \
+-nThreads 4 \
+-cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/ht_PC.txt
+```
+
+## bio clim variables  
+
+**Bio5 (temp of warmest month)**  
+```{bash eval=FALSE}
+angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/all_bam.list \
+-ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa \
+-out /home/Anoob/mydata/Anoob/ANGSD/GWAS/bio05/bio05 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 2 \
+-minInd 20 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant /home/Anoob/mydata/Anoob/ANGSD/blups/bio05 \
+-doAsso 5 \
+-nThreads 4 \
+-cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/all.txt
+```
+
+**Bio18 (precip of warmest quarter)**  
+```{bash eval=FALSE}
+angsd -b /home/Anoob/mydata/Anoob/ANGSD/bam/all_bam.list \
+-ref ~/mydata/datashare/Spruce/exome_capture/WES_mapping/ReferenceGenomes/Pabies1.0-genome_reduced.fa \
+-out /home/Anoob/mydata/Anoob/ANGSD/GWAS/bio18/bio18 \
+-remove_bads 1 \
+-C 50 \
+-baq 1 \
+-minMapQ 20 \
+-minQ 20 \
+-setMinDepth 2 \
+-minInd 20 \
+-setMinDepthInd 1 \
+-setMaxDepthInd 17 \
+-skipTriallelic 1 \
+-GL 1 \
+-doPost 1 \
+-doCounts 1 \
+-doMajorMinor 1 \
+-doMaf 1 \
+-SNP_pval 1e-6 \
+-yQuant /home/Anoob/mydata/Anoob/ANGSD/blups/bio18 \
+-doAsso 5 \
+-nThreads 4 \
+-cov /home/Anoob/mydata/Anoob/ANGSD/beagle/PC_scores/all.txt
+```
+
+
+## Height growth (Pbio server)   
+```{bash eval=F}
+
 ANGSD -b ${OUT}/bam/edge/edge_bam.list \
 -ref ${REF} \
 -out ${OUT}/ANGSD/GWAS/GWAS_HT_Edge/Ht_EDGE_MD_PC12 \
@@ -678,9 +880,348 @@ ANGSD -b ${OUT}/bam/edge/edge_bam.list \
 
 ```
 
+# Analysis {.tabset .tabset-fade .tabset-pills}
+## Importing in R  
+
+<!-- Read: [ngsTools](http://www.nielsenlab.org/wp-content/uploads/2016/05/Bioinformatics-2014-Fumagalli-1486-7.pdf)   -->
+
+```{r message=FALSE, warning=FALSE}
+require(tidyverse)
+require(plotly)
+```
+
+
+```{r}
+bs_Gwa <- read.table(gzfile("Z:\\Anoob\\ANGSD\\GWAS\\budset2019\\budset.lrt0.gz"),
+                     header = T)
+
+bs_maf <- read.table(gzfile("Z:\\Anoob\\ANGSD\\GWAS\\budset2019\\budset.mafs.gz"),
+                     header = T)
+
+bs_Gwa_flt <- bs_Gwa %>%
+              filter(LRTscore > -998)
+  
+summary(bs_Gwa_flt)
+hist(bs_Gwa_flt$beta)
+# minor allele -> earlier budset (neg. direction)
+# look at the subset of alleles with bio effect to look at which pops have sig. minor alleles?
+
+# bedtools intersect
+
+bs_LRT <- ggplot(bs_Gwa_flt, aes(beta, LRTscore)) +
+                  geom_point()
+
+# pchisq log.p = T lower.tail = F?
+
+bs_Gwa_flt$p <- -10*(pchisq(bs_Gwa_flt$LRTscore, 
+                            df = 1, log.p = T, lower.tail = F))
+head(bs_Gwa_flt)
+
+bs_Gwa_flt$Position2 <- seq(1,nrow(bs_Gwa_flt))
+
+summary(bs_Gwa_flt)
+
+
+# significant SNPs
+quantile(bs_Gwa_flt$p,0.9999)
+
+
+# find outliers for the GWASs
+bs_outliers <- bs_Gwa_flt %>%
+                  filter(p > 184.8012) #184.8012
+
+0.05/506042
+# 70.05
+```
+**write out files**  
+```{r}
+bs_out_bed <- bs_outliers[,c(1,2)]
+bs_out_bed$PositionEnd <- bs_out_bed$Position
+
+write.table(bs_out_bed, "./bed_files/bs_outliers.bed",
+            row.names = F, col.names = F, sep="\t",quote=F)
+```
+
+**Create bed tools and annotate**  
+```{bash eval=F}
+/data/popgen/bedtools2/bin/bedtools intersect \
+-a /data/project_data/GroupProjects/GWAS_env/bed_files/bs_outliers.bed \
+-b /data/project_data/Annotation/Pabies1.0-HC.gtf \
+-wb > bs_intersect.bed
+```
+
+
+**Manhattan plot**
+```{r}
+# Manhattan plot
+
+bs_man <- ggplot(bs_Gwa_flt, aes(Position2, p)) +
+                  geom_point(alpha=0.3) + theme_minimal() + 
+                  theme(
+                    legend.position = "none",
+                    panel.border = element_blank(),
+                    panel.grid.major.x = element_blank(),
+                    panel.grid.minor.x = element_blank(),
+                    axis.text.x = element_text(angle = 90, size = 8, vjust = 0.5)
+                  ) + xlab("Chromosome position") + ylab("-log10 (p-value)") + 
+            geom_point(data=bs_outliers, 
+                       aes(x=Position2,y=p), color='blue',size=2) + 
+            geom_hline(yintercept=184.8012, linetype="dashed", color = "red")
+bs_man
+
+# find intersection with annotations
+# venn diagram
+# temp and precipitation
+
+# UTR group? 
+###################################
+```
 
 
 
+
+
+
+## Height  
+```{r}
+
+ht_Gwa <- read.table(gzfile("Z:\\Anoob\\ANGSD\\GWAS\\height2019\\height.lrt0.gz"),
+                     header = T)
+ht_maf <- read.table(gzfile("Z:\\Anoob\\ANGSD\\GWAS\\height2019\\height.mafs.gz"),
+                     header = T)
+
+ht_Gwa_flt <- ht_Gwa %>%
+              filter(LRTscore > -998)
+
+summary(ht_Gwa_flt)
+
+hist(ht_Gwa_flt$beta)
+
+ht_LRT <- ggplot(ht_Gwa_flt, aes(beta, LRTscore)) +
+                  geom_point()
+ht_LRT
+
+# pchisq log.p = T lower.tail = F?
+
+ht_Gwa_flt$p <- -10*(pchisq(ht_Gwa_flt$LRTscore, 
+                            df = 1, 
+                            log.p = T, 
+                            lower.tail = F))
+head(ht_Gwa_flt)
+
+ht_Gwa_flt$Position2 <- seq(1,nrow(ht_Gwa_flt))
+
+summary(ht_Gwa_flt)
+
+
+# significant SNPs
+quantile(ht_Gwa_flt$p,0.9999) #142.655
+
+
+# find outliers for the GWASs
+ht_outliers <- ht_Gwa_flt %>%
+                  filter(p > 142.6555)
+```
+**write out files**  
+```{r}
+# ht_out_bed <- ht_outliers[,c(1,2)]
+# ht_out_bed$PositionEnd <- ht_out_bed$Position
+# 
+# write.table(ht_out_bed, "./bed_files/ht_outliers.bed",
+#             row.names = F, col.names = F, sep="\t",quote=F)
+```
+
+**Create bed tools and annotate**  
+```{bash eval=F}
+/data/popgen/bedtools2/bin/bedtools intersect \
+-a /data/project_data/GroupProjects/GWAS_env/bed_files/ht_outliers.bed \
+-b /data/project_data/Annotation/Pabies1.0-HC.gtf \
+-wb > ht_intersect.bed
+
+```
+
+
+**Manhattan plot**
+```{r}
+# Manhattan plot
+
+ht_man <- ggplot(ht_Gwa_flt, aes(Position2, p)) +
+                  geom_point(alpha=0.3) + theme_minimal() + 
+                  theme(
+                    legend.position = "none",
+                    panel.border = element_blank(),
+                    panel.grid.major.x = element_blank(),
+                    panel.grid.minor.x = element_blank(),
+                    axis.text.x = element_text(angle = 90, size = 8, vjust = 0.5)
+                  ) + xlab("Chromosome position") + ylab("-log10 (p-value)") + 
+            geom_point(data=ht_outliers, 
+                       aes(x=Position2,y=p), color='blue',size=2) + 
+            geom_hline(yintercept=142.655, linetype="dashed", color = "red")
+ht_man
+
+```
+
+## Bio05 
+```{r}
+
+bio05_Gwa <- read.table(gzfile("Z:\\Anoob\\ANGSD\\GWAS\\bio05\\bio05.lrt0.gz"),
+                     header = T)
+
+
+bio05_maf <- read.table(gzfile("Z:\\Anoob\\ANGSD\\GWAS\\bio05\\bio05.mafs.gz"),
+                     header = T)
+
+bio05_Gwa_flt <- bio05_Gwa %>%
+                 filter(LRTscore > -998)
+
+summary(bio05_Gwa_flt)
+
+hist(bio05_Gwa_flt$beta)
+
+bio05_LRT <- ggplot(bio05_Gwa_flt, aes(beta, LRTscore)) +
+                  geom_point()
+bio05_LRT
+
+# pchisq log.p = T lower.tail = F?
+
+bio05_Gwa_flt$p <- -10*(pchisq(bio05_Gwa_flt$LRTscore, 
+                            df = 1, 
+                            log.p = T, 
+                            lower.tail = F))
+head(bio05_Gwa_flt)
+
+bio05_Gwa_flt$Position2 <- seq(1,nrow(bio05_Gwa_flt))
+
+summary(bio05_Gwa_flt)
+
+
+# significant SNPs
+quantile(bio05_Gwa_flt$p,0.9999) #150.7185
+
+
+# find outliers for the GWASs
+bio05_outliers <- bio05_Gwa_flt %>%
+                  filter(p > 150.7185)
+```
+**write out files**  
+```{r}
+# bio05_out_bed <- bio05_outliers[,c(1,2)]
+# bio05_out_bed$PositionEnd <- bio05_out_bed$Position
+# 
+# write.table(bio05_out_bed, "./bed_files/bio05_outliers.bed",
+#             row.names = F, col.names = F, sep="\t",quote=F)
+```
+
+**Create bed tools and annotate**  
+```{bash eval=F}
+/data/popgen/bedtools2/bin/bedtools intersect \
+-a /data/project_data/GroupProjects/GWAS_env/bed_files/bio05_outliers.bed \
+-b /data/project_data/Annotation/Pabies1.0-HC.gtf \
+-wb > bio05_intersect.bed
+
+```
+
+
+**Manhattan plot**
+```{r}
+# Manhattan plot
+
+bio05_man <- ggplot(bio05_Gwa_flt, aes(Position2, p)) +
+                  geom_point(alpha=0.3) + theme_minimal() + 
+                  theme(
+                    legend.position = "none",
+                    panel.border = element_blank(),
+                    panel.grid.major.x = element_blank(),
+                    panel.grid.minor.x = element_blank(),
+                    axis.text.x = element_text(angle = 90, size = 8, vjust = 0.5)
+                  ) + xlab("Chromosome position") + ylab("-log10 (p-value)") + 
+            geom_point(data=bio05_outliers, 
+                       aes(x=Position2,y=p), color='blue',size=2) + 
+            geom_hline(yintercept=150.7185, linetype="dashed", color = "red")
+bio05_man
+
+```
+
+## Bio18 
+```{r}
+
+bio18_Gwa <- read.table(gzfile("Z:\\Anoob\\ANGSD\\GWAS\\bio18\\bio18.lrt0.gz"),
+                     header = T)
+
+
+bio18_maf <- read.table(gzfile("Z:\\Anoob\\ANGSD\\GWAS\\bio18\\bio18.mafs.gz"),
+                     header = T)
+
+bio18_Gwa_flt <- bio18_Gwa %>%
+                 filter(LRTscore > -998)
+
+summary(bio18_Gwa_flt)
+
+hist(bio18_Gwa_flt$beta)
+
+bio18_LRT <- ggplot(bio18_Gwa_flt, aes(beta, LRTscore)) +
+                  geom_point()
+bio18_LRT
+
+# pchisq log.p = T lower.tail = F?
+
+bio18_Gwa_flt$p <- -10*(pchisq(bio18_Gwa_flt$LRTscore, 
+                            df = 1, 
+                            log.p = T, 
+                            lower.tail = F))
+head(bio18_Gwa_flt)
+
+bio18_Gwa_flt$Position2 <- seq(1,nrow(bio18_Gwa_flt))
+
+summary(bio18_Gwa_flt)
+
+
+# significant SNPs
+quantile(bio18_Gwa_flt$p,0.9999) #143.0102
+
+
+# find outliers for the GWASs
+bio18_outliers <- bio18_Gwa_flt %>%
+                  filter(p > 143.0102)
+```
+**write out files**  
+```{r}
+# bio18_out_bed <- bio18_outliers[,c(1,2)]
+# bio18_out_bed$PositionEnd <- bio18_out_bed$Position
+# 
+# write.table(bio18_out_bed, "./bed_files/bio18_outliers.bed",
+#             row.names = F, col.names = F, sep="\t",quote=F)
+```
+
+**Create bed tools and annotate**  
+```{bash eval=F}
+/data/popgen/bedtools2/bin/bedtools intersect \
+-a /data/project_data/GroupProjects/GWAS_env/bed_files/bio18_outliers.bed \
+-b /data/project_data/Annotation/Pabies1.0-HC.gtf \
+-wb > bio18_intersect.bed
+
+```
+
+
+**Manhattan plot**
+```{r}
+# Manhattan plot
+
+bio18_man <- ggplot(bio18_Gwa_flt, aes(Position2, p)) +
+                  geom_point(alpha=0.3) + theme_minimal() + 
+                  theme(
+                    legend.position = "none",
+                    panel.border = element_blank(),
+                    panel.grid.major.x = element_blank(),
+                    panel.grid.minor.x = element_blank(),
+                    axis.text.x = element_text(angle = 90, size = 8, vjust = 0.5)
+                  ) + xlab("Chromosome position") + ylab("-log10 (p-value)") + 
+            geom_point(data=bio18_outliers, 
+                       aes(x=Position2,y=p), color='blue',size=2) + 
+            geom_hline(yintercept=143.0102, linetype="dashed", color = "red")
+bio18_man
+
+```
 
 
 

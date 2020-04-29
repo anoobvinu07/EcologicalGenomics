@@ -79,7 +79,7 @@ Peeking into the first or last few lines of a file  | `head` *filename*, `tail` 
 Searching within a file for a match              | `grep` **search string** *filename*  
 Outputing the results of a command to a new file | `grep` **search string** *filename* >outputfilename  
 Using the “pipe” to send the output of one command to the input of another | `grep` **text
-Removing files or folders [use with caution as the action is irreversible]  | `rm`   
+Removing files or folders [use with caution as the action is irreversible]  | `rm` , `rm -r`    
 <p style="color:green"> Github specific</p>  
 Description                                     | Commands  
 ----------------------------------------------- | --------  
